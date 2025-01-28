@@ -5,7 +5,8 @@ const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 app.use(bodyParser.json());
-
+const cors = require("cors");
+app.use(cors());
 connectDB();
 app.use("/api/user", userRoutes);
 app.listen(process.env.PORT, () => {
