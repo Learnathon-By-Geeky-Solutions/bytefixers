@@ -10,6 +10,21 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { InputAdornment, IconButton } from "@mui/material";
 import { TextField } from "@mui/material";
+import {
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Button,
+} from "@mui/material";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import FolderIcon from "@mui/icons-material/Folder";
+import PeopleIcon from "@mui/icons-material/People";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import PersonIcon from "@mui/icons-material/Person";
 
 export {
   AddBoxIcon,
@@ -26,4 +41,17 @@ export {
   InputAdornment,
   IconButton,
   TextField,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Button,
+  DashboardIcon,
+  AssignmentIcon,
+  CalendarTodayIcon,
+  FolderIcon,
+  PeopleIcon,
+  NotificationsIcon,
+  PersonIcon,
 };

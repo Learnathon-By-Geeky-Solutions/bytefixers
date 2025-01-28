@@ -6,10 +6,13 @@ import {
   IconButton,
   TextField,
 } from "../../common/icons"; // Ensure these imports are correct
+import { useNavigate } from "react-router-dom";
 import login_signupPicture from "../../assets/images/login_signupPicture.jpg";
 import google from "../../assets/images/google.PNG";
+import { authServices } from "../../auth";
 
 export const LoginForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -34,6 +37,15 @@ export const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     // Handle signup logic here
+    const payload = {
+      type: "email",
+      email: formData.email,
+      password: formData.password,
+    };
+    authServices
+      .login(payload)
+      .then(() => navigate("/kanbanBoard"))
+      .catch(() => alert("Failed to login"));
   };
 
   return (
@@ -94,6 +106,7 @@ export const LoginForm = () => {
             <button
               type="submit"
               className="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+              onClick={handleLogin}
             >
               Login
             </button>

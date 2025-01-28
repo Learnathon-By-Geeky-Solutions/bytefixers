@@ -1,6 +1,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { LoginForm, SignupForm } from "../components/auth";
+import { LoginForm, SignupForm, KanbanBoard } from "../components/auth";
 import AppBar from "../components/appbar/AppBar";
+import Sidebar from "../components/Board/sidebar/sidebar";
+import TopNavbar from "../components/Board/navbar/navbar";
+import { TaskColoumn } from "../components/kanbanboard/task";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -45,6 +48,24 @@ export const router = createBrowserRouter([
   {
     path: "/login",
     element: <LoginForm />,
+  },
+  {
+    path: "/kanbanBoard",
+    element: <KanbanBoard />,
+    children: [
+      {
+        index: true,
+        element: <Sidebar />,
+      },
+      {
+        index: true,
+        element: <TopNavbar />,
+      },
+      {
+        index: true,
+        element: <TaskColoumn />,
+      },
+    ],
   },
 ]);
 export const AppRouter = ({ children }) => {

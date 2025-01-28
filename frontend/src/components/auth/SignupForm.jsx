@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Visibility,
   VisibilityOff,
@@ -6,10 +7,12 @@ import {
   IconButton,
   TextField,
 } from "../../common/icons"; // Ensure these imports are correct
+import { authServices } from "../../auth"; // Import authServices
 import login_signupPicture from "../../assets/images/login_signupPicture.jpg";
 import google from "../../assets/images/google.PNG";
 
 export const SignupForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -34,8 +37,21 @@ export const SignupForm = () => {
   };
 
   const handleSignup = async (e) => {
+    console.log("Signup form data", formData);
+
     e.preventDefault();
     // Handle signup logic here
+    const payload = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      // honeypot: "", // Honeypot field
+    };
+
+    authServices
+      .signup(payload)
+      .then(() => navigate("/login"))
+      .catch(() => alert("Failed to signup"));
   };
 
   return (
@@ -116,6 +132,7 @@ export const SignupForm = () => {
             <button
               type="submit"
               className="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+              onClick={handleSignup}
             >
               Signup
             </button>
