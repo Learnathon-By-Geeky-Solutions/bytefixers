@@ -9,6 +9,8 @@ const corsOptions = {
   methods: process.env.CORS_METHODS,
   allowedHeaders: process.env.CORS_HEADERS,
 };
+const helmet = require("helmet");
+app.use(helmet());
 app.use(bodyParser.json());
 const cors = require("cors");
 app.use(cors(corsOptions));

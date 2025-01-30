@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const appConfig = require("../config/appConfig");
+const { body, validationResult } = require("express-validator");
 const router = express.Router();
 
 router.post("/sign-up", async (req, res) => {
@@ -24,28 +25,54 @@ router.post("/sign-up", async (req, res) => {
 });
 
 //? Login a user
-router.post("/login", async (req, res) => {
-  try {
-    const { type, email, password, refreshToken } = req.body;
-    if (type == "email") {
-      const user = await User.findOne({ email: email });
-      if (!user) {
-        res.status(404).json({ message: "User not found" });
-      } else {
+router.post(
+  "/login",
+  [
+    body("email").optional().isEmail().normalizeEmail(), // Validate email if provided
+    body("password").optional().isString().trim(), // Ensure password is a string
+    body("refreshToken").optional().isString().trim(), // Ensure refreshToken is a string
+  ],
+  async (req, res) => {
+    try {
+      // Check for validation errors
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const { type, email, password, refreshToken } = req.body;
+
+      if (type === "email") {
+        // Ensure email is provided
+        if (!email) {
+          return res.status(400).json({ message: "Email is required" });
+        }
+
+        // Securely query user
+        const user = await User.findOne({ email: { $eq: email } }).lean();
+        if (!user) {
+          return res.status(404).json({ message: "User not found" });
+        }
+
+        // Proceed with login
         await handleEmailLogin(password, user, res);
-      }
-    } else {
-      //? Login using refresh token
-      if (!refreshToken) {
-        res.status(401).json({ message: "Refresh token is not defined" });
-      } else {
+      } else if (type === "refreshToken") {
+        // Ensure refresh token is provided
+        if (!refreshToken) {
+          return res.status(401).json({ message: "Refresh token is required" });
+        }
+
+        // Process refresh token login
         handleRefreshToken(refreshToken, res);
+      } else {
+        return res.status(400).json({ message: "Invalid login type" });
       }
+    } catch (error) {
+      console.error("Login error:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
-  } catch (error) {
-    res.status(500).json({ message: "Something went wrong" });
   }
-});
+);
 
 //? Get all user
 router.get("/", async (req, res) => {
