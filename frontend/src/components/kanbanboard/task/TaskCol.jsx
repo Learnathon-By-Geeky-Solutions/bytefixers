@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import { DropArea } from "./DropArea";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { Card, CardContent, CardHeader } from "@mui/material";
-import { Input } from "@mui/material";
-import { Button } from "@mui/material";
-import { ScrollArea } from "@mui/material";
-import Typography from "@mui/material/Typography";
+import { Card, CardContent, Typography } from "../../../common/icons";
 export const TaskCol = ({
   title,
   tasks,

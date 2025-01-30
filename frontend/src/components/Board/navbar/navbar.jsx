@@ -1,25 +1,18 @@
-import { AppBar, Toolbar, InputBase, IconButton, Avatar } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import AddIcon from "@mui/icons-material/Add";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import SettingsIcon from "@mui/icons-material/Settings";
-import { Search } from "@mui/icons-material";
-import { Input } from "@mui/material";
-import { Button } from "@mui/material";
 import {
   Notifications,
   Help,
   AccountCircle,
   Add,
   Share,
-} from "@mui/icons-material";
-import {
+  Search,
+  Input,
+  Button,
   Summarize,
   Alarm,
   FormatListBulleted,
   ViewKanban,
-} from "@mui/icons-material";
-import { Link } from "@mui/material";
+  Link,
+} from "../../../common/icons";
 
 const TopNavbar = () => {
   return (

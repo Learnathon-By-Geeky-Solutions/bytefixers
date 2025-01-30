@@ -7,9 +7,22 @@ import SearchOffIcon from "@mui/icons-material/SearchOff";
 import EditIcon from "@mui/icons-material/Edit";
 import SettingsIcon from "@mui/icons-material/Settings";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { InputAdornment, IconButton } from "@mui/material";
-import { TextField } from "@mui/material";
+import {
+  Visibility,
+  VisibilityOff,
+  Task,
+  Search,
+  Notifications,
+  Help,
+  AccountCircle,
+  Add,
+  Share,
+  Summarize,
+  Alarm,
+  FormatListBulleted,
+  ViewKanban,
+} from "@mui/icons-material";
+
 import {
   Drawer,
   List,
@@ -17,6 +30,17 @@ import {
   ListItemIcon,
   ListItemText,
   Button,
+  Card,
+  CardContent,
+  TextField,
+  InputAdornment,
+  IconButton,
+  AppBar,
+  Toolbar,
+  InputBase,
+  Avatar,
+  Input,
+  Link,
 } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -25,7 +49,11 @@ import FolderIcon from "@mui/icons-material/Folder";
 import PeopleIcon from "@mui/icons-material/People";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonIcon from "@mui/icons-material/Person";
-
+import { amber } from "@mui/material/colors";
+import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from "@mui/icons-material/Add";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import Typography from "@mui/material/Typography";
 export {
   AddBoxIcon,
   ImageIcon,
@@ -54,4 +82,28 @@ export {
   PeopleIcon,
   NotificationsIcon,
   PersonIcon,
+  Task,
+  amber,
+  AppBar,
+  Toolbar,
+  InputBase,
+  Avatar,
+  SearchIcon,
+  AddIcon,
+  NotificationsNoneIcon,
+  Search,
+  Input,
+  Notifications,
+  Help,
+  AccountCircle,
+  Add,
+  Share,
+  Summarize,
+  Alarm,
+  FormatListBulleted,
+  ViewKanban,
+  Link,
+  Card,
+  CardContent,
+  Typography,
 };

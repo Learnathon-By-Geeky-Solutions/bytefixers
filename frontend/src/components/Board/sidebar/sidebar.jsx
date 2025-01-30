@@ -5,16 +5,16 @@ import {
   ListItemIcon,
   ListItemText,
   Button,
-} from "@mui/material";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import { Task } from "@mui/icons-material";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import FolderIcon from "@mui/icons-material/Folder";
-import PeopleIcon from "@mui/icons-material/People";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import PersonIcon from "@mui/icons-material/Person";
-import { amber } from "@mui/material/colors";
+  DashboardIcon,
+  AssignmentIcon,
+  CalendarTodayIcon,
+  FolderIcon,
+  PeopleIcon,
+  NotificationsIcon,
+  PersonIcon,
+  Task,
+  amber,
+} from "../../../common/icons";
 
 const Sidebar = () => {
   const menuItems = [

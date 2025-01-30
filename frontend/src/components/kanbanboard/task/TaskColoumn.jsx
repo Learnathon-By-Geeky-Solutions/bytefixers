@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { TaskCol } from "./TaskCol";
-import { DragDropContext } from "react-beautiful-dnd";
-import { DropArea } from "./DropArea";
 import ToDo from "../../../assets/images/to-do-list.png";
 import InProgress from "../../../assets/images/in-progress.png";
 import Done from "../../../assets/images/done.png";
@@ -38,40 +36,18 @@ export const TaskColoumn = () => {
     console.log(
       `${activeTask.index} dropped to ${Targetstatus} at ${position + 1}`
     );
-    // console.log();
-    // if (!activeTask) return;
-    // const taskTomove = tasks[status][activeTask.index];
-    // console.log(taskTomove.inProgress);
-    // const updatedTasks = tasks.filter((task, index) => index !== activeTask);
-    // updatedTasks.splice(position, 0, { ...taskTomove, status: status });
-    // setTasks(updatedTasks);
     let sourceStatus = activeTask.stat;
     let taskToMove = null;
 
-    // Loop through task lists to find the active task
     for (const [status, taskList] of Object.entries(tasks)) {
-      //   console.log(status);
-      //   console.log(taskList);
-      //   console.log(taskList[activeTask.index]);
-      //   console.log(activeTask.stat);
       if (status === activeTask.stat) {
         taskToMove = taskList[activeTask.index];
         console.log(taskToMove);
         break;
       }
-      //   if (taskList[activeTask]) {
-      //     sourceStatus = status;
-      //     taskToMove = taskList[activeTask];
-      //     console.log(taskToMove);
-      //     //     break;
-      //   }
     }
-    // console.log(sourceStatus);
-    // If no task was found, exit early
     if (sourceStatus === Targetstatus) return;
     if (activeTask.index === null || activeTask.stat === "") return;
-
-    // Remove the task from the source list
     const filteredTasks = Object.fromEntries(
       Object.entries(tasks).map(([status, taskList]) => [
         status,
@@ -80,7 +56,7 @@ export const TaskColoumn = () => {
     );
     console.log(JSON.stringify(filteredTasks));
     console.log(JSON.stringify(tasks));
-    //{"todo":[{"task":"adad","status":"todo"}],"inProgress":[{"task":"fwf","status":"inProgress"}],"done":[{"task":"ffFEF","status":"done"}]}
+
     const updatedSourceList = tasks[sourceStatus].filter(
       (_, idx) => idx !== activeTask.index
     );

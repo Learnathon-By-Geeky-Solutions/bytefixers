@@ -71,7 +71,6 @@ function handleRefreshToken(refreshToken, res) {
   jwt.verify(refreshToken, appConfig.AUTH.JWT_SECRET, async (err, payload) => {
     if (err) {
       res.status(401).json({ message: "Unauthorized" });
-      return;
     } else {
       const user = await User.findById(payload._id);
       if (user) {
