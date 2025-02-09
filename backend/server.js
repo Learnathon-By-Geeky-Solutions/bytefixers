@@ -4,16 +4,11 @@ const app = express();
 const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
-const corsOptions = {
-  origin: process.env.CORS_ORIGIN.split(","), // Convert CSV string to array
-  methods: process.env.CORS_METHODS,
-  allowedHeaders: process.env.CORS_HEADERS,
-};
-const helmet = require("helmet");
-app.use(helmet());
+// const helmet = require("helmet");
+// app.use(helmet());
 app.use(bodyParser.json());
 const cors = require("cors");
-app.use(cors(corsOptions));
+app.use(cors());
 connectDB();
 app.use("/api/user", userRoutes);
 app.listen(process.env.PORT, () => {

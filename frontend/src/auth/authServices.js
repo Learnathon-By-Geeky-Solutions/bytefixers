@@ -22,15 +22,16 @@ export const signup = ({ name, email, password }) =>
   });
 
 export const login = async ({ type, email, password, refreshToken }) => {
+  console.log("Login data", { type, email, password, refreshToken });
   const authUser = (
-    await axios.post(`${appConfig.BASE_URL}/api/user/login`, {
+    await axios.post("http://localhost:4000/api/user/login", {
       type,
       email,
       password,
       refreshToken,
     })
   ).data;
-
+  console.log("✅ Login Successful:", authUser.data);
   saveAuthUser(authUser);
   return authUser;
 };

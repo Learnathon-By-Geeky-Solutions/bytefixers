@@ -5,6 +5,7 @@ const User = require("../models/user");
 const appConfig = require("../config/appConfig");
 const { body, validationResult } = require("express-validator");
 const router = express.Router();
+const { MongoClient } = require("mongodb");
 
 router.post("/sign-up", async (req, res) => {
   try {
@@ -25,54 +26,31 @@ router.post("/sign-up", async (req, res) => {
 });
 
 //? Login a user
-router.post(
-  "/login",
-  [
-    body("email").optional().isEmail().normalizeEmail(), // Validate email if provided
-    body("password").optional().isString().trim(), // Ensure password is a string
-    body("refreshToken").optional().isString().trim(), // Ensure refreshToken is a string
-  ],
-  async (req, res) => {
-    try {
-      // Check for validation errors
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
+router.post("/login", async (req, res) => {
+  try {
+    console.log("Login data", req.body);
 
-      const { type, email, password, refreshToken } = req.body;
-
-      if (type === "email") {
-        // Ensure email is provided
-        if (!email) {
-          return res.status(400).json({ message: "Email is required" });
-        }
-
-        // Securely query user
-        const user = await User.findOne({ email: { $eq: email } }).lean();
-        if (!user) {
-          return res.status(404).json({ message: "User not found" });
-        }
-
-        // Proceed with login
-        await handleEmailLogin(password, user, res);
-      } else if (type === "refreshToken") {
-        // Ensure refresh token is provided
-        if (!refreshToken) {
-          return res.status(401).json({ message: "Refresh token is required" });
-        }
-
-        // Process refresh token login
-        handleRefreshToken(refreshToken, res);
+    const { type, email, password, refreshToken } = req.body;
+    if (type == "email") {
+      const user = await User.findOne({ email: email }).lean();
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
       } else {
-        return res.status(400).json({ message: "Invalid login type" });
+        await handleEmailLogin(password, user, res);
       }
-    } catch (error) {
-      console.error("Login error:", error);
-      res.status(500).json({ message: "Internal server error" });
+    } else {
+      //? Login using refresh token
+      if (!refreshToken) {
+        res.status(401).json({ message: "Refresh token is not defined" });
+      } else {
+        handleRefreshToken(refreshToken, res);
+      }
     }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
-);
+});
 
 //? Get all user
 router.get("/", async (req, res) => {
@@ -84,39 +62,69 @@ router.get("/", async (req, res) => {
   }
 });
 async function handleEmailLogin(password, user, res) {
-  const isValidPassword = await bcrypt.compare(password, user.password);
-  if (isValidPassword) {
+  try {
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ message: "Unable to Login" });
+    }
+
+    // ✅ FIX: Convert user to a plain object and generate user object
     const userObj = generateUserObject(user);
-    res.json(userObj);
-    //todo
-  } else {
-    res.status(401).json({ message: "Unable to Login" });
+    return res.json(userObj);
+  } catch (error) {
+    console.error("❌ Error in handleEmailLogin:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
-function handleRefreshToken(refreshToken, res) {
-  jwt.verify(refreshToken, appConfig.AUTH.JWT_SECRET, async (err, payload) => {
-    if (err) {
-      res.status(401).json({ message: "Unauthorized" });
-    } else {
-      const user = await User.findById(payload._id);
-      if (user) {
+async function handleRefreshToken(refreshToken, res) {
+  try {
+    jwt.verify(
+      refreshToken,
+      appConfig.AUTH.JWT_SECRET,
+      async (err, payload) => {
+        if (err) {
+          return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        // ✅ FIX: Use MongoDB query instead of `User.findById()`
+        const client = new MongoClient(process.env.MONGODB_URI);
+        await client.connect();
+        const db = client.db(process.env.DB_NAME);
+        const user = await db
+          .collection("users")
+          .findOne({ _id: new ObjectId(payload._id) });
+
+        if (!user) {
+          await client.close();
+          return res.status(401).json({ message: "Unauthorized" });
+        }
+
         const userObj = generateUserObject(user);
-        res.json(userObj);
-      } else {
-        res.status(401).json({ message: "Unauthorized" });
+        await client.close();
+        return res.json(userObj);
       }
-    }
-  });
+    );
+  } catch (error) {
+    console.error("❌ Error in handleRefreshToken:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
 }
 
 function generateUserObject(user) {
-  const { accessToken, refreshToken } = generateTokens(user);
+  // ✅ FIX: Convert user into a plain object to prevent `toJSON` errors
+  const userObj = { ...user };
 
-  const userObj = user.toJSON();
+  // Remove sensitive data
   delete userObj.password;
-  userObj["accessToken"] = accessToken;
-  userObj["refreshToken"] = refreshToken;
+
+  // Generate Tokens
+  const { accessToken, refreshToken } = generateTokens(userObj);
+
+  // Attach tokens to user object
+  userObj.accessToken = accessToken;
+  userObj.refreshToken = refreshToken;
+
   return userObj;
 }
 
