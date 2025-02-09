@@ -3,9 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const appConfig = require("../config/appConfig");
-const { body, validationResult } = require("express-validator");
 const router = express.Router();
-const { MongoClient } = require("mongodb");
 
 router.post("/sign-up", async (req, res) => {
   try {
@@ -28,11 +26,9 @@ router.post("/sign-up", async (req, res) => {
 //? Login a user
 router.post("/login", async (req, res) => {
   try {
-    console.log("Login data", req.body);
-
     const { type, email, password, refreshToken } = req.body;
     if (type == "email") {
-      const user = await User.findOne({ email: email }).lean();
+      const user = await User.findOne({ email: email });
       if (!user) {
         res.status(404).json({ message: "User not found" });
       } else {
@@ -47,7 +43,6 @@ router.post("/login", async (req, res) => {
       }
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: "Something went wrong" });
   }
 });
@@ -62,69 +57,40 @@ router.get("/", async (req, res) => {
   }
 });
 async function handleEmailLogin(password, user, res) {
-  try {
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!isValidPassword) {
-      return res.status(401).json({ message: "Unable to Login" });
-    }
-
-    // ✅ FIX: Convert user to a plain object and generate user object
+  const isValidPassword = await bcrypt.compare(password, user.password);
+  if (isValidPassword) {
     const userObj = generateUserObject(user);
-    return res.json(userObj);
-  } catch (error) {
-    console.error("❌ Error in handleEmailLogin:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    res.json(userObj);
+    //todo
+  } else {
+    res.status(401).json({ message: "Unable to Login" });
   }
 }
 
-async function handleRefreshToken(refreshToken, res) {
-  try {
-    jwt.verify(
-      refreshToken,
-      appConfig.AUTH.JWT_SECRET,
-      async (err, payload) => {
-        if (err) {
-          return res.status(401).json({ message: "Unauthorized" });
-        }
-
-        // ✅ FIX: Use MongoDB query instead of `User.findById()`
-        const client = new MongoClient(process.env.MONGODB_URI);
-        await client.connect();
-        const db = client.db(process.env.DB_NAME);
-        const user = await db
-          .collection("users")
-          .findOne({ _id: new ObjectId(payload._id) });
-
-        if (!user) {
-          await client.close();
-          return res.status(401).json({ message: "Unauthorized" });
-        }
-
+function handleRefreshToken(refreshToken, res) {
+  jwt.verify(refreshToken, appConfig.AUTH.JWT_SECRET, async (err, payload) => {
+    if (err) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    } else {
+      const user = await User.findById(payload._id);
+      if (user) {
         const userObj = generateUserObject(user);
-        await client.close();
-        return res.json(userObj);
+        res.json(userObj);
+      } else {
+        res.status(401).json({ message: "Unauthorized" });
       }
-    );
-  } catch (error) {
-    console.error("❌ Error in handleRefreshToken:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
+    }
+  });
 }
 
 function generateUserObject(user) {
-  // ✅ FIX: Convert user into a plain object to prevent `toJSON` errors
-  const userObj = { ...user };
+  const { accessToken, refreshToken } = generateTokens(user);
 
-  // Remove sensitive data
+  const userObj = user.toJSON();
   delete userObj.password;
-
-  // Generate Tokens
-  const { accessToken, refreshToken } = generateTokens(userObj);
-
-  // Attach tokens to user object
-  userObj.accessToken = accessToken;
-  userObj.refreshToken = refreshToken;
-
+  userObj["accessToken"] = accessToken;
+  userObj["refreshToken"] = refreshToken;
   return userObj;
 }
 

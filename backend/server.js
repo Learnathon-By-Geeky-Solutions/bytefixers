@@ -4,8 +4,6 @@ const app = express();
 const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
-// const helmet = require("helmet");
-// app.use(helmet());
 app.use(bodyParser.json());
 const cors = require("cors");
 app.use(cors());
