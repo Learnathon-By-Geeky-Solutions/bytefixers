@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const projectSchema = new mongoose.Schema(
   {
     name: {
@@ -25,6 +27,12 @@ const projectSchema = new mongoose.Schema(
       enum: ["Planning", "Active", "On Hold", "Completed", "Archived"],
       default: "Planning",
     },
+    task: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Task",
+      },
+    ],
     progress: {
       // Auto-calculated field
       type: Number,
@@ -35,3 +43,12 @@ const projectSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+projectSchema.statics.calculateProgress = function (tasks) {
+  if (tasks.length === 0) return 0;
+  const completedTasks = tasks.filter(task => task.status === "Done").length;
+  return Math.round((completedTasks / tasks.length) * 100);
+};
+
+// Export the Project model
+module.exports = mongoose.model("Project", projectSchema);
