@@ -5,7 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^6.4.0",
+    "@mui/icons-material": "^6.4.1",
     "@mui/material": "^6.4.0",
     "advance-project-management-tool": "file:",
     "cra-template": "1.2.0",
