@@ -6,11 +6,16 @@ const taskSchema = new mongoose.Schema({
     required: [true, "Task title required"],
     trim: true
   },
-  assignee: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: "User",
-    index: true 
+  description: {
+    type: String,
+    maxlength: [500, "Description too long"],
   },
+  assignee: [{ 
+      type: mongoose.Types.ObjectId, 
+      ref: "User",
+      index: true ,
+    },
+  ],
   reporter: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: "User",
@@ -26,6 +31,12 @@ const taskSchema = new mongoose.Schema({
     enum: ["Low", "Medium", "High", "Critical"],
     default: "Medium"
   },
+  subTask: [{ 
+    type: mongoose.Types.ObjectId, 
+    ref: "Subtask",
+    index: true ,
+  },
+],
   activityLog: [{
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     action: String,

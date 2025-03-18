@@ -44,11 +44,5 @@ const projectSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-projectSchema.statics.calculateProgress = function (tasks) {
-  if (tasks.length === 0) return 0;
-  const completedTasks = tasks.filter(task => task.status === "Done").length;
-  return Math.round((completedTasks / tasks.length) * 100);
-};
-
 // Export the Project model
 module.exports = mongoose.model("Project", projectSchema);

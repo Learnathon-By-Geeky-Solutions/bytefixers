@@ -28,8 +28,8 @@ router.get('/', async (req, res) => {
     try {
         // Populate tasks and team members for better context
         const projects = await Project.find()
-            .populate('tasks')  // Populates task details
-            .populate('team')   // Populates team details
+            .populate('task')  // Populates task details
+            //.populate('team')   // Populates team details
             .populate('createdBy', 'name email'); // Populates creator details
         res.json(projects);
     } catch (err) {
@@ -41,10 +41,10 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-
+        console.log(id);
         const project = await Project.findById(id)
-            .populate('tasks')
-            .populate('team')
+            .populate('task')
+            // .populate('team')
             .populate('createdBy', 'name email');
 
         if (!project) return res.status(404).json({ message: 'Project not found' });
@@ -62,8 +62,8 @@ router.put('/:id', async (req, res) => {
         const updates = req.body;
 
         const project = await Project.findByIdAndUpdate(id, updates, { new: true })
-            .populate('tasks')
-            .populate('team')
+            .populate('task')
+            //.populate('team')
             .populate('createdBy', 'name email');
 
         if (!project) return res.status(404).json({ message: 'Project not found' });

@@ -2,12 +2,14 @@ const express = require('express');
 const router = express.Router();
 const Project = require('../models/Project');
 const Task = require('../models/Task');
+const Subtask = require('../models/Subtask');
+
 
 // Create a task under a project
-router.post('/:projectId/tasks', async (req, res) => {
+router.post('/:projectId/addTasks', async (req, res) => {
     try {
         const { projectId } = req.params;
-        const { title, assignee, reporter, priority } = req.body;
+        const { title,description, assignee, reporter, priority } = req.body;
 
         const project = await Project.findById(projectId);
         
@@ -15,6 +17,7 @@ router.post('/:projectId/tasks', async (req, res) => {
 
         const newTask = new Task({
             title,
+            description,
             assignee,
             reporter,
             priority,
@@ -30,6 +33,11 @@ router.post('/:projectId/tasks', async (req, res) => {
 
         project.task.push(newTask);
         await newTask.save();
+
+        const tasks = await Task.find({ _id: { $in: project.task } }, "status");
+        const completedTasks = tasks.filter(task => task.status === "Done").length;
+        project.progress = Math.round((completedTasks / tasks.length) * 100);
+
         await project.save();
         
         res.status(201).json(newTask);
@@ -39,7 +47,7 @@ router.post('/:projectId/tasks', async (req, res) => {
 });
 
 // Update a task under a project
-router.put('/:projectId/tasks/:taskId', async (req, res) => {
+router.put('/:projectId/tasks/:taskId/update', async (req, res) => {
     try {
         const { projectId, taskId } = req.params;
         const updatedFields = req.body;
@@ -48,27 +56,26 @@ router.put('/:projectId/tasks/:taskId', async (req, res) => {
         const project = await Project.findById(projectId);
         if (!project) return res.status(404).json({ message: 'Project not found' });
 
-        const taskIndex = project.tasks.findIndex(task => task._id.toString() === taskId);
-        if (taskIndex === -1) return res.status(404).json({ message: 'Task not found' });
+       // Find the task by ID
+       const task = await Task.findById(taskId);
+       if (!task) return res.status(404).json({ message: 'Task not found' });
 
-        const updatedTask = {
-            ...project.tasks[taskIndex]._doc,
-            ...updatedFields,
-            activityLog: [
-                ...project.tasks[taskIndex].activityLog,
-                {
-                    user: userId,
-                    action: actionDescription || "Task Updated",
-                    details: updatedFields
-                }
-            ]
-        };
+       // Update the task with new fields
+       Object.assign(task, updatedFields);
 
-        project.tasks[taskIndex] = updatedTask;
-        project.progress = calculateProgress(project.tasks);
+       // Add activity log to task
+       task.activityLog.push({
+           user: userId,
+           action: actionDescription || "Task Updated",
+           details: updatedFields
+       });
+        await task.save();
+        const tasks = await Task.find({ _id: { $in: project.task } }, "status");
+        const completedTasks = tasks.filter(task => task.status === "Done").length;
+        project.progress = Math.round((completedTasks / tasks.length) * 100);
+
         await project.save();
-
-        res.json(updatedTask);
+        res.json(task);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -80,26 +87,74 @@ router.put('/:projectId/tasks/:taskId/assign', async (req, res) => {
         const { projectId, taskId } = req.params;
         const { assignee, userId } = req.body;
 
-        const project = await Project.findById(projectId);
-        if (!project) return res.status(404).json({ message: 'Project not found' });
+        // const project = await Project.findById(projectId);
+        // if (!project) return res.status(404).json({ message: 'Project not found' });
 
-        const taskIndex = project.tasks.findIndex(task => task._id.toString() === taskId);
-        if (taskIndex === -1) return res.status(404).json({ message: 'Task not found' });
+        const task = await Task.findById(taskId);
 
-        project.tasks[taskIndex].assignee = assignee;
-        project.tasks[taskIndex].activityLog.push({
+        // Ensure assignee is an array before pushing
+        if (!Array.isArray(task.assignee)) {
+            task.assignee = [];
+        }
+
+        if (!task.assignee.includes(assignee)) {
+            task.assignee.push(assignee);
+        }
+        task.activityLog.push({
             user: userId,
             action: "Assigned Task",
             details: { assignedTo: assignee }
         });
-
-        project.progress = calculateProgress(project.tasks);
-        await project.save();
-
-        res.json(project.tasks[taskIndex]);
+        await task.save();
+        res.json(task);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
+
+router.post("/:taskId/add-subtask", async (req, res) => {
+    try {
+        const { taskId } = req.params;
+        const { title,description, assignee, reporter, status, priority,userId } = req.body;
+    
+        // Check if the parent task exists
+        const parentTask = await Task.findById(taskId);
+        if (!parentTask) {
+            return res.status(404).json({ message: "Parent task not found" });
+        }
+    
+        // Create the new subtask
+        const subTask = new Subtask({
+            title,
+            description,
+            assignee,
+            reporter,
+            status: status || "Backlog",
+            priority: priority || "Medium",
+        });
+    
+        await subTask.save(); // Save subtask to database
+    
+        // Add subtask to the parent's subTask array
+        parentTask.subTask.push(subTask._id);
+        parentTask.activityLog.push({
+            user: userId,
+            action: "Subtask Created",
+            details: { subtask : title }
+        });
+        await parentTask.save();
+    
+        return res.status(201).json({ 
+            message: "Subtask created and added successfully", 
+            subTask, 
+            parentTask 
+        });
+  
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Server error", err });
+    }
+});
+  
 
 module.exports = router;
