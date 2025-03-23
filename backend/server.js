@@ -6,6 +6,7 @@ const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require('./routes/projectRoutes');
 const taskRoutes = require('./routes/taskRoutes');
+const teamRoutes = require('./routes/teamRoutes');
 app.use(bodyParser.json());
 const cors = require("cors");
 const http = require('http');
@@ -22,6 +23,7 @@ connectDB();
 app.use("/api/user", userRoutes);
 app.use('/projects', projectRoutes);
 app.use('/tasks', taskRoutes);
+app.use('/teams', teamRoutes);
 
 // Socket.IO for real-time collaboration
 io.on('connection', (socket) => {
