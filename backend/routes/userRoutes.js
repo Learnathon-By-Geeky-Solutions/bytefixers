@@ -29,25 +29,27 @@ router.post("/sign-up", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { type, email, password, refreshToken } = req.body;
-    if (type == "email") {
-      const sanitizedEmail = validator.normalizeEmail(email);
-      const user = await User.findOne({ email: sanitizedEmail });
-      if (!user) {
-        res.status(404).json({ message: "User not found" });
-      } else {
-        await handleEmailLogin(password, user, res);
-      }
-    } else {
-        //? Login using refresh token
-        if (!refreshToken) {
-          res.status(401).json({ message: "Refresh token is not defined" });
-        } else {
-          handleRefreshToken(refreshToken, res);
+    
+    if (type === 'email') {
+        const sanitizedEmail = validator.normalizeEmail(email);
+        const user = await User.findOne({ email: sanitizedEmail });
+        
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
         }
+        
+        await handleEmailLogin(password, user, res);
+    } else {
+        // Login using refresh token
+        if (!refreshToken) {
+            return res.status(401).json({ message: "Refresh token is not defined" });
+        }
+        
+        await handleRefreshToken(refreshToken, res);
     }
-  } catch (error) {
+} catch (error) {
     res.status(500).json({ message: "Something went wrong" });
-  }
+}
 });
 
 //? Get all user
@@ -71,18 +73,17 @@ async function handleEmailLogin(password, user, res) {
 
 function handleRefreshToken(refreshToken, res) {
   jwt.verify(refreshToken, appConfig.AUTH.JWT_SECRET, async (err, payload) => {
-    if (err) {
-      res.status(401).json({ message: "Unauthorized" });
-      return;
-    } else {
-      const user = await User.findById(payload._id);
-      if (user) {
-        const userObj = generateUserObject(user);
-        res.json(userObj);
-      } else {
-        res.status(401).json({ message: "Unauthorized" });
+      if (err) {
+          return res.status(401).json({ message: "Unauthorized" });
       }
-    }
+
+      const user = await User.findById(payload._id);
+      if (!user) {
+          return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const userObj = generateUserObject(user);
+      res.json(userObj);
   });
 }
 

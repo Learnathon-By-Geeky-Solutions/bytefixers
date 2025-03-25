@@ -9,16 +9,19 @@ const taskRoutes = require('./routes/taskRoutes');
 const teamRoutes = require('./routes/teamRoutes');
 app.use(bodyParser.json());
 const cors = require("cors");
+// Define CORS options
+const corsOptions = {
+  origin: "http://localhost:4000",
+  methods: ["GET", "POST", "PUT"]
+};
 const http = require('http');
 const { Server } = require('socket.io');
 const server = http.createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: 'http://localhost:4000',
-        methods: ['GET', 'POST', 'PUT']
-    }
-});
-app.use(cors());
+const io = new Server(server, { cors: corsOptions });
+
+// Enable CORS for the API endpoints
+app.use(cors(corsOptions));
+
 connectDB();
 app.use("/api/user", userRoutes);
 app.use('/projects', projectRoutes);
