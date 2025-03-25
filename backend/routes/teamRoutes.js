@@ -47,8 +47,24 @@ router.post("/assign/:teamId", async (req, res) => {
             return res.status(404).json({ message: "Team not found" });
         }
 
-        // Validate users
-        const validUsers = await User.find({ _id: { $in: teamMembers } });
+        
+        // Validate that teamMembers is an array
+        if (!Array.isArray(teamMembers)) {
+            throw new Error('Team members must be an array');
+        }
+        
+        // Sanitize and validate each team member ID
+        const sanitizedTeamMembers = teamMembers
+            .map(memberId => {
+            // Validate ObjectId format
+            if (!mongoose.Types.ObjectId.isValid(memberId)) {
+                throw new Error('Invalid team member ID');
+            }
+            return new mongoose.Types.ObjectId(String(memberId));
+            });
+        
+        // Query with validated and sanitized IDs
+        const validUsers = await User.find({ _id: { $in: sanitizedTeamMembers } });
         const validUserIds = validUsers.map(user => user._id.toString());
 
         // Filter out already assigned members

@@ -5,7 +5,7 @@ export function authenticateToken(req, res, next) {
   if (!authHeader) {
     res.status(401).json({ message: "Unauthorized" });
   } else {
-    const token = authHeader && authHeader.split(" ")[1];
+    const token = authHeader?.split(" ")[1];
     if (token) {
       jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
         if (err) {

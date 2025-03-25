@@ -84,11 +84,8 @@ router.put('/:projectId/tasks/:taskId/update', async (req, res) => {
 // Assign a member to a task
 router.put('/:projectId/tasks/:taskId/assign', async (req, res) => {
     try {
-        const { projectId, taskId } = req.params;
+        const { taskId } = req.params;
         const { assignee, userId } = req.body;
-
-        // const project = await Project.findById(projectId);
-        // if (!project) return res.status(404).json({ message: 'Project not found' });
 
         const task = await Task.findById(taskId);
 
@@ -133,7 +130,8 @@ router.post("/:taskId/add-subtask", async (req, res) => {
             priority: priority || "Medium",
         });
     
-        await subTask.save(); // Save subtask to database
+        // Save subtask to database
+        await subTask.save(); 
     
         // Add subtask to the parent's subTask array
         parentTask.subTask.push(subTask._id);

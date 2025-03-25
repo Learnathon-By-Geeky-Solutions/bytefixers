@@ -3,7 +3,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const appConfig = require("../config/appConfig");
+const validator = require('validator');
 const router = express.Router();
+
 
 router.post("/sign-up", async (req, res) => {
   try {
@@ -28,19 +30,20 @@ router.post("/login", async (req, res) => {
   try {
     const { type, email, password, refreshToken } = req.body;
     if (type == "email") {
-      const user = await User.findOne({ email: email });
+      const sanitizedEmail = validator.normalizeEmail(email);
+      const user = await User.findOne({ email: sanitizedEmail });
       if (!user) {
         res.status(404).json({ message: "User not found" });
       } else {
         await handleEmailLogin(password, user, res);
       }
     } else {
-      //? Login using refresh token
-      if (!refreshToken) {
-        res.status(401).json({ message: "Refresh token is not defined" });
-      } else {
-        handleRefreshToken(refreshToken, res);
-      }
+        //? Login using refresh token
+        if (!refreshToken) {
+          res.status(401).json({ message: "Refresh token is not defined" });
+        } else {
+          handleRefreshToken(refreshToken, res);
+        }
     }
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
@@ -61,7 +64,6 @@ async function handleEmailLogin(password, user, res) {
   if (isValidPassword) {
     const userObj = generateUserObject(user);
     res.json(userObj);
-    //todo
   } else {
     res.status(401).json({ message: "Unable to Login" });
   }
