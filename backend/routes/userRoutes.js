@@ -71,7 +71,7 @@ async function handleEmailLogin(password, user, res) {
   }
 }
 
-function handleRefreshToken(refreshToken, res) {
+async function handleRefreshToken(refreshToken, res) {
   jwt.verify(refreshToken, appConfig.AUTH.JWT_SECRET, async (err, payload) => {
       if (err) {
           return res.status(401).json({ message: "Unauthorized" });
