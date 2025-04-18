@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { DropArea } from "./DropArea";
-import "@fortawesome/fontawesome-free/css/all.min.css";
-import { Card, CardContent, Typography } from "../../../common/icons";
+import { useNavigate, useParams } from "react-router-dom";
+import { useNotifications } from "../../../context/NotificationContext";
 export const TaskCol = ({
   title,
   tasks,
@@ -11,104 +10,159 @@ export const TaskCol = ({
   setActiveTask,
   onDrop,
   icon,
+  projectId,
 }) => {
+  const { addNotification } = useNotifications();
+  const navigate = useNavigate();
   const [taskText, setTaskText] = useState("");
-
-  const handleSubmit = (e) => {
+  const [showAddForm, setShowAddForm] = useState(false);
+  const handleTaskClick = (taskId) => {
+    console.log("Task clicked:", taskId);
+    console.log("Project ID:", projectId);
+    navigate(`/project/${projectId}/task/${taskId}`);
+  };
+  // Handle task submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (taskText.trim() !== "") {
-      handleAddTask(status, taskText);
+
+    if (!taskText.trim()) return;
+
+    try {
+      await handleAddTask(status, taskText);
+      addNotification({
+        message: `New task "${taskText}" created in ${status}`,
+        type: "success",
+      });
       setTaskText("");
+      setShowAddForm(false);
+    } catch (error) {
+      console.error("Error adding task:", error);
     }
   };
-  const handleDragStart = (status, index) => {
-    // console.log(status);
-    setActiveTask({ index, stat: status });
-  };
-  return (
-    <div className=" bg-gradient-to-r from-[rgb(41,115,178)] to-[rgb(235,240,255)] shadow-md p-4 animate-fade-in rounded-xl shadow-lg p-6 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
-      <Card className="bg-card/50 backdrop-blur-sm w-[350px] flex-shrink-0">
-        <Typography
-          gutterBottom
-          variant="h6"
-          component="div"
-          sx={{
-            fontWeight: "bold",
-            color: "#333",
-            textAlign: "center",
-            textTransform: "capitalize",
-            letterSpacing: "1px",
-            marginTop: "16px",
-          }}
-          className="text-sm md:text-lg hover:text-blue-500 transition-all"
-        >
-          {title}
-        </Typography>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="mb-4 flex flex-col">
-            <input
-              type="text"
-              value={taskText}
-              onChange={(e) => setTaskText(e.target.value)}
-              placeholder={`Add a task to ${title}`}
-              className="p-2 border border-gray-300 rounded mb-2"
-            />
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            >
-              Add Task
-            </button>
-          </form>
-          <ul className="space-y-2">
-            <DropArea onDrop={() => onDrop(status, 0)}></DropArea>
-            {tasks.map((task, index) => (
-              <React.Fragment key={index}>
-                <article
-                  className="task_card cursor-grab"
-                  draggable="true"
-                  onDragStart={() => handleDragStart(status, index)}
-                  onDragEnd={() => setActiveTask({ index: null, status: "" })}
-                >
-                  <li className="bg-gradient-to-r from-[rgb(5, 54, 97)] to-[rgb(1, 49, 50)] p-4 rounded-lg shadow-md w-full break-words ease-in-out hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
-                    {/* Task content with delete button */}
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full">
-                      <span className="text-white font-sm flex-1 break-words overflow-hidden w-full">
-                        {task.task}
-                      </span>
-                      <button
-                        onClick={() => handleDelete(status, index)}
-                        className="text-red-800 transition-all duration-200"
-                      >
-                        <i className="fas fa-trash-alt mr"></i>
-                      </button>
-                    </div>
 
-                    {/* Increased space below the task */}
-                    <div className="mt-6 border-t border-gray-300 pt-4 flex gap-8 text-gray-500 text-sm">
-                      <div className="flex items-center gap-1">
-                        <i
-                          class="fas fa-comment text-white"
-                          aria-hidden="true"
-                        ></i>
-                        <span className="font-sm text-white">14</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <i
-                          class="fas fa-file text-white"
-                          aria-hidden="true"
-                        ></i>
-                        <span className="font-sm text-white">5</span>
-                      </div>
-                    </div>
-                  </li>
-                </article>
-                <DropArea onDrop={() => onDrop(status, index + 1)}></DropArea>
-              </React.Fragment>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
+  // Handle drag start
+  const handleDragStart = (e, taskId) => {
+    setActiveTask({ taskId, status });
+    // Set data for HTML5 drag and drop
+    e.dataTransfer.setData("taskId", taskId);
+  };
+
+  // Handle dragover event to allow dropping
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  // Handle drop event
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const taskId = e.dataTransfer.getData("taskId");
+    onDrop(status, taskId);
+  };
+
+  return (
+    <div
+      className="bg-gray-100 rounded-lg p-3 min-w-[280px] h-fit"
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
+      {/* Column header */}
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="font-semibold text-gray-700 flex items-center">
+          <span className="mr-2">{icon}</span> {title}
+          <span className="ml-2 text-gray-500 text-sm">({tasks.length})</span>
+        </h3>
+        <button
+          onClick={() => setShowAddForm(!showAddForm)}
+          className="text-blue-500 hover:text-blue-700"
+        >
+          {showAddForm ? "Cancel" : "+ Add"}
+        </button>
+      </div>
+
+      {/* Add task form */}
+      {showAddForm && (
+        <form onSubmit={handleSubmit} className="mb-3">
+          <input
+            type="text"
+            value={taskText}
+            onChange={(e) => setTaskText(e.target.value)}
+            placeholder="Enter task title..."
+            className="w-full p-2 border rounded mb-2"
+            autoFocus
+          />
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          >
+            Add Task
+          </button>
+        </form>
+      )}
+
+      {/* Tasks list */}
+      <div className="space-y-2">
+        {tasks.length > 0 ? (
+          tasks.map((task) => (
+            <div
+              key={task._id}
+              draggable
+              onDragStart={(e) => handleDragStart(e, task._id)}
+              onClick={() => handleTaskClick(task._id)}
+              className="bg-white p-3 rounded shadow cursor-grab hover:shadow-md"
+            >
+              <div className="flex justify-between">
+                <h4 className="font-medium">{task.title}</h4>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(task._id);
+                  }}
+                  className="text-red-500 hover:text-red-700 text-sm"
+                >
+                  &times;
+                </button>
+              </div>
+
+              {task.description && (
+                <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                  {task.description}
+                </p>
+              )}
+
+              <div className="flex justify-between items-center mt-2">
+                <span
+                  className={`text-xs px-2 py-1 rounded ${getPriorityColor(
+                    task.priority
+                  )}`}
+                >
+                  {task.priority}
+                </span>
+                <span className="text-xs text-gray-500">
+                  {task.assignee ? task.assignee.name : "Unassigned"}
+                </span>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-4 text-gray-400">No tasks yet</div>
+        )}
+      </div>
     </div>
   );
 };
+
+// Helper function for priority colors
+function getPriorityColor(priority) {
+  switch (priority) {
+    case "LOW":
+      return "bg-green-100 text-green-800";
+    case "MEDIUM":
+      return "bg-blue-100 text-blue-800";
+    case "HIGH":
+      return "bg-orange-100 text-orange-800";
+    case "CRITICAL":
+      return "bg-red-100 text-red-800";
+    default:
+      return "bg-gray-100 text-gray-800";
+  }
+}
