@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { TaskColoumn } from "./TaskColoumn";
 
 export const TaskForm = ({ handleAddTask }) => {
   const [taskData, setTaskData] = useState({
@@ -47,6 +48,7 @@ export const TaskForm = ({ handleAddTask }) => {
           + Add Task
         </button>
       </form>
+      <TaskColoumn />
     </div>
   );
 };
