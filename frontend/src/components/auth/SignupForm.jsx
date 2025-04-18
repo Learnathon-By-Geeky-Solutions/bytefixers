@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Visibility,
   VisibilityOff,
@@ -23,6 +23,11 @@ export const SignupForm = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const emailFromQuery = queryParams.get("email") || "";
+  const projectIdFromQuery = queryParams.get("projectId");
+  console.log("Project ID from query:", projectIdFromQuery);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -45,12 +50,29 @@ export const SignupForm = () => {
       name: formData.name,
       email: formData.email,
       password: formData.password,
+      projectId: projectIdFromQuery,
       // honeypot: "", // Honeypot field
     };
 
+    // authServices
+    //   .signup(payload)
+    //   .then(() => navigate("/login"))
+    //   .catch(() => alert("Failed to signup"));
     authServices
       .signup(payload)
-      .then(() => navigate("/login"))
+      .then(() => {
+        if (projectIdFromQuery) {
+          console.log("Inside project id query");
+          // Add user to project (Backend should handle this logic)
+          navigate(
+            `/login?email=${formData.email}&projectId=${
+              projectIdFromQuery || ""
+            }`
+          );
+        } else {
+          navigate("/login");
+        }
+      })
       .catch(() => alert("Failed to signup"));
   };
 

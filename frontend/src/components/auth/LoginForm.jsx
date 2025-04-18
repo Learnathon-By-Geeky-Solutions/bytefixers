@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Visibility,
   VisibilityOff,
@@ -6,13 +6,17 @@ import {
   IconButton,
   TextField,
 } from "../../common/icons"; // Ensure these imports are correct
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import login_signupPicture from "../../assets/images/login_signupPicture.jpg";
 import google from "../../assets/images/google.PNG";
 import { authServices } from "../../auth";
 
 export const LoginForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const emailFromQuery = queryParams.get("email") || "";
+  const projectIdFromQuery = queryParams.get("projectId");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -21,6 +25,11 @@ export const LoginForm = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  useEffect(() => {
+    if (emailFromQuery) {
+      setFormData((prev) => ({ ...prev, email: emailFromQuery }));
+    }
+  }, [emailFromQuery]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -42,9 +51,20 @@ export const LoginForm = () => {
       email: formData.email,
       password: formData.password,
     };
+    // authServices
+    //   .login(payload)
+    //   .then(() => navigate("/kanbanBoard"))
+    //   .catch(() => alert("Failed to login"));
     authServices
       .login(payload)
-      .then(() => navigate("/kanbanBoard"))
+      .then(() => {
+        if (projectIdFromQuery) {
+          // Add user to project (Backend should handle this logic)
+          navigate(`/kanbanBoard/projects/${projectIdFromQuery}`);
+        } else {
+          navigate("/kanbanBoard");
+        }
+      })
       .catch(() => alert("Failed to login"));
   };
 
