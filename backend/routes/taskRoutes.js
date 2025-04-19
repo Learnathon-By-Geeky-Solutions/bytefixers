@@ -269,19 +269,14 @@ router.get("/:taskId/subtasks", async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
+
 // Update a subtask
 router.put("/subtask/:subtaskId", async (req, res) => {
   try {
     const { subtaskId } = req.params;
-    const {
-      title,
-      description,
-      status,
-      priority,
-      reporter,
-      assignee,
-      dueDate,
-      userId,
+    const { 
+      title, description, status, priority, 
+      reporter, assignee, dueDate, userId 
     } = req.body;
 
     // Find the subtask
@@ -289,6 +284,8 @@ router.put("/subtask/:subtaskId", async (req, res) => {
     if (!subtask) {
       return res.status(404).json({ message: "Subtask not found" });
     }
+
+    // Create a map of old values for comparison
     const oldValues = {
       status: subtask.status,
       assignee: subtask.assignee,
@@ -296,142 +293,141 @@ router.put("/subtask/:subtaskId", async (req, res) => {
       reporter: subtask.reporter,
       dueDate: subtask.dueDate,
       title: subtask.title,
-      description: subtask.description,
+      description: subtask.description
     };
 
-    // Check if status is changing to DONE and record completion time
+    // Handle completion time based on status
     if (status === "DONE" && subtask.status !== "DONE") {
       subtask.completedAt = new Date();
-    } else if (status !== "DONE") {
-      subtask.completedAt = null; // Reset if moving back from DONE
+    } else if (status !== "DONE" && status) {
+      subtask.completedAt = null;
     }
 
-    // Update the subtask fields
-    subtask.title = title || subtask.title;
-    subtask.description =
-      description !== undefined ? description : subtask.description;
-    subtask.status = status || subtask.status;
-    subtask.assignee = assignee !== undefined ? assignee : subtask.assignee;
-    subtask.dueDate = dueDate !== undefined ? dueDate : subtask.dueDate;
-    subtask.priority = priority || subtask.priority;
-    subtask.reporter = reporter || subtask.reporter;
-    const changes = [];
-    if (status && status !== oldValues.status) {
-      changes.push(`Status changed from ${oldValues.status} to ${status}`);
+    // Update subtask fields
+    updateSubtaskFields(subtask, req.body);
+    
+    // Track and generate changes
+    const changes = trackChanges(oldValues, subtask, req.body);
+    
+    // Add activity log if there are changes
+    if (changes.length > 0) {
+      addActivityLog(subtask, userId, changes);
+      
+      // Update parent task's activity log
+      await updateParentTaskLog(subtask, userId, changes);
     }
-    if (assignee !== undefined && assignee !== oldValues.assignee) {
-      changes.push(`Assignee ${assignee ? "updated" : "removed"}`);
-    }
-    if (priority && priority !== oldValues.priority) {
-      changes.push(
-        `Priority changed from ${oldValues.priority} to ${priority}`
-      );
-    }
-    if (reporter && reporter !== oldValues.reporter) {
-      changes.push(`Reporter changed`);
-    }
-    if (dueDate !== undefined && dueDate !== oldValues.dueDate) {
-      changes.push(`Due date ${dueDate ? "updated" : "removed"}`);
-    }
-    if (title && title !== oldValues.title) {
-      changes.push(`Title updated from "${oldValues.title}" to "${title}"`);
-    }
-    if (description !== undefined && description !== oldValues.description) {
-      changes.push(`Description updated`);
-    }
-    // Create activity log message
-    const changeMessage = changes.join(", ");
-    if (subtask && changes.length > 0) {
-      subtask.activityLog.push({
-        user: userId,
-        action: changeMessage,
-        details: {
-          subtaskId: subtask._id,
-          subtaskTitle: subtask.title,
-          changes: {
-            status:
-              status !== subtask.status
-                ? { from: subtask.status, to: status }
-                : undefined,
-            assignee:
-              assignee !== subtask.assignee
-                ? { from: subtask.assignee, to: assignee }
-                : undefined,
-            priority:
-              priority !== subtask.priority
-                ? { from: subtask.priority, to: priority }
-                : undefined,
-            reporter:
-              reporter !== subtask.reporter
-                ? { from: subtask.reporter, to: reporter }
-                : undefined,
-            dueDate:
-              dueDate !== subtask.dueDate
-                ? { from: subtask.dueDate, to: dueDate }
-                : undefined,
-          },
-        },
-        timestamp: new Date(),
-      });
-    }
+
     // Save the updated subtask
     const updatedSubtask = await subtask.save();
-    console.log(updatedSubtask);
-    // Add to parent task's activity log
-    const task = await Task.findById(subtask.parentTask);
-    if (task && changes.length > 0) {
-      task.activityLog.push({
-        user: userId,
-        action: `Subtask "${subtask.title}": ${changeMessage}`,
-        details: {
-          subtaskId: subtask._id,
-          subtaskTitle: subtask.title,
-          changes: {
-            status:
-              status !== subtask.status
-                ? { from: subtask.status, to: status }
-                : undefined,
-            assignee:
-              assignee !== subtask.assignee
-                ? { from: subtask.assignee, to: assignee }
-                : undefined,
-            priority:
-              priority !== subtask.priority
-                ? { from: subtask.priority, to: priority }
-                : undefined,
-            reporter:
-              reporter !== subtask.reporter
-                ? { from: subtask.reporter, to: reporter }
-                : undefined,
-            dueDate:
-              dueDate !== subtask.dueDate
-                ? { from: subtask.dueDate, to: dueDate }
-                : undefined,
-          },
-        },
-        timestamp: new Date(),
-      });
-      await task.save();
-    }
-
-    // Return the updated subtask with populated fields
-    const populatedSubtask = await Subtask.findById(updatedSubtask._id)
-      .populate("assignee", "name email")
-      .populate("createdBy", "name email")
-      .populate("reporter", "name email")
-      .populate("parentTask", "title")
-      .populate("title", "title")
-      .populate("description", "description")
-      .populate("status", "status")
-      .populate("priority", "priority")
-      .populate("dueDate", "dueDate");
-
+    
+    // Return populated subtask
+    const populatedSubtask = await populateSubtask(updatedSubtask._id);
+    
     res.status(200).json(populatedSubtask);
   } catch (error) {
     console.error("Error updating subtask:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
+
+// Helper functions
+function updateSubtaskFields(subtask, updates) {
+  const { title, description, status, assignee, dueDate, priority, reporter } = updates;
+  
+  subtask.title = title || subtask.title;
+  subtask.description = description !== undefined ? description : subtask.description;
+  subtask.status = status || subtask.status;
+  subtask.assignee = assignee !== undefined ? assignee : subtask.assignee;
+  subtask.dueDate = dueDate !== undefined ? dueDate : subtask.dueDate;
+  subtask.priority = priority || subtask.priority;
+  subtask.reporter = reporter || subtask.reporter;
+}
+
+function trackChanges(oldValues, subtask, updates) {
+  const changes = [];
+  const { title, description, status, assignee, dueDate, priority, reporter } = updates;
+  
+  if (status && status !== oldValues.status) {
+    changes.push(`Status changed from ${oldValues.status} to ${status}`);
+  }
+  if (assignee !== undefined && assignee !== oldValues.assignee) {
+    changes.push(`Assignee ${assignee ? "updated" : "removed"}`);
+  }
+  if (priority && priority !== oldValues.priority) {
+    changes.push(`Priority changed from ${oldValues.priority} to ${priority}`);
+  }
+  if (reporter && reporter !== oldValues.reporter) {
+    changes.push(`Reporter changed`);
+  }
+  if (dueDate !== undefined && dueDate !== oldValues.dueDate) {
+    changes.push(`Due date ${dueDate ? "updated" : "removed"}`);
+  }
+  if (title && title !== oldValues.title) {
+    changes.push(`Title updated from "${oldValues.title}" to "${title}"`);
+  }
+  if (description !== undefined && description !== oldValues.description) {
+    changes.push(`Description updated`);
+  }
+  
+  return changes;
+}
+
+function addActivityLog(subtask, userId, changes) {
+  const changeMessage = changes.join(", ");
+  
+  subtask.activityLog.push({
+    user: userId,
+    action: changeMessage,
+    details: createChangeDetails(subtask),
+    timestamp: new Date()
+  });
+}
+
+function createChangeDetails(subtask) {
+  const { title, status, assignee, priority, reporter, dueDate, _id } = subtask;
+  
+  return {
+    subtaskId: _id,
+    subtaskTitle: title,
+    changes: {
+      status: status !== subtask.status ? { from: subtask.status, to: status } : undefined,
+      assignee: assignee !== subtask.assignee ? { from: subtask.assignee, to: assignee } : undefined,
+      priority: priority !== subtask.priority ? { from: subtask.priority, to: priority } : undefined,
+      reporter: reporter !== subtask.reporter ? { from: subtask.reporter, to: reporter } : undefined,
+      dueDate: dueDate !== subtask.dueDate ? { from: subtask.dueDate, to: dueDate } : undefined,
+    }
+  };
+}
+
+async function updateParentTaskLog(subtask, userId, changes) {
+  const task = await Task.findById(subtask.parentTask);
+  if (!task) return;
+  
+  const changeMessage = changes.join(", ");
+  
+  task.activityLog.push({
+    user: userId,
+    action: `Subtask "${subtask.title}": ${changeMessage}`,
+    details: createChangeDetails(subtask),
+    timestamp: new Date()
+  });
+  
+  await task.save();
+}
+
+async function populateSubtask(subtaskId) {
+  return await Subtask.findById(subtaskId)
+    .populate("assignee", "name email")
+    .populate("createdBy", "name email")
+    .populate("reporter", "name email")
+    .populate("parentTask", "title")
+    .populate("title", "title")
+    .populate("description", "description")
+    .populate("status", "status")
+    .populate("priority", "priority")
+    .populate("dueDate", "dueDate");
+}
+
 
 // Delete a subtask
 router.delete("/subtask/:subtaskId", async (req, res) => {
@@ -503,11 +499,264 @@ router.get("/:projectId", async (req, res) => {
 // Update a task (for changing status via drag and drop)
 // Update the task update route to fix the team activity log and add missing activity logs
 
+// router.put("/:taskId", async (req, res) => {
+//   try {
+//     const { taskId } = req.params;
+//     const updates = req.body;
+//     const userId = updates.userId || updates.reporter; // Get user who made the change
+
+//     // Find the task
+//     const task = await Task.findById(taskId);
+//     if (!task) {
+//       return res.status(404).json({ message: "Task not found" });
+//     }
+
+//     // Fix team reference
+//     if (updates.team !== undefined) {
+//       // Store old team value for activity logging
+//       const oldTeam = task.team;
+//       // Update team field
+//       task.team = updates.team || null;
+
+//       // Log team change only if it actually changed
+//       const teamChanged =
+//         (!oldTeam && updates.team) ||
+//         (oldTeam && !updates.team) ||
+//         (oldTeam &&
+//           updates.team &&
+//           oldTeam.toString() !== updates.team.toString());
+
+//       if (teamChanged) {
+//         task.activityLog.push({
+//           user: userId,
+//           action: updates.team ? "Team Assigned" : "Team Removed",
+//           details: { team: updates.team || "None" },
+//           timestamp: new Date(),
+//         });
+//       }
+//     }
+
+//     // Track if status was changed
+//     const statusChanged = updates.status && updates.status !== task.status;
+//     const oldStatus = task.status;
+
+//     // Track if title was changed
+//     const titleChanged = updates.title && updates.title !== task.title;
+//     const oldTitle = task.title;
+
+//     // Track if description was changed
+//     const descriptionChanged =
+//       updates.description !== undefined &&
+//       updates.description !== task.description;
+//     const oldDescription = task.description;
+
+//     // Track if reporter was changed
+//     const reporterChanged =
+//       updates.reporter &&
+//       (!task.reporter ||
+//         task.reporter.toString() !== updates.reporter.toString());
+//     const oldReporter = task.reporter;
+
+//     // Track if assignee was changed
+//     const assigneeChanged =
+//       updates.assignee !== undefined &&
+//       ((!task.assignee && updates.assignee) ||
+//         (task.assignee && !updates.assignee) ||
+//         (task.assignee &&
+//           updates.assignee &&
+//           task.assignee.toString() !== updates.assignee.toString()));
+//     const oldAssignee = task.assignee;
+
+//     // Track if priority was changed
+//     const priorityChanged =
+//       updates.priority && updates.priority !== task.priority;
+//     const oldPriority = task.priority;
+
+//     const dueDateChanged =
+//       updates.hasOwnProperty("dueDate") &&
+//       ((!task.dueDate && updates.dueDate) ||
+//         (task.dueDate && !updates.dueDate) ||
+//         (task.dueDate &&
+//           updates.dueDate &&
+//           new Date(task.dueDate).getTime() !==
+//             new Date(updates.dueDate).getTime()));
+//     const oldDueDate = task.dueDate;
+
+//     console.log("At backend", dueDateChanged);
+//     console.log("At backend", updates.dueDate);
+
+//     // Check if the status is being changed to DONE
+//     if (updates.status === "DONE" && task.status !== "DONE") {
+//       task.completedAt = new Date();
+//     } else if (updates.status !== "DONE") {
+//       task.completedAt = null; // Reset if moving back from DONE
+//     }
+//     // Update task fields
+//     Object.keys(updates).forEach((key) => {
+//       if (
+//         key !== "userId" &&
+//         key !== "activityLog" &&
+//         key !== "team" &&
+//         key !== "attachments" &&
+//         key !== "subTask"
+//       ) {
+//         // Skip team as we handled it separately
+//         task[key] = updates[key];
+//       }
+//     });
+
+//     // Add activity log entries for each specific change
+
+//     // Title change
+//     if (titleChanged) {
+//       task.activityLog.push({
+//         user: userId,
+//         action: "Title Changed",
+//         details: { from: oldTitle, to: updates.title },
+//         timestamp: new Date(),
+//       });
+//     }
+
+//     // Description change
+//     if (descriptionChanged) {
+//       task.activityLog.push({
+//         user: userId,
+//         action: "Description Changed",
+//         details: {
+//           from: oldDescription
+//             ? oldDescription.length > 50
+//               ? oldDescription.substring(0, 50) + "..."
+//               : oldDescription
+//             : "None",
+//           to: updates.description
+//             ? updates.description.length > 50
+//               ? updates.description.substring(0, 50) + "..."
+//               : updates.description
+//             : "None",
+//         },
+//         timestamp: new Date(),
+//       });
+//     }
+
+//     // Status change
+//     if (statusChanged) {
+//       task.activityLog.push({
+//         user: userId,
+//         action: "Status Changed",
+//         details: { from: oldStatus, to: updates.status },
+//         timestamp: new Date(),
+//       });
+//     }
+
+//     // Priority change
+//     if (priorityChanged) {
+//       task.activityLog.push({
+//         user: userId,
+//         action: "Priority Changed",
+//         details: { from: oldPriority, to: updates.priority },
+//         timestamp: new Date(),
+//       });
+//     }
+
+//     // Reporter change
+//     if (reporterChanged) {
+//       task.activityLog.push({
+//         user: userId,
+//         action: "Reporter Changed",
+//         details: {
+//           from: oldReporter || "None",
+//           to: updates.reporter || "None",
+//         },
+//         timestamp: new Date(),
+//       });
+//     }
+
+//     // Assignee change
+//     if (assigneeChanged) {
+//       task.activityLog.push({
+//         user: userId,
+//         action: updates.assignee ? "Assignee Changed" : "Assignee Removed",
+//         details: {
+//           from: oldAssignee || "None",
+//           to: updates.assignee || "None",
+//         },
+//         timestamp: new Date(),
+//       });
+//     }
+//     if (dueDateChanged) {
+//       task.activityLog.push({
+//         user: userId,
+//         action: "Due Date Changed",
+//         details: { from: oldDueDate, to: updates.dueDate },
+//         timestamp: new Date(),
+//       });
+//     }
+
+//     await task.save();
+
+//     // If this task is part of a project and status was changed to DONE,
+//     // update project progress
+//     if (statusChanged && updates.status === "DONE") {
+//       // Find the project containing this task
+//       const project = await Project.findOne({ task: taskId });
+
+//       if (project) {
+//         const tasks = await Task.find({ _id: { $in: project.task } }, "status");
+//         const completedTasks = tasks.filter(
+//           (task) => task.status === "DONE"
+//         ).length;
+//         project.progress = Math.round((completedTasks / tasks.length) * 100);
+//         await project.save();
+//       }
+//     }
+
+//     // Return the updated task with populated fields
+//     const updatedTask = await Task.findById(taskId)
+//       .populate("assignee", "name email")
+//       .populate("reporter", "name email")
+//       .populate("team", "name")
+//       .populate("attachments.uploadedBy", "name email")
+//       .populate("dueDate", "dueDate")
+//       .populate({
+//         path: "subTask",
+//         populate: [
+//           { path: "assignee", select: "name email" },
+//           { path: "reporter", select: "name email" },
+//           { path: "createdBy", select: "name email" },
+//           { path: "parentTask", select: "title" },
+//           { path: "title", select: "title" },
+//           { path: "description", select: "description" },
+//           { path: "status", select: "status" },
+//           { path: "priority", select: "priority" },
+//           { path: "dueDate", select: "dueDate" },
+//         ],
+//       });
+//     const subtasks = await Subtask.find({
+//       _id: { $in: task.subTask },
+//     })
+//       .populate("assignee", "name email")
+//       .populate("reporter", "name email")
+//       .populate("createdBy", "name email")
+//       .populate("parentTask", "title")
+//       .populate("title", "title")
+//       .populate("description", "description")
+//       .populate("status", "status")
+//       .populate("priority", "priority")
+//       .populate("dueDate", "dueDate");
+//     updatedTask.subTask = subtasks;
+//     console.log("At backend", updatedTask);
+//     res.status(200).json(updatedTask);
+//   } catch (error) {
+//     console.error("Error updating task:", error);
+//     res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// });
+
 router.put("/:taskId", async (req, res) => {
   try {
     const { taskId } = req.params;
     const updates = req.body;
-    const userId = updates.userId || updates.reporter; // Get user who made the change
+    const userId = updates.userId || updates.reporter;
 
     // Find the task
     const task = await Task.findById(taskId);
@@ -515,246 +764,239 @@ router.put("/:taskId", async (req, res) => {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    // Fix team reference
-    if (updates.team !== undefined) {
-      // Store old team value for activity logging
-      const oldTeam = task.team;
-      // Update team field
-      task.team = updates.team || null;
-
-      // Log team change only if it actually changed
-      const teamChanged =
-        (!oldTeam && updates.team) ||
-        (oldTeam && !updates.team) ||
-        (oldTeam &&
-          updates.team &&
-          oldTeam.toString() !== updates.team.toString());
-
-      if (teamChanged) {
-        task.activityLog.push({
-          user: userId,
-          action: updates.team ? "Team Assigned" : "Team Removed",
-          details: { team: updates.team || "None" },
-          timestamp: new Date(),
-        });
-      }
-    }
-
-    // Track if status was changed
-    const statusChanged = updates.status && updates.status !== task.status;
-    const oldStatus = task.status;
-
-    // Track if title was changed
-    const titleChanged = updates.title && updates.title !== task.title;
-    const oldTitle = task.title;
-
-    // Track if description was changed
-    const descriptionChanged =
-      updates.description !== undefined &&
-      updates.description !== task.description;
-    const oldDescription = task.description;
-
-    // Track if reporter was changed
-    const reporterChanged =
-      updates.reporter &&
-      (!task.reporter ||
-        task.reporter.toString() !== updates.reporter.toString());
-    const oldReporter = task.reporter;
-
-    // Track if assignee was changed
-    const assigneeChanged =
-      updates.assignee !== undefined &&
-      ((!task.assignee && updates.assignee) ||
-        (task.assignee && !updates.assignee) ||
-        (task.assignee &&
-          updates.assignee &&
-          task.assignee.toString() !== updates.assignee.toString()));
-    const oldAssignee = task.assignee;
-
-    // Track if priority was changed
-    const priorityChanged =
-      updates.priority && updates.priority !== task.priority;
-    const oldPriority = task.priority;
-
-    const dueDateChanged =
-      updates.hasOwnProperty("dueDate") &&
-      ((!task.dueDate && updates.dueDate) ||
-        (task.dueDate && !updates.dueDate) ||
-        (task.dueDate &&
-          updates.dueDate &&
-          new Date(task.dueDate).getTime() !==
-            new Date(updates.dueDate).getTime()));
-    const oldDueDate = task.dueDate;
-
-    console.log("At backend", dueDateChanged);
-    console.log("At backend", updates.dueDate);
-
-    // Check if the status is being changed to DONE
-    if (updates.status === "DONE" && task.status !== "DONE") {
-      task.completedAt = new Date();
-    } else if (updates.status !== "DONE") {
-      task.completedAt = null; // Reset if moving back from DONE
-    }
-    // Update task fields
-    Object.keys(updates).forEach((key) => {
-      if (
-        key !== "userId" &&
-        key !== "activityLog" &&
-        key !== "team" &&
-        key !== "attachments" &&
-        key !== "subTask"
-      ) {
-        // Skip team as we handled it separately
-        task[key] = updates[key];
-      }
-    });
-
-    // Add activity log entries for each specific change
-
-    // Title change
-    if (titleChanged) {
-      task.activityLog.push({
-        user: userId,
-        action: "Title Changed",
-        details: { from: oldTitle, to: updates.title },
-        timestamp: new Date(),
-      });
-    }
-
-    // Description change
-    if (descriptionChanged) {
-      task.activityLog.push({
-        user: userId,
-        action: "Description Changed",
-        details: {
-          from: oldDescription
-            ? oldDescription.length > 50
-              ? oldDescription.substring(0, 50) + "..."
-              : oldDescription
-            : "None",
-          to: updates.description
-            ? updates.description.length > 50
-              ? updates.description.substring(0, 50) + "..."
-              : updates.description
-            : "None",
-        },
-        timestamp: new Date(),
-      });
-    }
-
-    // Status change
-    if (statusChanged) {
-      task.activityLog.push({
-        user: userId,
-        action: "Status Changed",
-        details: { from: oldStatus, to: updates.status },
-        timestamp: new Date(),
-      });
-    }
-
-    // Priority change
-    if (priorityChanged) {
-      task.activityLog.push({
-        user: userId,
-        action: "Priority Changed",
-        details: { from: oldPriority, to: updates.priority },
-        timestamp: new Date(),
-      });
-    }
-
-    // Reporter change
-    if (reporterChanged) {
-      task.activityLog.push({
-        user: userId,
-        action: "Reporter Changed",
-        details: {
-          from: oldReporter || "None",
-          to: updates.reporter || "None",
-        },
-        timestamp: new Date(),
-      });
-    }
-
-    // Assignee change
-    if (assigneeChanged) {
-      task.activityLog.push({
-        user: userId,
-        action: updates.assignee ? "Assignee Changed" : "Assignee Removed",
-        details: {
-          from: oldAssignee || "None",
-          to: updates.assignee || "None",
-        },
-        timestamp: new Date(),
-      });
-    }
-    if (dueDateChanged) {
-      task.activityLog.push({
-        user: userId,
-        action: "Due Date Changed",
-        details: { from: oldDueDate, to: updates.dueDate },
-        timestamp: new Date(),
-      });
-    }
-
+    // Save original values for change tracking
+    const originalValues = captureOriginalValues(task);
+    
+    // Handle status completion time
+    handleCompletionTime(task, updates);
+    
+    // Update team field separately (special handling)
+    handleTeamUpdate(task, updates, userId);
+    
+    // Update basic task fields
+    updateTaskFields(task, updates);
+    
+    // Record all changes to activity log
+    logActivityChanges(task, originalValues, updates, userId);
+    
     await task.save();
 
-    // If this task is part of a project and status was changed to DONE,
-    // update project progress
-    if (statusChanged && updates.status === "DONE") {
-      // Find the project containing this task
-      const project = await Project.findOne({ task: taskId });
-
-      if (project) {
-        const tasks = await Task.find({ _id: { $in: project.task } }, "status");
-        const completedTasks = tasks.filter(
-          (task) => task.status === "DONE"
-        ).length;
-        project.progress = Math.round((completedTasks / tasks.length) * 100);
-        await project.save();
-      }
-    }
-
+    // Update project progress if task status changed to DONE
+    await updateProjectProgress(taskId, originalValues.status, updates.status);
+    
     // Return the updated task with populated fields
-    const updatedTask = await Task.findById(taskId)
-      .populate("assignee", "name email")
-      .populate("reporter", "name email")
-      .populate("team", "name")
-      .populate("attachments.uploadedBy", "name email")
-      .populate("dueDate", "dueDate")
-      .populate({
-        path: "subTask",
-        populate: [
-          { path: "assignee", select: "name email" },
-          { path: "reporter", select: "name email" },
-          { path: "createdBy", select: "name email" },
-          { path: "parentTask", select: "title" },
-          { path: "title", select: "title" },
-          { path: "description", select: "description" },
-          { path: "status", select: "status" },
-          { path: "priority", select: "priority" },
-          { path: "dueDate", select: "dueDate" },
-        ],
-      });
-    const subtasks = await Subtask.find({
-      _id: { $in: task.subTask },
-    })
-      .populate("assignee", "name email")
-      .populate("reporter", "name email")
-      .populate("createdBy", "name email")
-      .populate("parentTask", "title")
-      .populate("title", "title")
-      .populate("description", "description")
-      .populate("status", "status")
-      .populate("priority", "priority")
-      .populate("dueDate", "dueDate");
-    updatedTask.subTask = subtasks;
-    console.log("At backend", updatedTask);
+    const updatedTask = await getPopulatedTask(taskId);
+    
     res.status(200).json(updatedTask);
   } catch (error) {
     console.error("Error updating task:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
+
+// Helper functions
+function captureOriginalValues(task) {
+  return {
+    title: task.title,
+    description: task.description,
+    status: task.status,
+    priority: task.priority,
+    reporter: task.reporter,
+    assignee: task.assignee,
+    dueDate: task.dueDate,
+    team: task.team
+  };
+}
+
+function handleCompletionTime(task, updates) {
+  if (updates.status === "DONE" && task.status !== "DONE") {
+    task.completedAt = new Date();
+  } else if (updates.status && updates.status !== "DONE") {
+    task.completedAt = null;
+  }
+}
+
+function handleTeamUpdate(task, updates, userId) {
+  if (updates.team === undefined) return;
+  
+  const oldTeam = task.team;
+  task.team = updates.team || null;
+  
+  const teamChanged = 
+    (!oldTeam && updates.team) ||
+    (oldTeam && !updates.team) ||
+    (oldTeam && updates.team && oldTeam.toString() !== updates.team.toString());
+  
+  if (teamChanged) {
+    task.activityLog.push({
+      user: userId,
+      action: updates.team ? "Team Assigned" : "Team Removed",
+      details: { team: updates.team || "None" },
+      timestamp: new Date()
+    });
+  }
+}
+
+function updateTaskFields(task, updates) {
+  const skipFields = ['userId', 'activityLog', 'team', 'attachments', 'subTask'];
+  
+  Object.keys(updates).forEach(key => {
+    if (!skipFields.includes(key)) {
+      task[key] = updates[key];
+    }
+  });
+}
+
+function logActivityChanges(task, original, updates, userId) {
+  // Check and log various field changes
+  logFieldChange(task, 'title', original.title, updates.title, userId);
+  logFieldChange(task, 'description', original.description, updates.description, userId);
+  logFieldChange(task, 'status', original.status, updates.status, userId);
+  logFieldChange(task, 'priority', original.priority, updates.priority, userId);
+  logDueDate(task, original.dueDate, updates.dueDate, userId);
+  logEntityChange(task, 'reporter', original.reporter, updates.reporter, userId);
+  logAssigneeChange(task, original.assignee, updates.assignee, userId);
+}
+
+function logFieldChange(task, field, oldValue, newValue, userId) {
+  if (!newValue || oldValue === newValue) return;
+  
+  const capitalizedField = field.charAt(0).toUpperCase() + field.slice(1);
+  
+  let details = { from: oldValue, to: newValue };
+  
+  // Special handling for description to truncate long text
+  if (field === 'description') {
+    details = {
+      from: formatDescription(oldValue),
+      to: formatDescription(newValue)
+    };
+  }
+  
+  task.activityLog.push({
+    user: userId,
+    action: `${capitalizedField} Changed`,
+    details,
+    timestamp: new Date()
+  });
+}
+
+function formatDescription(text) {
+  if (!text) return "None";
+  return text.length > 50 ? text.substring(0, 50) + "..." : text;
+}
+
+function logDueDate(task, oldDate, newDate, userId) {
+  if (newDate === undefined) return;
+  
+  const dateChanged = 
+    (!oldDate && newDate) ||
+    (oldDate && !newDate) ||
+    (oldDate && newDate && new Date(oldDate).getTime() !== new Date(newDate).getTime());
+    
+  if (dateChanged) {
+    task.activityLog.push({
+      user: userId,
+      action: "Due Date Changed",
+      details: { from: oldDate, to: newDate },
+      timestamp: new Date()
+    });
+  }
+}
+
+function logEntityChange(task, field, oldValue, newValue, userId) {
+  if (!newValue) return;
+  
+  const valueChanged = 
+    !oldValue || 
+    oldValue.toString() !== newValue.toString();
+    
+  if (valueChanged) {
+    const capitalizedField = field.charAt(0).toUpperCase() + field.slice(1);
+    
+    task.activityLog.push({
+      user: userId,
+      action: `${capitalizedField} Changed`,
+      details: {
+        from: oldValue || "None",
+        to: newValue || "None"
+      },
+      timestamp: new Date()
+    });
+  }
+}
+
+function logAssigneeChange(task, oldAssignee, newAssignee, userId) {
+  if (newAssignee === undefined) return;
+  
+  const assigneeChanged = 
+    (!oldAssignee && newAssignee) ||
+    (oldAssignee && !newAssignee) ||
+    (oldAssignee && newAssignee && oldAssignee.toString() !== newAssignee.toString());
+    
+  if (assigneeChanged) {
+    task.activityLog.push({
+      user: userId,
+      action: newAssignee ? "Assignee Changed" : "Assignee Removed",
+      details: {
+        from: oldAssignee || "None",
+        to: newAssignee || "None"
+      },
+      timestamp: new Date()
+    });
+  }
+}
+
+async function updateProjectProgress(taskId, oldStatus, newStatus) {
+  if (newStatus !== "DONE" || oldStatus === "DONE") return;
+  
+  // Find the project containing this task
+  const project = await Project.findOne({ task: taskId });
+  if (!project) return;
+  
+  const tasks = await Task.find({ _id: { $in: project.task } }, "status");
+  const completedTasks = tasks.filter(task => task.status === "DONE").length;
+  project.progress = Math.round((completedTasks / tasks.length) * 100);
+  await project.save();
+}
+
+async function getPopulatedTask(taskId) {
+  const task = await Task.findById(taskId)
+    .populate("assignee", "name email")
+    .populate("reporter", "name email")
+    .populate("team", "name")
+    .populate("attachments.uploadedBy", "name email")
+    .populate("dueDate", "dueDate")
+    .populate({
+      path: "subTask",
+      populate: [
+        { path: "assignee", select: "name email" },
+        { path: "reporter", select: "name email" },
+        { path: "createdBy", select: "name email" },
+        { path: "parentTask", select: "title" },
+        { path: "title", select: "title" },
+        { path: "description", select: "description" },
+        { path: "status", select: "status" },
+        { path: "priority", select: "priority" },
+        { path: "dueDate", select: "dueDate" }
+      ]
+    });
+    
+  // Handle subtasks separately
+  const subtasks = await Subtask.find({ _id: { $in: task.subTask } })
+    .populate("assignee", "name email")
+    .populate("reporter", "name email")
+    .populate("createdBy", "name email")
+    .populate("parentTask", "title")
+    .populate("title", "title")
+    .populate("description", "description")
+    .populate("status", "status")
+    .populate("priority", "priority")
+    .populate("dueDate", "dueDate");
+    
+  task.subTask = subtasks;
+  return task;
+}
 
 // Delete a task
 router.delete("/:taskId", async (req, res) => {
