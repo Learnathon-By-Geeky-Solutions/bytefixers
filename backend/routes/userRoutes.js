@@ -62,6 +62,7 @@ router.get("/", async (req, res) => {
     const users = await User.find({});
     res.json(users);
   } catch (error) {
+    console.error("Get all user error:", error);
     res.status(500).json({ message: "Something went wrong" });
   }
 });
@@ -74,6 +75,7 @@ router.get("/:id", async (req, res) => {
     }
     res.json(user);
   } catch (error) {
+    console.error("Get a user by id error:", error);
     res.status(500).json({ message: "Something went wrong" });
   }
 });
@@ -81,14 +83,9 @@ async function handleEmailLogin(password, user, res, projectId) {
   const isValidPassword = await bcrypt.compare(password, user.password);
   if (isValidPassword) {
     const userObj = generateUserObject(user);
-    // if (projectId) {
-    //   await Project.findByIdAndUpdate(projectId, {
-    //     $addToSet: { members: user._id },
-    //   });
-    // }
     res.json(userObj);
-    //todo
   } else {
+    console.error("Email login error:", error);
     res.status(401).json({ message: "Unable to Login" });
   }
 }
@@ -167,8 +164,6 @@ router.put("/profile", authenticateToken, async (req, res) => {
 
     // Update other fields if provided
     if (name) user.name = name;
-    // if (avatar) user.avatar = avatar;
-    // if (bio) user.bio = bio;
 
     // Save updated user
     await user.save();
