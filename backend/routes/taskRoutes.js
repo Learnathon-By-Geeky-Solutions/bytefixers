@@ -346,29 +346,53 @@ function trackChanges(oldValues, subtask, updates) {
   const changes = [];
   const { title, description, status, assignee, dueDate, priority, reporter } = updates;
   
-  if (status && status !== oldValues.status) {
-    changes.push(`Status changed from ${oldValues.status} to ${status}`);
-  }
-  if (assignee !== undefined && assignee !== oldValues.assignee) {
-    changes.push(`Assignee ${assignee ? "updated" : "removed"}`);
-  }
-  if (priority && priority !== oldValues.priority) {
-    changes.push(`Priority changed from ${oldValues.priority} to ${priority}`);
-  }
-  if (reporter && reporter !== oldValues.reporter) {
-    changes.push(`Reporter changed`);
-  }
-  if (dueDate !== undefined && dueDate !== oldValues.dueDate) {
-    changes.push(`Due date ${dueDate ? "updated" : "removed"}`);
-  }
-  if (title && title !== oldValues.title) {
-    changes.push(`Title updated from "${oldValues.title}" to "${title}"`);
-  }
-  if (description !== undefined && description !== oldValues.description) {
-    changes.push(`Description updated`);
-  }
+  // Track each field change using helper function
+  trackFieldChange(changes, "Status", status, oldValues.status);
+  trackAssigneeChange(changes, assignee, oldValues.assignee);
+  trackFieldChange(changes, "Priority", priority, oldValues.priority);
+  trackReporterChange(changes, reporter, oldValues.reporter);
+  trackDateChange(changes, dueDate, oldValues.dueDate);
+  trackTitleChange(changes, title, oldValues.title);
+  trackDescriptionChange(changes, description, oldValues.description);
   
   return changes;
+}
+
+// Helper functions
+function trackFieldChange(changes, fieldName, newValue, oldValue) {
+  if (newValue && newValue !== oldValue) {
+    changes.push(`${fieldName} changed from ${oldValue} to ${newValue}`);
+  }
+}
+
+function trackAssigneeChange(changes, newAssignee, oldAssignee) {
+  if (newAssignee !== undefined && newAssignee !== oldAssignee) {
+    changes.push(`Assignee ${newAssignee ? "updated" : "removed"}`);
+  }
+}
+
+function trackReporterChange(changes, newReporter, oldReporter) {
+  if (newReporter && newReporter !== oldReporter) {
+    changes.push(`Reporter changed`);
+  }
+}
+
+function trackDateChange(changes, newDate, oldDate) {
+  if (newDate !== undefined && newDate !== oldDate) {
+    changes.push(`Due date ${newDate ? "updated" : "removed"}`);
+  }
+}
+
+function trackTitleChange(changes, newTitle, oldTitle) {
+  if (newTitle && newTitle !== oldTitle) {
+    changes.push(`Title updated from "${oldTitle}" to "${newTitle}"`);
+  }
+}
+
+function trackDescriptionChange(changes, newDescription, oldDescription) {
+  if (newDescription !== undefined && newDescription !== oldDescription) {
+    changes.push(`Description updated`);
+  }
 }
 
 function addActivityLog(subtask, userId, changes) {
@@ -822,7 +846,7 @@ router.get("/:projectId/status/:status", async (req, res) => {
 
     res.status(200).json(tasks);
   } catch (error) {
-    console.error(`Error fetching ${status} tasks:`, error);
+    console.error(`Error fetching tasks`, error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });

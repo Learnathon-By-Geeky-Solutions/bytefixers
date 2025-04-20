@@ -52,6 +52,7 @@ router.post("/login", async (req, res) => {
       await handleRefreshToken(refreshToken, res);
     }
   } catch (error) {
+    console.error("Login error:", error);
     res.status(500).json({ message: "Something went wrong" });
   }
 });
