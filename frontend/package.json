@@ -9,7 +9,7 @@
     "@mui/icons-material": "^6.4.0",
     "@mui/material": "^6.4.0",
     "advance-project-management-tool": "file:",
-    "axios": "^1.7.9",
+    "axios": "^1.8.3",
     "cra-template": "1.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
