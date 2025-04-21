@@ -1,9 +1,32 @@
 require("dotenv").config();
 const express = require("express");
+const helmet = require("helmet");
 const app = express();
+
+// Disable X-Powered-By header
+app.disable('x-powered-by');
+
 const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
 const multer = require("multer");
+const cors = require("cors");
+
+// More secure CORS configuration
+const corsOptions = {
+  origin: "http://localhost:3000",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  hideOptionsCall: true,
+};
+
+// Security middlewares
+app.use(helmet());
+app.use(cors(corsOptions));
+
+app.use(bodyParser.json());
+
+connectDB();
+
+// Route imports and mounting
 const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const taskRoutes = require("./routes/taskRoutes");
@@ -12,14 +35,7 @@ const teamRoutes = require("./routes/teamRoutes");
 const fileRoutes = require("./routes/fileRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const calendarRoutes = require("./routes/calendarRoutes");
-app.use(bodyParser.json());
-const cors = require("cors");
-const corsOptions = {
-  origin: "http://localhost:3000",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-};
-app.use(cors(corsOptions));
-connectDB();
+
 app.use("/api/user", userRoutes);
 app.use("/projects", projectRoutes);
 app.use("/tasks", taskRoutes);
@@ -28,6 +44,7 @@ app.use("/teams", teamRoutes);
 app.use("/files", fileRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/calendar", calendarRoutes);
+
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });

@@ -11,9 +11,6 @@ router.post("/send-invite", async (req, res) => {
   }
 
   try {
-    // Check if the user is already registered
-    const user = await User.findOne({ email });
-
     // Generate the invite link
     let inviteLink = `http://localhost:4000/sendEmail/accept-invite?email=${email}&projectId=${projectId}`;
     // Send invitation email
@@ -21,6 +18,7 @@ router.post("/send-invite", async (req, res) => {
 
     res.status(200).json({ message: "Invitation sent successfully!" });
   } catch (error) {
+    console.error("Invite send error:", error);
     res.status(500).json({ error: "Failed to send invitation" });
   }
 });
@@ -53,6 +51,7 @@ router.get("/accept-invite", async (req, res) => {
       `http://localhost:3000/login?email=${email}&projectId=${projectId}`
     );
   } catch (error) {
+    console.error("Invite accept error:", error);
     res.status(500).json({ error: "Failed to process invitation" });
   }
 });

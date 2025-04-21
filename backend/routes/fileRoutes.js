@@ -110,9 +110,9 @@ router.delete("/:taskId/:fileId", async (req, res) => {
     // Example: "http://res.cloudinary.com/your-cloud-name/image/upload/v1234567890/task-attachments/abcdef"
     // We need to extract "task-attachments/abcdef"
     const fileUrl = deletedFile.fileUrl;
-    const publicIdMatch = fileUrl.match(/\/v\d+\/([^\.]+)/);
+    const publicIdMatch = fileUrl.match(/\/v\d+\/([^.]+)/);
 
-    if (publicIdMatch && publicIdMatch[1]) {
+    if (publicIdMatch?.[1]) {
       // Delete from Cloudinary
       await cloudinary.uploader.destroy(publicIdMatch[1]);
     }

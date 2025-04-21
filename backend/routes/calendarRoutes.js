@@ -88,84 +88,112 @@ router.get("/project/:projectId", async (req, res) => {
 router.get("/:eventId", async (req, res) => {
   try {
     const { eventId } = req.params;
-
-    // Check if it's a special ID for task or subtask
-    if (eventId.startsWith("task-") || eventId.startsWith("subtask-")) {
-      const realId = eventId.split("-")[1];
-
-      if (eventId.startsWith("task-")) {
-        const task = await Task.findById(realId)
-          .populate("assignee", "name email")
-          .populate("reporter", "name email");
-
-        if (!task) return res.status(404).json({ message: "Task not found" });
-
-        return res.json({
-          _id: eventId,
-          title: task.title,
-          startDate: task.dueDate,
-          endDate: task.dueDate,
-          eventType: "TASK_DUE",
-          priority: task.priority,
-          status: task.status === "DONE" ? "COMPLETED" : "SCHEDULED",
-          task: task._id,
-          project: task.team,
-          createdBy: task.reporter,
-          participants: task.assignee ? [task.assignee] : [],
-        });
-      } else {
-        const subtask = await Subtask.findById(realId)
-          .populate("assignee", "name email")
-          .populate("reporter", "name email")
-          .populate("parentTask", "title");
-
-        if (!subtask)
-          return res.status(404).json({ message: "Subtask not found" });
-
-        return res.json({
-          _id: eventId,
-          title: `${subtask.parentTask.title} > ${subtask.title}`,
-          startDate: subtask.dueDate,
-          endDate: subtask.dueDate,
-          eventType: "TASK_DUE",
-          priority: subtask.priority,
-          status: subtask.status === "DONE" ? "COMPLETED" : "SCHEDULED",
-          task: subtask.parentTask._id,
-          project: subtask.team,
-          createdBy: subtask.reporter,
-          participants: subtask.assignee ? [subtask.assignee] : [],
-        });
-      }
+    
+    // Extract handling of special IDs
+    if (isSpecialId(eventId)) {
+      return await handleSpecialIdEvent(eventId, res);
     }
 
-    // Regular calendar event
-    const event = await CalendarEvent.findById(eventId)
-      .populate("task", "title status priority")
-      .populate("createdBy", "name email")
-      .populate("participants", "name email");
+    // Handle regular calendar event
+    return await handleRegularCalendarEvent(eventId, res);
 
-    if (!event) return res.status(404).json({ message: "Event not found" });
-
-    res.json(event);
   } catch (error) {
-    console.error("Error fetching calendar event:", error);
-    res.status(500).json({ message: error.message });
+    handleErrorResponse(error, res);
   }
 });
+
+// Helper function to check if ID is special
+function isSpecialId(eventId) {
+  return eventId.startsWith("task-") || eventId.startsWith("subtask-");
+}
+
+// Handle task and subtask events
+async function handleSpecialIdEvent(eventId, res) {
+  const [type, realId] = eventId.split('-');
+  
+  const event = type === 'task' 
+    ? await fetchTaskEvent(realId) 
+    : await fetchSubtaskEvent(realId);
+  
+  if (!event) {
+    return res.status(404).json({ message: `${type.charAt(0).toUpperCase() + type.slice(1)} not found` });
+  }
+
+  return res.json(event);
+}
+
+// Fetch and transform task event
+async function fetchTaskEvent(realId) {
+  const task = await Task.findById(realId)
+    .populate("assignee", "name email")
+    .populate("reporter", "name email");
+
+  if (!task) return null;
+
+  return {
+    _id: `task-${realId}`,
+    title: task.title,
+    startDate: task.dueDate,
+    endDate: task.dueDate,
+    eventType: "TASK_DUE",
+    priority: task.priority,
+    status: task.status === "DONE" ? "COMPLETED" : "SCHEDULED",
+    task: task._id,
+    project: task.team,
+    createdBy: task.reporter,
+    participants: task.assignee ? [task.assignee] : [],
+  };
+}
+
+// Fetch and transform subtask event
+async function fetchSubtaskEvent(realId) {
+  const subtask = await Subtask.findById(realId)
+    .populate("assignee", "name email")
+    .populate("reporter", "name email")
+    .populate("parentTask", "title");
+
+  if (!subtask) return null;
+
+  return {
+    _id: `subtask-${realId}`,
+    title: `${subtask.parentTask.title} > ${subtask.title}`,
+    startDate: subtask.dueDate,
+    endDate: subtask.dueDate,
+    eventType: "TASK_DUE",
+    priority: subtask.priority,
+    status: subtask.status === "DONE" ? "COMPLETED" : "SCHEDULED",
+    task: subtask.parentTask._id,
+    project: subtask.team,
+    createdBy: subtask.reporter,
+    participants: subtask.assignee ? [subtask.assignee] : [],
+  };
+}
+
+// Handle regular calendar event
+async function handleRegularCalendarEvent(eventId, res) {
+  const event = await CalendarEvent.findById(eventId)
+    .populate("task", "title status priority")
+    .populate("createdBy", "name email")
+    .populate("participants", "name email");
+
+  if (!event) {
+    return res.status(404).json({ message: "Event not found" });
+  }
+
+  return res.json(event);
+}
+
+// Error handling
+function handleErrorResponse(error, res) {
+  console.error("Error fetching calendar event:", error);
+  res.status(500).json({ message: error.message });
+}
 
 // Create new calendar event
 router.post("/", async (req, res) => {
   try {
     const event = new CalendarEvent(req.body);
-
-    if (req.body.task) {
-      // If this is related to a task, add notification for task assignee
-      const task = await Task.findById(req.body.task);
-      if (task && task.assignee) {
-        // Create notification here if you have a notification system
-      }
-    }
-
+    
     await event.save();
 
     const populatedEvent = await CalendarEvent.findById(event._id)
