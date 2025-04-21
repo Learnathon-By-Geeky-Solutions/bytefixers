@@ -9,6 +9,10 @@ router.post("/send-invite", async (req, res) => {
   if (!email || !projectId) {
     return res.status(400).json({ error: "Email and Project ID are required" });
   }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(String(email).trim())) {
+    return res.status(400).json({ error: "Invalid email format" });
+  }
 
   try {
     // Generate the invite link
@@ -30,7 +34,8 @@ router.get("/accept-invite", async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ email });
+    const sanitizedEmail = String(email).trim();
+    const user = await User.findOne({ email: sanitizedEmail });
 
     if (!user) {
       // User not registered → Redirect to signup

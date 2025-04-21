@@ -3,6 +3,7 @@ const router = express.Router();
 const Notification = require("../models/Notification");
 const Project = require("../models/Project");
 const Task = require("../models/Task");
+const mongoose = require('mongoose');
 
 // Get notifications for a user
 router.get("/user/:userId", async (req, res) => {
@@ -118,8 +119,16 @@ router.put("/mark-all-read", async (req, res) => {
   try {
     const { userId } = req.body;
 
-    // Find all notifications for this user
-    const notifications = await Notification.find({ recipients: userId });
+    // Validate userId (ensuring it's a valid MongoDB ObjectId)
+    if (!userId || typeof userId !== 'string' || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid user ID format" });
+    }
+    
+    // Create a sanitized ObjectId from the string
+    const sanitizedUserId = new mongoose.Types.ObjectId(userId);
+
+    // Find all notifications for this user with sanitized ID
+    const notifications = await Notification.find({ recipients: sanitizedUserId });
 
     // Mark each notification as read for this user only
     for (const notification of notifications) {
@@ -140,8 +149,16 @@ router.delete("/clear-all", async (req, res) => {
   try {
     const { userId } = req.body;
 
-    // Find all notifications for this user
-    const notifications = await Notification.find({ recipients: userId });
+    // Validate userId (ensuring it's a valid MongoDB ObjectId)
+    if (!userId || typeof userId !== 'string' || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid user ID format" });
+    }
+    
+    // Create a sanitized ObjectId from the string
+    const sanitizedUserId = new mongoose.Types.ObjectId(userId);
+
+    // Find all notifications for this user with sanitized ID
+    const notifications = await Notification.find({ recipients: sanitizedUserId });
 
     // Remove this user from recipients for all their notifications
     await Promise.all(
