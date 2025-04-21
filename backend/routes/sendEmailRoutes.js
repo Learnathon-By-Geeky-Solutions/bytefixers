@@ -9,7 +9,7 @@ router.post("/send-invite", async (req, res) => {
   if (!email || !projectId) {
     return res.status(400).json({ error: "Email and Project ID are required" });
   }
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]{1,255}\.[a-zA-Z]{2,}$/;
   if (!emailRegex.test(String(email).trim())) {
     return res.status(400).json({ error: "Invalid email format" });
   }
