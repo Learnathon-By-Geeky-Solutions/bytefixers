@@ -99,16 +99,17 @@ const TopNavbar = () => {
       }
     });
     const filtered = tasksToSearch.filter((task) => {
-      const titleMatch =
-        task.title && task.title.toLowerCase().includes(query.toLowerCase());
-      const descriptionMatch =
-        task.description &&
-        task.description.toLowerCase().includes(query.toLowerCase());
-      const tagMatch =
-        task.tags &&
-        task.tags.some((tag) =>
-          tag.toLowerCase().includes(query.toLowerCase())
-        );
+      const titleMatch = task.title
+        ?.toLowerCase()
+        .includes(query.toLowerCase());
+
+      const descriptionMatch = task.description
+        ?.toLowerCase()
+        .includes(query.toLowerCase());
+
+      const tagMatch = task.tags?.some((tag) =>
+        tag.toLowerCase().includes(query.toLowerCase())
+      );
 
       return titleMatch || descriptionMatch || tagMatch;
     });
