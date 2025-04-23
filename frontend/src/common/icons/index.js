@@ -34,11 +34,6 @@ import {
   PictureAsPdfOutlined,
 } from "@mui/icons-material";
 import Divider from "@mui/material/Divider";
-import MusicVideoOutlinedIcon from "@mui/icons-material/MusicVideoOutlined";
-// import FolderZipOutlinedIcon from "@mui/icons-material/FolderZipOutlined";
-// import NoteAddOutlinedIcon from "@mui/icons-material/NoteAddOutlined";
-// import PictureAsPdfOutlinedIcon from "@mui/icons-material/PictureAsPdfOutlined";
-// import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 
 import {
   Drawer,

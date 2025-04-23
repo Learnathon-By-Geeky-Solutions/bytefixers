@@ -4,16 +4,11 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { NotificationProvider } from "./context/NotificationContext";
 function App() {
   return (
-    // <BrowserRouter>
     <MembersProvider>
-      {/* <TaskProvider> */}
       <NotificationProvider>
         <AppRouter />
       </NotificationProvider>
-      {/* </TaskProvider> */}
     </MembersProvider>
-
-    // </BrowserRouter>
   );
 }
 

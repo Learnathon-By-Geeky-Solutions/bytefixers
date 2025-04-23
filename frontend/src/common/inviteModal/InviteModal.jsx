@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Input } from "../icons";
 import axios from "axios";
+import PropTypes from "prop-types";
 
 export const InviteModal = ({ isOpen, onClose, projectid }) => {
   const [email, setEmail] = useState("");
@@ -52,4 +53,9 @@ export const InviteModal = ({ isOpen, onClose, projectid }) => {
       </div>
     </div>
   );
+};
+InviteModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  projectid: PropTypes.string.isRequired, // or PropTypes.number if that's what it is
 };
