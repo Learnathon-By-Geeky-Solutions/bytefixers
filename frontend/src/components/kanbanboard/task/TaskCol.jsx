@@ -106,6 +106,12 @@ export const TaskCol = ({
               draggable
               onDragStart={(e) => handleDragStart(e, task._id)}
               onClick={() => handleTaskClick(task._id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleTaskClick(task._id);
+                }
+              }}
+              tabIndex={0} // Makes the element focusable
               className="bg-white p-3 rounded shadow cursor-grab hover:shadow-md"
             >
               <div className="flex justify-between">

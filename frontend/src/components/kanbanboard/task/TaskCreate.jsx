@@ -164,6 +164,12 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
                       <div
                         className="flex items-center p-2 cursor-pointer hover:bg-gray-200"
                         onClick={() => handleAssigneeSelect(null)}
+                        tabIndex={0} // Makes it focusable
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            handleAssigneeSelect(null);
+                          }
+                        }}
                       >
                         <Avatar className="bg-gray-500" />
                         <span className="text-gray-700">Unassigned</span>
@@ -175,6 +181,12 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
                           key={member._id}
                           className="flex items-center p-2 cursor-pointer hover:bg-gray-200"
                           onClick={() => handleAssigneeSelect(member._id)}
+                          tabIndex={0} // Makes it focusable
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              handleAssigneeSelect(member._id);
+                            }
+                          }}
                         >
                           <Avatar className="bg-blue-500">
                             {member.name.substring(0, 2).toUpperCase()}
@@ -227,6 +239,12 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
                         key={member._id}
                         className="flex items-center p-2 cursor-pointer hover:bg-gray-200"
                         onClick={() => handleReporterSelect(member._id)}
+                        tabIndex={0} // Makes the div focusable
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            handleReporterSelect(member._id);
+                          }
+                        }}
                       >
                         <Avatar className="bg-blue-500">
                           {member.name.substring(0, 2).toUpperCase()}

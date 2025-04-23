@@ -188,6 +188,12 @@ export const TeamList = ({ teams, setTeams, members, teamMembers }) => {
           key={team._id}
           className="bg-white rounded-lg shadow-md border w-64 cursor-pointer"
           onClick={() => openModal(team)}
+          tabIndex={0} // Makes the div focusable
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              openModal(team);
+            }
+          }}
         >
           {/* Gradient Header */}
           <div
