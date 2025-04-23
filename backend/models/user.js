@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const todoList = require("./todoList");
+
 const UserSchema = new mongoose.Schema(
   {
     name: {
@@ -14,10 +14,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    todoList: [
+    task: [
       {
         type: mongoose.Types.ObjectId,
-        ref: "TodoList",
+        ref: "Task",
       },
     ],
   },
@@ -26,5 +26,4 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
-// export const User = mongoose.model("User", UserSchema);
 module.exports = mongoose.model("User", UserSchema);

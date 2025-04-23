@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const projectSchema = new mongoose.Schema(
   {
     name: {
@@ -8,7 +10,7 @@ const projectSchema = new mongoose.Schema(
     team: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Team",
-      required: true,
+      // required: true,
       index: true,
     },
     createdBy: {
@@ -20,11 +22,23 @@ const projectSchema = new mongoose.Schema(
       type: String,
       maxlength: [500, "Description too long"],
     },
+    members: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     status: {
       type: String,
       enum: ["Planning", "Active", "On Hold", "Completed", "Archived"],
       default: "Planning",
     },
+    task: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Task",
+      },
+    ],
     progress: {
       // Auto-calculated field
       type: Number,
@@ -35,3 +49,6 @@ const projectSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Export the Project model
+module.exports = mongoose.model("Project", projectSchema);
