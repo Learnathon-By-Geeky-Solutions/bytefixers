@@ -24,6 +24,7 @@ export const InviteModal = ({ isOpen, onClose, projectid }) => {
 
       setMessage(response.data.message);
     } catch (error) {
+      console.error("Invite error:", error);
       setMessage("Failed to send invitation");
     }
 
