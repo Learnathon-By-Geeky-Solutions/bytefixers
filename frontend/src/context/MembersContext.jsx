@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { authServices } from "../auth";
-
+import propTypes from "prop-types";
 // Create context
 const MembersContext = createContext();
 
@@ -156,4 +156,7 @@ export const MembersProvider = ({ children }) => {
       {children}
     </MembersContext.Provider>
   );
+};
+MembersProvider.propTypes = {
+  children: propTypes.node.isRequired,
 };

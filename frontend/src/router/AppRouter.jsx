@@ -16,6 +16,7 @@ import { NotificationBell } from "../components/notification/NotificationBell";
 import { ProjectCalendar } from "../components/calendar/ProjectCalendar";
 import { PersonalTaskStats } from "../components/project/PersonalTaskStats";
 import { UserProfile } from "../components/auth/UserProfile";
+import propTypes from "prop-types";
 const KanbanLayout = () => {
   return (
     <div className="kanban-layout flex">
@@ -85,4 +86,7 @@ export const router = createBrowserRouter([
 ]);
 export const AppRouter = ({ children }) => {
   return <RouterProvider router={router}>{children}</RouterProvider>;
+};
+AppRouter.propTypes = {
+  children: propTypes.node,
 };

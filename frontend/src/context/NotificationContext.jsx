@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { authServices } from "../auth";
-
+import propTypes from "prop-types";
 const NotificationContext = createContext();
 
 export const NotificationProvider = ({ children }) => {
@@ -228,3 +228,7 @@ export const NotificationProvider = ({ children }) => {
 };
 
 export const useNotifications = () => useContext(NotificationContext);
+
+NotificationProvider.propTypes = {
+  children: propTypes.node.isRequired,
+};
