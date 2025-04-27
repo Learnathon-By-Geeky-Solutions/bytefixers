@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import PropTypes from "prop-types";
 export const DropArea = ({ onDrop }) => {
   const [showDropArea, setShowDropArea] = useState(false);
   return (
@@ -20,4 +20,7 @@ export const DropArea = ({ onDrop }) => {
       <p className="text-gray-500 text-xl leading-[0.5rem]">Drop here</p>
     </section>
   );
+};
+DropArea.propTypes = {
+  onDrop: PropTypes.func.isRequired,
 };

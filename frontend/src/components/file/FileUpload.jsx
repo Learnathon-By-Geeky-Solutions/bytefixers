@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { authServices } from "../../auth";
-
+import PropTypes from "prop-types";
 export const FileUpload = ({ taskId, onFileUploaded }) => {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -111,4 +111,9 @@ export const FileUpload = ({ taskId, onFileUploaded }) => {
       </form>
     </div>
   );
+};
+
+FileUpload.propTypes = {
+  taskId: PropTypes.string.isRequired,
+  onFileUploaded: PropTypes.func,
 };
