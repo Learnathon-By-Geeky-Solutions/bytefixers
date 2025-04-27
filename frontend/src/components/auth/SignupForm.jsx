@@ -135,15 +135,19 @@ export const SignupForm = () => {
               }}
             />
             <div className="flex items-center">
-              <input
-                type="checkbox"
-                name="agreeToTerms"
-                checked={formData.agreeToTerms}
-                onChange={handleInputChange}
-                className="h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
-              />
-              <label className="ml-2 text-sm text-gray-600">
-                I agree to the terms & policy
+              <label
+                htmlFor="agreeToTerms"
+                className="text-sm text-gray-600 flex items-center cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  id="agreeToTerms"
+                  name="agreeToTerms"
+                  checked={formData.agreeToTerms}
+                  onChange={handleInputChange}
+                  className="h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500 focus:ring-2 focus:ring-offset-2"
+                />
+                <span className="ml-2">I agree to the terms & policy</span>
               </label>
             </div>
             <button

@@ -232,6 +232,7 @@ const TopNavbar = () => {
                         }
                       }}
                       role="button"
+                      tabIndex="0"
                       className="p-2 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
                     >
                       <div className="flex items-start">
