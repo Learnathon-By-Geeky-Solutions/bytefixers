@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { authServices } from "../../../auth";
+import PropTypes from "prop-types";
 export const SubtaskItem = ({ subtask, members, onUpdate, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedSubtask, setEditedSubtask] = useState({ ...subtask });
@@ -72,9 +73,7 @@ export const SubtaskItem = ({ subtask, members, onUpdate, onDelete }) => {
       {isEditing ? (
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Title
-            </label>
+            <div className="block text-sm font-medium text-gray-700">Title</div>
             <input
               type="text"
               name="title"
@@ -86,9 +85,9 @@ export const SubtaskItem = ({ subtask, members, onUpdate, onDelete }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <div className="block text-sm font-medium text-gray-700">
               Description
-            </label>
+            </div>
             <textarea
               name="description"
               value={editedSubtask.description || ""}
@@ -100,9 +99,9 @@ export const SubtaskItem = ({ subtask, members, onUpdate, onDelete }) => {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <div className="block text-sm font-medium text-gray-700">
                 Status
-              </label>
+              </div>
               <select
                 name="status"
                 value={editedSubtask.status || "TO DO"}
@@ -117,9 +116,9 @@ export const SubtaskItem = ({ subtask, members, onUpdate, onDelete }) => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <div className="block text-sm font-medium text-gray-700">
                 Priority
-              </label>
+              </div>
               <select
                 name="priority"
                 value={editedSubtask.priority || "LOW"}
@@ -135,9 +134,9 @@ export const SubtaskItem = ({ subtask, members, onUpdate, onDelete }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <div className="block text-sm font-medium text-gray-700">
                 Assignee
-              </label>
+              </div>
               <select
                 name="assignee"
                 value={
@@ -155,9 +154,9 @@ export const SubtaskItem = ({ subtask, members, onUpdate, onDelete }) => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <div className="block text-sm font-medium text-gray-700">
                 Reporter
-              </label>
+              </div>
               <select
                 name="reporter"
                 value={
@@ -176,9 +175,9 @@ export const SubtaskItem = ({ subtask, members, onUpdate, onDelete }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <div className="block text-sm font-medium text-gray-700">
                 Due Date
-              </label>
+              </div>
               <input
                 type="date"
                 name="dueDate"
@@ -698,4 +697,32 @@ export const SubtaskList = ({
       </div>
     </div>
   );
+};
+SubtaskItem.propTypes = {
+  subtask: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string,
+    status: PropTypes.oneOf([
+      "BACKLOG",
+      "TO DO",
+      "IN PROGRESS",
+      "REVIEW",
+      "DONE",
+    ]),
+    priority: PropTypes.oneOf(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
+    assignee: PropTypes.shape({
+      _id: PropTypes.string,
+      name: PropTypes.string,
+    }), // Assignee object with optional _id and name
+    reporter: PropTypes.shape({
+      _id: PropTypes.string,
+      name: PropTypes.string,
+    }), // Reporter object with optional _id and name
+    dueDate: PropTypes.string,
+    completedAt: PropTypes.string,
+  }).isRequired,
+  members: PropTypes.array.isRequired,
+  onUpdate: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };

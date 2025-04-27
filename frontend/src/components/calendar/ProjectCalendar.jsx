@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom";
 import { authServices } from "../../auth";
 import { EventModal } from "./EventModal";
 import { EventTooltip } from "./EventTooltip";
+import propTypes from "prop-types";
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
 };
