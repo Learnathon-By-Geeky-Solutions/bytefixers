@@ -91,7 +91,6 @@ export const ProjectTable = () => {
                       onClick={() => {
                         handlenameClick(project._id);
                       }}
-                      tabIndex={0} // Makes the span focusable
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
                           handlenameClick(project._id);

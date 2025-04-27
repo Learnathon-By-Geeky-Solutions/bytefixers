@@ -1,6 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import propTypes from "prop-types";
 import {
   Dialog,
   DialogTitle,
@@ -82,4 +83,8 @@ export const ProjectModal = ({ isOpen, onRequestClose }) => {
       </DialogContent>
     </Dialog>
   );
+};
+ProjectModal.propTypes = {
+  isOpen: propTypes.bool.isRequired,
+  onRequestClose: propTypes.func.isRequired,
 };

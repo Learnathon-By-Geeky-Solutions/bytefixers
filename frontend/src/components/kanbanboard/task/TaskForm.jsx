@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { TaskColoumn } from "./TaskColoumn";
+import propTypes from "prop-types";
 
 export const TaskForm = ({ handleAddTask }) => {
   const [taskData, setTaskData] = useState({
@@ -51,4 +52,7 @@ export const TaskForm = ({ handleAddTask }) => {
       <TaskColoumn />
     </div>
   );
+};
+TaskForm.propTypes = {
+  handleAddTask: propTypes.func.isRequired,
 };

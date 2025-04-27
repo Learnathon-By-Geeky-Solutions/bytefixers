@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { authServices } from "../../../auth";
 import { useNotifications } from "../../../context/NotificationContext";
 import { useMembers } from "../../../context/MembersContext";
+import propTypes from "prop-types";
 export const TaskColoumn = ({ projectId }) => {
   const { addNotification } = useNotifications();
   // const { projectId } = useParams();
@@ -293,3 +294,6 @@ function getStatusIcon(status) {
       return "📄"; // Document icon
   }
 }
+TaskColoumn.propTypes = {
+  projectId: propTypes.string.isRequired,
+};

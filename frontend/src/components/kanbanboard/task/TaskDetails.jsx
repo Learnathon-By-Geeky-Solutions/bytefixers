@@ -286,9 +286,9 @@ export const TaskDetails = () => {
         <div className="md:col-span-2 space-y-6 space-x-4">
           <h1 className="text-2xl font-bold text-center">{task.title}</h1>
           <div className="bg-white p-4 rounded-lg shadow">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="block text-sm font-medium text-gray-700 mb-2">
               Title
-            </label>
+            </div>
             <input
               type="text"
               value={task.title || ""}
@@ -298,9 +298,9 @@ export const TaskDetails = () => {
           </div>
 
           <div className="bg-white p-4 rounded-lg shadow">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="block text-sm font-medium text-gray-700 mb-2">
               Description
-            </label>
+            </div>
             <textarea
               value={task.description || ""}
               onChange={(e) =>
@@ -341,9 +341,9 @@ export const TaskDetails = () => {
         <div className="space-y-4 mt-12">
           {/* Status dropdown */}
           <div className="bg-white p-4 rounded-lg shadow">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="block text-sm font-medium text-gray-700 mb-2">
               Status
-            </label>
+            </div>
             <select
               value={task.status || "TO DO"}
               onChange={(e) => setTask({ ...task, status: e.target.value })}
@@ -359,9 +359,9 @@ export const TaskDetails = () => {
 
           {/* Priority dropdown */}
           <div className="bg-white p-4 rounded-lg shadow">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="block text-sm font-medium text-gray-700 mb-2">
               Priority
-            </label>
+            </div>
             <select
               value={task.priority || "MEDIUM"}
               onChange={(e) => setTask({ ...task, priority: e.target.value })}
@@ -377,9 +377,9 @@ export const TaskDetails = () => {
 
           {/* Team selection */}
           <div className="bg-white p-4 rounded-lg shadow">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="block text-sm font-medium text-gray-700 mb-2">
               Team
-            </label>
+            </div>
             {loadingTeams ? (
               <div className="text-gray-500">Loading teams...</div>
             ) : (
@@ -459,9 +459,9 @@ export const TaskDetails = () => {
           </div>
           {/* Due date */}
           <div className="bg-white p-4 rounded-lg shadow">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="block text-sm font-medium text-gray-700 mb-2">
               Due Date
-            </label>
+            </div>
             <input
               type="date"
               value={task.dueDate ? task.dueDate.slice(0, 10) : ""}

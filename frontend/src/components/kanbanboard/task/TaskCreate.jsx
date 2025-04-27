@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Avatar } from "../../../common/icons";
 import { authServices } from "../../../auth";
+import PropTypes from "prop-types";
 export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
   const [taskData, setTaskData] = useState({
     title: "",
@@ -120,7 +121,7 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
             required
             className="border p-2 rounded mb-2"
           />
-          <label className="mt-6">Task Description:</label>
+          <div className="mt-6">Task Description:</div>
           <textarea
             name="description"
             placeholder="Task Description"
@@ -128,7 +129,7 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
             onChange={handleChange}
             className="border p-2 rounded"
           />
-          <label className="mt-6">Assignee:</label>
+          <div className="mt-6">Assignee:</div>
           <div>
             <div className="modal-container">
               <form>
@@ -164,7 +165,6 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
                       <div
                         className="flex items-center p-2 cursor-pointer hover:bg-gray-200"
                         onClick={() => handleAssigneeSelect(null)}
-                        tabIndex={0} // Makes it focusable
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
                             handleAssigneeSelect(null);
@@ -181,7 +181,6 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
                           key={member._id}
                           className="flex items-center p-2 cursor-pointer hover:bg-gray-200"
                           onClick={() => handleAssigneeSelect(member._id)}
-                          tabIndex={0} // Makes it focusable
                           onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
                               handleAssigneeSelect(member._id);
@@ -239,7 +238,6 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
                         key={member._id}
                         className="flex items-center p-2 cursor-pointer hover:bg-gray-200"
                         onClick={() => handleReporterSelect(member._id)}
-                        tabIndex={0} // Makes the div focusable
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
                             handleReporterSelect(member._id);
@@ -302,4 +300,11 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
       </div>
     </div>
   );
+};
+
+TaskCreate.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onCreate: PropTypes.func.isRequired,
+  projectid: PropTypes.string.isRequired,
 };

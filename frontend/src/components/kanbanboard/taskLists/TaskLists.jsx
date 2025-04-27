@@ -178,9 +178,9 @@ export const TaskLists = () => {
           <div className="mb-4 flex gap-4 bg-white p-4 rounded-lg shadow">
             {/* Priority Filter */}
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="block text-sm font-medium text-gray-700 mb-1">
                 Priority
-              </label>
+              </div>
               <select
                 value={filters.priority}
                 onChange={(e) => handleFilterChange("priority", e.target.value)}
@@ -197,9 +197,9 @@ export const TaskLists = () => {
 
             {/* Status Filter */}
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="block text-sm font-medium text-gray-700 mb-1">
                 Status
-              </label>
+              </div>
               <select
                 value={filters.status}
                 onChange={(e) => handleFilterChange("status", e.target.value)}
@@ -216,9 +216,9 @@ export const TaskLists = () => {
 
             {/* Due Date Filter */}
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="block text-sm font-medium text-gray-700 mb-1">
                 Due Date
-              </label>
+              </div>
               <select
                 value={filters.dueDate}
                 onChange={(e) => handleFilterChange("dueDate", e.target.value)}
