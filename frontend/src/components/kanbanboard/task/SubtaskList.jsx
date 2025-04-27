@@ -755,3 +755,32 @@ SubtaskItem.propTypes = {
   onUpdate: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
 };
+SubtaskList.propTypes = {
+  taskId: PropTypes.string.isRequired,
+  subtasks: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      description: PropTypes.string,
+      status: PropTypes.oneOf([
+        "BACKLOG",
+        "TO DO",
+        "IN PROGRESS",
+        "REVIEW",
+        "DONE",
+      ]),
+      priority: PropTypes.oneOf(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
+      assignee: PropTypes.shape({
+        _id: PropTypes.string,
+        name: PropTypes.string,
+      }),
+    })
+  ).isRequired,
+  members: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  onSubtasksChanged: PropTypes.func.isRequired,
+};

@@ -1,5 +1,5 @@
 import React from "react";
-
+import PropTypes from "prop-types";
 export const SubtaskProgress = ({ subtasks }) => {
   // Calculate progress
   const totalSubtasks = subtasks.length;
@@ -35,4 +35,19 @@ export const SubtaskProgress = ({ subtasks }) => {
       </div>
     </div>
   );
+};
+SubtaskProgress.propTypes = {
+  subtasks: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      status: PropTypes.oneOf([
+        "BACKLOG",
+        "TO DO",
+        "IN PROGRESS",
+        "REVIEW",
+        "DONE",
+      ]),
+    })
+  ).isRequired,
 };
