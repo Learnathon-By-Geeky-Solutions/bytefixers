@@ -364,7 +364,7 @@ export const TaskLists = () => {
                               <td className="border p-2">
                                 <span className="text-xs text-gray-500">
                                   └─
-                                </span>
+                                </span>{" "}
                                 Subtask
                               </td>
                               <td className="border p-2">{subtask.title}</td>

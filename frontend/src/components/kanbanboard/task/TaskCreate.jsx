@@ -111,7 +111,7 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
         {error && <p className="text-red-500 text-sm">{error}</p>}
 
         <form onSubmit={handleSubmit} className="flex flex-col space-y-1">
-          Task Title:
+          Task Title:{" "}
           <input
             type="text"
             name="title"
@@ -267,7 +267,7 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
             <option value="IN PROGRESS">IN PROGRESS</option>
             <option value="REVIEW">REVIEW</option>
             <option value="DONE">DONE</option>
-          </select>
+          </select>{" "}
           Priority:
           <select
             name="priority"

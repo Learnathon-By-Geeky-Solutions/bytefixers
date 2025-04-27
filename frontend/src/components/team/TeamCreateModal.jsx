@@ -105,7 +105,6 @@ export const TeamCreateModal = ({
               className={`w-full flex items-center justify-between px-4 py-2 border ${
                 isDropdownteamMembers ? "border-gray-700" : "border-gray-300"
               } rounded-md bg-white cursor-pointer transition-all duration-200`}
-              tabIndex={0} // Makes the div focusable
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   toggleDropdownteamMembers();
