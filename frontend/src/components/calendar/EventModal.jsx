@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { authServices } from "../../auth";
 import { useMembers } from "../../context/MembersContext";
+import PropTypes from "prop-types";
 export const EventModal = ({
   isOpen,
   onClose,
@@ -173,9 +174,9 @@ export const EventModal = ({
         <form onSubmit={handleSubmit}>
           {/* Title */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="block text-sm font-medium text-gray-700 mb-1">
               Title *
-            </label>
+            </div>
             <input
               type="text"
               name="title"
@@ -267,9 +268,9 @@ export const EventModal = ({
 
           {/* Task Relation */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="block text-sm font-medium text-gray-700 mb-1">
               Related Task
-            </label>
+            </div>
             <select
               name="task"
               value={formData.task || ""}
@@ -287,9 +288,9 @@ export const EventModal = ({
 
           {/* Priority */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="block text-sm font-medium text-gray-700 mb-1">
               Priority
-            </label>
+            </div>
             <select
               name="priority"
               value={formData.priority}
@@ -305,9 +306,9 @@ export const EventModal = ({
 
           {/* Participants */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="block text-sm font-medium text-gray-700 mb-1">
               Participants
-            </label>
+            </div>
             <select
               name="participants"
               multiple
@@ -353,4 +354,11 @@ export const EventModal = ({
       </div>
     </div>
   );
+};
+EventModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired, // Ensuring isOpen is a boolean and required
+  onClose: PropTypes.func.isRequired, // Ensuring onClose is a function and required
+  onSave: PropTypes.func.isRequired, // Ensuring onSave is a function and required
+  event: PropTypes.object, // event can be an object or null (since you default it to null)
+  projectId: PropTypes.string.isRequired, // Ensuring projectId is a string and required
 };
