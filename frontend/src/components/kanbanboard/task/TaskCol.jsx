@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotifications } from "../../../context/NotificationContext";
+import propTypes from "prop-types";
 export const TaskCol = ({
   title,
   tasks,
@@ -170,3 +171,14 @@ function getPriorityColor(priority) {
       return "bg-gray-100 text-gray-800";
   }
 }
+TaskCol.propTypes = {
+  title: propTypes.string.isRequired,
+  tasks: propTypes.array.isRequired,
+  status: propTypes.string.isRequired,
+  handleAddTask: propTypes.func.isRequired,
+  handleDelete: propTypes.func.isRequired,
+  setActiveTask: propTypes.func.isRequired,
+  onDrop: propTypes.func.isRequired,
+  icon: propTypes.element,
+  projectId: propTypes.string.isRequired,
+};

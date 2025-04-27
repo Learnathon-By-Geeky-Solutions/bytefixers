@@ -1,5 +1,6 @@
 import React from "react";
 import deleteIcon from "../../../assets/images/delete.png";
+import PropTypes from "prop-types";
 export const TaskCard = ({ key, title, handleDelete, index }) => {
   return (
     <article className="task_card">
@@ -15,4 +16,10 @@ export const TaskCard = ({ key, title, handleDelete, index }) => {
       </div>
     </article>
   );
+};
+TaskCard.propTypes = {
+  key: PropTypes.string,
+  title: PropTypes.string.isRequired,
+  handleDelete: PropTypes.func.isRequired,
+  index: PropTypes.number.isRequired,
 };
