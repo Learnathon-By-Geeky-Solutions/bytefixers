@@ -223,7 +223,7 @@ const TopNavbar = () => {
               ) : searchResults.length > 0 ? (
                 <ul>
                   {searchResults.map((task) => (
-                    <li
+                    <div
                       key={task._id}
                       onClick={() => goToTask(task._id)}
                       onKeyDown={(e) => {
@@ -231,7 +231,6 @@ const TopNavbar = () => {
                           goToTask(task._id);
                         }
                       }}
-                      tabIndex={0}
                       className="p-2 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
                     >
                       <div className="flex items-start">
@@ -270,7 +269,7 @@ const TopNavbar = () => {
                           {task.priority || "MEDIUM"}
                         </span>
                       </div>
-                    </li>
+                    </div>
                   ))}
                 </ul>
               ) : (
