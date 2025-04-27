@@ -194,6 +194,10 @@ export const ProjectCalendar = () => {
   const handleViewChange = (newView) => {
     setView(newView);
   };
+  EventComponent.propTypes = {
+    event: propTypes.object.isRequired,
+    title: propTypes.string.isRequired,
+  };
 
   return (
     <div className="h-screen p-4 ml-24 width-auto">
