@@ -135,8 +135,8 @@ export const LoginForm = () => {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-500 mb-4">Or</p>
             <button className="flex items-center justify-center w-full border border-gray-300 py-2 px-4 rounded-md text-gray-700 hover:bg-gray-100">
-              <img src={google} alt="Google" className="h-5 w-5 mr-2" />
-              Sign in with Google
+              <img src={google} alt="Google" className="h-5 w-5 mr-2" /> Sign in
+              with Google
             </button>
           </div>
 
