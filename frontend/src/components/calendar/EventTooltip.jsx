@@ -1,6 +1,6 @@
 import React from "react";
 import { format } from "date-fns";
-
+import PropTypes from "prop-types";
 export const EventTooltip = ({ event }) => {
   if (!event) return null;
 
@@ -163,4 +163,29 @@ export const EventTooltip = ({ event }) => {
       </div>
     </div>
   );
+};
+
+EventTooltip.propTypes = {
+  event: PropTypes.shape({
+    start: PropTypes.string.isRequired, // Start date (ISO string)
+    end: PropTypes.string.isRequired, // End date (ISO string)
+    description: PropTypes.string, // Event description
+    priority: PropTypes.oneOf(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
+    status: PropTypes.oneOf([
+      "SCHEDULED",
+      "IN_PROGRESS",
+      "COMPLETED",
+      "CANCELLED",
+    ]), // Event status (e.g., 'active', 'completed')
+    eventType: PropTypes.string, // Type of event (e.g., 'meeting', 'workshop')
+    task: PropTypes.string, // Optional task for the event
+    participants: PropTypes.arrayOf(
+      // Array of participants
+      PropTypes.shape({
+        name: PropTypes.string, // Each participant must have a name
+        email: PropTypes.string, // Optional email for each participant
+      })
+    ).isRequired, // Participants must be an array of objects
+    title: PropTypes.string.isRequired, // Event title
+  }), // The event object is required
 };

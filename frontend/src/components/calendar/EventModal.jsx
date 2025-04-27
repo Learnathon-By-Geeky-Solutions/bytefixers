@@ -193,9 +193,9 @@ export const EventModal = ({
 
           {/* Event Type */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="block text-sm font-medium text-gray-700 mb-1">
               Event Type
-            </label>
+            </div>
             <select
               name="eventType"
               value={formData.eventType}
@@ -212,9 +212,9 @@ export const EventModal = ({
           {/* Date Pickers */}
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="block text-sm font-medium text-gray-700 mb-1">
                 Start Date *
-              </label>
+              </div>
               <DatePicker
                 selected={formData.startDate}
                 onChange={(date) => handleDateChange(date, "startDate")}
@@ -231,9 +231,9 @@ export const EventModal = ({
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="block text-sm font-medium text-gray-700 mb-1">
                 End Date *
-              </label>
+              </div>
               <DatePicker
                 selected={formData.endDate}
                 onChange={(date) => handleDateChange(date, "endDate")}
@@ -254,9 +254,9 @@ export const EventModal = ({
 
           {/* Description */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="block text-sm font-medium text-gray-700 mb-1">
               Description
-            </label>
+            </div>
             <textarea
               name="description"
               value={formData.description}
