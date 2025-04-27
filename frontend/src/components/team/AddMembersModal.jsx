@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+import propTypes from "prop-types";
 export const AddMembersModal = ({
   teamId,
   isOpen,
@@ -93,4 +93,12 @@ export const AddMembersModal = ({
       </div>
     </div>
   );
+};
+AddMembersModal.propTypes = {
+  teamId: propTypes.string.isRequired,
+  isOpen: propTypes.bool.isRequired,
+  onClose: propTypes.func.isRequired,
+  onUpdate: propTypes.func.isRequired,
+  allMembers: propTypes.array.isRequired,
+  existingMembers: propTypes.array.isRequired,
 };

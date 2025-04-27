@@ -16,6 +16,7 @@ import {
 import { authServices } from "../../auth";
 import { AddMembersModal } from "./AddMembersModal";
 import axios from "axios";
+import propTypes from "prop-types";
 const useForceUpdate = () => {
   // eslint-disable-next-line
   const [value, setValue] = useState(0);
@@ -312,4 +313,11 @@ export const TeamList = ({ teams, setTeams, members, teamMembers }) => {
       )}
     </div>
   );
+};
+
+TeamList.propTypes = {
+  teams: propTypes.array.isRequired,
+  setTeams: propTypes.func.isRequired,
+  members: propTypes.array.isRequired,
+  teamMembers: propTypes.array.isRequired,
 };

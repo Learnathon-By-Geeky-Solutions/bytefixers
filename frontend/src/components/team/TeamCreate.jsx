@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { TeamCreateModal } from "./TeamCreateModal";
 import { TeamList } from "./TeamList";
 import { authServices } from "../../auth";
-
 export const TeamCreate = () => {
   const [projects, setProjects] = useState([]);
   const [leader, setLeader] = useState(null);

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { authServices } from "../../auth";
 import { ExpandLess, ExpandMore } from "../../common/icons";
-
+import propTypes from "prop-types";
 export const TeamCreateModal = ({
   isOpen,
   onClose,
@@ -76,7 +76,7 @@ export const TeamCreateModal = ({
           <h2 className="text-xl font-bold mb-4">Create Team</h2>
           {error && <p className="text-red-500">{error}</p>}
 
-          <label className="font-semibold">Team Name :</label>
+          <div className="font-semibold">Team Name :</div>
           <input
             type="text"
             value={name}
@@ -84,7 +84,7 @@ export const TeamCreateModal = ({
             className="w-full border p-2 rounded"
           />
           <div className="flex flex-col gap-2">
-            <label className="font-semibold">Select Team Leader :</label>
+            <div className="font-semibold">Select Team Leader :</div>
             <select
               className="border p-2 rounded"
               value={leader?._id || ""}
@@ -99,7 +99,7 @@ export const TeamCreateModal = ({
             </select>
           </div>
           <div className="flex flex-col gap-2 mt-4">
-            <label className="font-semibold">Select Team Members :</label>
+            <div className="font-semibold">Select Team Members :</div>
             <div
               onClick={toggleDropdownteamMembers}
               className={`w-full flex items-center justify-between px-4 py-2 border ${
@@ -173,4 +173,16 @@ export const TeamCreateModal = ({
       </div>
     )
   );
+};
+
+TeamCreateModal.propTypes = {
+  isOpen: propTypes.bool.isRequired,
+  onClose: propTypes.func.isRequired,
+  members: propTypes.array.isRequired,
+  setMembers: propTypes.func.isRequired,
+  teamMembers: propTypes.array.isRequired,
+  setTeamMembers: propTypes.func.isRequired,
+  leader: propTypes.object,
+  setLeader: propTypes.func.isRequired,
+  onCreateSuccess: propTypes.func,
 };
