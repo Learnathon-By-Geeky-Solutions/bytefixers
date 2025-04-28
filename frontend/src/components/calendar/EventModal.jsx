@@ -23,16 +23,12 @@ export const EventModal = ({
     priority: "MEDIUM",
   });
   const [tasks, setTasks] = useState([]);
-  const [subtasks, setSubtasks] = useState([]);
-  //   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (isOpen) {
       fetchTasks();
-      //   fetchMembers();
-
       if (event?.id) {
         // Edit existing event
         setFormData({
@@ -71,12 +67,8 @@ export const EventModal = ({
       );
       const data = await response.json();
       setTasks(Array.isArray(data.tasks) ? data.tasks : []);
-      if (data.subTask) {
-        setSubtasks(data.subTask);
-      }
     } catch (error) {
       console.error("Error fetching tasks:", error);
-      // setTasks([]); // ✅ Avoid undefined state
     }
   };
 
@@ -130,17 +122,22 @@ export const EventModal = ({
       priority: formData.priority,
       createdBy: authServices.getAuthUser()._id,
     };
+    const eventUrl = event?.id
+      ? `http://localhost:4000/api/calendar/${event.id}`
+      : "http://localhost:4000/api/calendar";
+
+    // Determine the HTTP method based on the presence of event ID
+    const method = event?.id ? "PUT" : "POST";
+
+    // Prepare the request options
+    const requestOptions = {
+      method: method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(eventData),
+    };
 
     try {
-      const response = await fetch(
-        `http://localhost:4000/api/calendar${event?.id ? `/${event.id}` : ""}`,
-        {
-          method: event?.id ? "PUT" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(eventData),
-        }
-      );
-
+      const response = await fetch(eventUrl, requestOptions);
       if (!response.ok) throw new Error("Failed to save event");
 
       const savedEvent = await response.json();
