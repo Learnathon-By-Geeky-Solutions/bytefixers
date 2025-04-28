@@ -21,7 +21,6 @@ export const SignupForm = () => {
   });
 
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -49,11 +48,6 @@ export const SignupForm = () => {
       projectId: projectIdFromQuery,
       // honeypot: "", // Honeypot field
     };
-
-    // authServices
-    //   .signup(payload)
-    //   .then(() => navigate("/login"))
-    //   .catch(() => alert("Failed to signup"));
     authServices
       .signup(payload)
       .then(() => {
@@ -68,7 +62,10 @@ export const SignupForm = () => {
           navigate("/login");
         }
       })
-      .catch(() => alert("Failed to signup"));
+      .catch((err) => {
+        setError(err.response?.data?.message || "Failed to signup");
+        alert("Failed to signup");
+      });
   };
 
   return (
@@ -90,7 +87,6 @@ export const SignupForm = () => {
             Get Started Now
           </h2>
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-          {success && <p className="text-green-500 text-sm mb-4">{success}</p>}
 
           <form onSubmit={handleSignup} className="space-y-4">
             <TextField
