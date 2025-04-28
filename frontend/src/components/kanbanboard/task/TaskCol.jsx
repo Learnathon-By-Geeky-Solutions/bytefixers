@@ -57,7 +57,7 @@ export const TaskCol = ({
   };
 
   return (
-    <div
+    <button
       className="bg-gray-100 rounded-lg p-3 min-w-[280px] h-fit"
       onDragOver={handleDragOver}
       onDrop={handleDrop}
@@ -149,7 +149,7 @@ export const TaskCol = ({
           <div className="text-center py-4 text-gray-400">No tasks yet</div>
         )}
       </div>
-    </div>
+    </button>
   );
 };
 

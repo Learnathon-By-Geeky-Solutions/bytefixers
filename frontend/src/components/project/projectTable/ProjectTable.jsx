@@ -85,7 +85,7 @@ export const ProjectTable = () => {
                 <TableCell className="text-center">
                   <div className="flex justufy-center items-center space-x-2">
                     <Avatar className="bg-gray-200">📁</Avatar>
-                    <span
+                    <button
                       className="font-poppins text-blue-500 font-bold cursor-pointer"
                       onClick={() => {
                         handlenameClick(project._id);
@@ -97,7 +97,7 @@ export const ProjectTable = () => {
                       }}
                     >
                       {project.name}
-                    </span>
+                    </button>
                   </div>
                 </TableCell>
 

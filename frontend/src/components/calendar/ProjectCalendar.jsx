@@ -276,7 +276,7 @@ export const ProjectCalendar = () => {
         projectId={projectId}
       />
       {tooltipEvent && (
-        <div
+        <button
           ref={tooltipRef}
           className="fixed z-50 animate-fade-in animate-duration-150"
           style={{
@@ -296,7 +296,7 @@ export const ProjectCalendar = () => {
           }}
         >
           <EventTooltip event={tooltipEvent} />
-        </div>
+        </button>
       )}
     </div>
   );

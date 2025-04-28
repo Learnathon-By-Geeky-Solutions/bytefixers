@@ -22,7 +22,7 @@ export const EventComponent = ({
         handleEventMouseLeave={handleEventMouseLeave}
       />
       {tooltipEvent && (
-        <div
+        <button
           ref={tooltipRef}
           className="absolute z-50 bg-gray-800 text-white text-xs px-3 py-2 rounded"
           style={{
@@ -46,7 +46,7 @@ export const EventComponent = ({
           {/* You can render additional tooltip content here */}
           <EventTooltip event={tooltipEvent} />{" "}
           {/* Render event details inside the tooltip */}
-        </div>
+        </button>
       )}
     </>
   );

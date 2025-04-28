@@ -9,7 +9,7 @@ export const EventCard = ({
 }) => {
   console.log("EventCard", event);
   return (
-    <div
+    <button
       onMouseEnter={(e) => {
         e.stopPropagation(); // Prevent event bubbling
         handleEventMouseEnter(event, e);
@@ -26,7 +26,7 @@ export const EventCard = ({
       }}
     >
       <span>{title}</span>
-    </div>
+    </button>
   );
 };
 
