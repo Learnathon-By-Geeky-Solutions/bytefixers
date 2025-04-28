@@ -183,7 +183,7 @@ export const TeamList = ({ teams, setTeams, members, teamMembers }) => {
   return (
     <div className="grid grid-cols-3 gap-4 p-4 ml-28 absolute">
       {teams.map((team) => (
-        <div
+        <button
           key={team._id}
           className="bg-white rounded-lg shadow-md border w-64 cursor-pointer"
           onClick={() => openModal(team)}
@@ -192,7 +192,6 @@ export const TeamList = ({ teams, setTeams, members, teamMembers }) => {
               openModal(team);
             }
           }}
-          role="button"
         >
           {/* Gradient Header */}
           <div
@@ -237,7 +236,7 @@ export const TeamList = ({ teams, setTeams, members, teamMembers }) => {
               )}
             </AvatarGroup>
           </div>
-        </div>
+        </button>
       ))}
       {/* Three-dot menu */}
       {/* Menu for three dots */}
