@@ -10,6 +10,7 @@ import { authServices } from "../../auth";
 import { EventModal } from "./EventModal";
 import { EventTooltip } from "./EventTooltip";
 import propTypes from "prop-types";
+import { EventCard } from "./EventCard";
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
 };
@@ -34,16 +35,18 @@ export const ProjectCalendar = () => {
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const tooltipRef = useRef(null);
   const tooltipTimeoutRef = useRef(null);
-  // const [date, setDate] = useState(new Date());
   useEffect(() => {
     fetchEvents();
   }, [projectId]);
   // Add tooltip handling functions
   const handleEventMouseEnter = (event, e) => {
+    console.log("Event mouse enter:", event);
+    console.log("Event mouse enter:", e);
     if (tooltipTimeoutRef.current) {
-      clearTimeout(tooltipTimeoutRef.current);
+      clearTimeout(tooltipTimeoutRef.current); // Clear any previous timeouts
     }
-    const rect = e.currentTarget.getBoundingClientRect();
+
+    const rect = e.currentTarget.getBoundingClientRect(); // Get the element's position
 
     // Position the tooltip slightly below and to the right of the cursor
     const position = {
@@ -51,48 +54,37 @@ export const ProjectCalendar = () => {
       top: rect.bottom + window.scrollY,
     };
 
-    // Adjust position to keep tooltip within viewport
+    // Adjust position to ensure the tooltip stays within the viewport
     if (tooltipRef.current) {
       const tooltipRect = tooltipRef.current.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
 
-      // If tooltip would go off right edge of screen, position it more to the left
+      // Prevent tooltip from going off the right edge of the screen
       if (position.left + tooltipRect.width > viewportWidth) {
         position.left = Math.max(10, viewportWidth - tooltipRect.width - 10);
       }
     }
 
-    setTooltipPosition(position);
-    setTooltipEvent(event);
+    setTooltipPosition(position); // Set tooltip position
+    setTooltipEvent(event); // Set the current event
   };
+
+  // Handle mouse leave
   const handleEventMouseLeave = () => {
     tooltipTimeoutRef.current = setTimeout(() => {
-      setTooltipEvent(null);
-    }, 100);
+      setTooltipEvent(null); // Hide tooltip after timeout
+    }, 100); // Delay hiding by 100ms
   };
 
   // Event component override for react-big-calendar
-  // Updated EventComponent with proper event capturing
   const EventComponent = ({ event, title }) => {
     return (
-      <div
-        onMouseEnter={(e) => {
-          e.stopPropagation(); // Prevent event bubbling
-          handleEventMouseEnter(event, e);
-        }}
-        onMouseLeave={(e) => {
-          e.stopPropagation(); // Prevent event bubbling
-          handleEventMouseLeave();
-        }}
-        className="h-full w-full truncate"
-        style={{
-          overflow: "hidden",
-          cursor: "pointer",
-          position: "relative", // Ensure position context for mouse events
-        }}
-      >
-        <span>{title}</span>
-      </div>
+      <EventCard
+        event={event}
+        title={title}
+        handleEventMouseEnter={handleEventMouseEnter}
+        handleEventMouseLeave={handleEventMouseLeave}
+      />
     );
   };
 

@@ -12,7 +12,7 @@ export const EventTooltip = ({ event }) => {
     format(new Date(event.end), "yyyy-MM-dd");
 
   // Set icon based on event type
-  let icon = "📅"; // default
+  let icon; // default
   switch (event.eventType) {
     case "TASK_DUE":
       icon = "📋";
@@ -141,14 +141,21 @@ export const EventTooltip = ({ event }) => {
             PARTICIPANTS
           </h4>
           <div className="flex -space-x-2 overflow-hidden">
-            {event.participants.slice(0, 5).map((participant, index) => (
-              <div
-                key={index}
-                className="inline-block h-6 w-6 rounded-full bg-gray-200 border border-white flex items-center justify-center text-xs text-gray-600"
-              >
-                {participant.name ? participant.name.charAt(0) : "U"}
-              </div>
-            ))}
+            {event.participants.slice(0, 5).map((participant) => {
+              // Fallback to 'U' if participant.name is missing or invalid
+              const initial = participant.name
+                ? participant.name.charAt(0).toUpperCase()
+                : "U";
+
+              return (
+                <div
+                  key={participant.name}
+                  className="inline-block h-6 w-6 rounded-full bg-gray-200 border border-white flex items-center justify-center text-xs text-gray-600"
+                >
+                  {initial}
+                </div>
+              );
+            })}
             {event.participants.length > 5 && (
               <div className="inline-block h-6 w-6 rounded-full bg-gray-300 border border-white flex items-center justify-center text-xs">
                 +{event.participants.length - 5}
