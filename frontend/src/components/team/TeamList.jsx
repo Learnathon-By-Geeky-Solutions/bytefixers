@@ -192,6 +192,7 @@ export const TeamList = ({ teams, setTeams, members, teamMembers }) => {
               openModal(team);
             }
           }}
+          role="button"
         >
           {/* Gradient Header */}
           <div
