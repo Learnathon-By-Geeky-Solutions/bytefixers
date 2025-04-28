@@ -177,7 +177,7 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
 
                       {/* Options: Project Members */}
                       {userDetails.map((member) => (
-                        <div
+                        <button
                           key={member._id}
                           className="flex items-center p-2 cursor-pointer hover:bg-gray-200"
                           onClick={() => handleAssigneeSelect(member._id)}
@@ -191,7 +191,7 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
                             {member.name.substring(0, 2).toUpperCase()}
                           </Avatar>
                           <span className="text-gray-700">{member.name}</span>
-                        </div>
+                        </button>
                       ))}
                     </button>
                   )}
@@ -234,7 +234,7 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
                   <button className="absolute left-0 mt-2 w-full bg-white border rounded shadow-lg z-10">
                     {/* Options: Project Members */}
                     {userDetails.map((member) => (
-                      <div
+                      <button
                         key={member._id}
                         className="flex items-center p-2 cursor-pointer hover:bg-gray-200"
                         onClick={() => handleReporterSelect(member._id)}
@@ -248,7 +248,7 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
                           {member.name.substring(0, 2).toUpperCase()}
                         </Avatar>
                         <span className="text-gray-700">{member.name}</span>
-                      </div>
+                      </button>
                     ))}
                   </button>
                 )}
