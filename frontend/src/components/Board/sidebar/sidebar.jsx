@@ -14,14 +14,13 @@ import {
 } from "../../../common/icons";
 import React, { useState } from "react";
 import { ProjectModal } from "../../project/recentProjects/ProjectModal";
-import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 const Sidebar = () => {
   const navigate = useNavigate();
   const { projectId } = useParams();
-  const [isProjectModalOpen, setProjectModalOpen] = useState(false);
+  const [isProjectModalOpen, setisProjectModalOpen] = useState(false);
   const handleCloseProjectModal = () => {
-    setProjectModalOpen(false);
+    setisProjectModalOpen(false);
   };
   const menuItems = [
     {
@@ -73,16 +72,16 @@ const Sidebar = () => {
           <h1 className="text-lg font-bold mb-3 p-4">Project OS</h1>
           <Button
             variant="contained"
-            onClick={() => setProjectModalOpen(true)}
+            onClick={() => setisProjectModalOpen(true)}
             sx={{ fontSize: "0.8rem", marginLeft: "15px", marginRight: "15px" }}
             className="bg-blue-500 text-white m-2 text-xs"
           >
             CREATE NEW
           </Button>
           <List>
-            {menuItems.map((item, index) => (
+            {menuItems.map((item) => (
               <ListItem
-                key={index}
+                key={item.text}
                 className="rounded-md hover:bg-gray-800 flex items-center justify-center cursor-pointer"
                 sx={{ minHeight: "30px" }}
               >
