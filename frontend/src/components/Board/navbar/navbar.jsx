@@ -191,6 +191,19 @@ const TopNavbar = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+  // Function to choose color based on priority
+  const chooseColor = (priority) => {
+    switch (priority) {
+      case "HIGH":
+        return "bg-red-100 text-red-800";
+      case "MEDIUM":
+        return "bg-yellow-100 text-yellow-800";
+      case "LOW":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
   return (
     <div className="flex flex-col pl-28">
       {/* Main Navbar */}
@@ -246,9 +259,9 @@ const TopNavbar = () => {
                               </div>
                               {task.tags && task.tags.length > 0 && (
                                 <div className="flex mt-1 flex-wrap gap-1">
-                                  {task.tags.slice(0, 3).map((tag, idx) => (
+                                  {task.tags.slice(0, 3).map((tag) => (
                                     <span
-                                      key={idx}
+                                      key={tag._id}
                                       className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs"
                                     >
                                       {tag}
@@ -263,13 +276,17 @@ const TopNavbar = () => {
                               )}
                               {/* </div> */}
                               <span
-                                className={`px-2 py-0.5 rounded text-xs ${
-                                  task.priority === "HIGH"
-                                    ? "bg-red-100 text-red-800"
-                                    : task.priority === "MEDIUM"
-                                    ? "bg-yellow-100 text-yellow-800"
-                                    : "bg-green-100 text-green-800"
-                                }`}
+                                className={`px-2 py-0.5 rounded text-xs ${chooseColor(
+                                  task.priority
+                                )}`}
+                                // className={`px-2 py-0.5 rounded text-xs ${
+                                //   task.priority === "HIGH"
+                                //     ? "bg-red-100 text-red-800"
+                                //     : task.priority === "MEDIUM"
+                                //     ? "bg-yellow-100 text-yellow-800"
+                                //     : "bg-green-100 text-green-800"
+                                // }
+                                // `}
                               >
                                 {task.priority || "MEDIUM"}
                               </span>
@@ -398,9 +415,9 @@ const TopNavbar = () => {
 
       {/* Navigation Items */}
       <div className="flex items-center px-4 h-10 gap-6 text-sm border-b">
-        {navItems.map((item, index) => (
+        {navItems.map((item) => (
           <button
-            key={index}
+            key={item._id}
             className={`flex items-center gap-2 ${item.className} cursor-pointer`}
             onClick={() => handleListItemClick(item.path)}
           >
