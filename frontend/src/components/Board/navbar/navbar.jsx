@@ -220,64 +220,72 @@ const TopNavbar = () => {
                 <div className="p-4 text-center text-sm text-gray-500">
                   Searching...
                 </div>
-              ) : searchResults.length > 0 ? (
-                <ul>
-                  {searchResults.map((task) => (
-                    <div
-                      key={task._id}
-                      onClick={() => goToTask(task._id)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          goToTask(task._id);
-                        }
-                      }}
-                      role="button"
-                      tabIndex="0"
-                      className="p-2 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
-                    >
-                      <div className="flex items-start">
-                        <div className="flex-1">
-                          <p className="font-medium">{task.title}</p>
-                          <p className="text-sm text-gray-600 truncate">
-                            {task.description || "No description"}
-                          </p>
-                          {task.tags && task.tags.length > 0 && (
-                            <div className="flex mt-1 flex-wrap gap-1">
-                              {task.tags.slice(0, 3).map((tag, idx) => (
-                                <span
-                                  key={idx}
-                                  className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs"
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                              {task.tags.length > 3 && (
-                                <span className="text-xs text-gray-500">
-                                  +{task.tags.length - 3} more
-                                </span>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                        <span
-                          className={`px-2 py-0.5 rounded text-xs ${
-                            task.priority === "HIGH"
-                              ? "bg-red-100 text-red-800"
-                              : task.priority === "MEDIUM"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-green-100 text-green-800"
-                          }`}
-                        >
-                          {task.priority || "MEDIUM"}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </ul>
               ) : (
-                <div className="p-4 text-center text-sm text-gray-500">
-                  No tasks found matching "{searchQuery}"
-                </div>
+                (() => {
+                  if (searchResults.length > 0) {
+                    return (
+                      <ul>
+                        {searchResults.map((task) => (
+                          <div
+                            key={task._id}
+                            onClick={() => goToTask(task._id)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                goToTask(task._id);
+                              }
+                            }}
+                            role="button"
+                            tabIndex="0"
+                            className="p-2 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
+                          >
+                            <div className="flex items-start">
+                              <div className="flex-1">
+                                <p className="font-medium">{task.title}</p>
+                                <p className="text-sm text-gray-600 truncate">
+                                  {task.description || "No description"}
+                                </p>
+                                {task.tags && task.tags.length > 0 && (
+                                  <div className="flex mt-1 flex-wrap gap-1">
+                                    {task.tags.slice(0, 3).map((tag, idx) => (
+                                      <span
+                                        key={idx}
+                                        className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs"
+                                      >
+                                        {tag}
+                                      </span>
+                                    ))}
+                                    {task.tags.length > 3 && (
+                                      <span className="text-xs text-gray-500">
+                                        +{task.tags.length - 3} more
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                              <span
+                                className={`px-2 py-0.5 rounded text-xs ${
+                                  task.priority === "HIGH"
+                                    ? "bg-red-100 text-red-800"
+                                    : task.priority === "MEDIUM"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : "bg-green-100 text-green-800"
+                                }`}
+                              >
+                                {task.priority || "MEDIUM"}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </ul>
+                    );
+                  } else {
+                    return (
+                      <div className="p-4 text-center text-sm text-gray-500">
+                        No tasks found matching "{searchQuery}"
+                      </div>
+                    );
+                  }
+                })()
               )}
 
               {/* Search tips footer */}
