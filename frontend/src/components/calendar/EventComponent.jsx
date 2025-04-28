@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { EventCard } from "./EventCard";
 import { EventTooltip } from "./EventTooltip"; // Assuming you have an EventTooltip component
-
+import propTypes from "prop-types";
 export const EventComponent = ({
   event,
   title,
@@ -50,4 +50,15 @@ export const EventComponent = ({
       )}
     </>
   );
+};
+
+EventComponent.propTypes = {
+  event: propTypes.object.isRequired,
+  title: propTypes.string.isRequired,
+  handleEventMouseEnter: propTypes.func.isRequired,
+  handleEventMouseLeave: propTypes.func.isRequired,
+  tooltipPosition: propTypes.shape({
+    left: propTypes.number.isRequired,
+    top: propTypes.number.isRequired,
+  }).isRequired,
 };

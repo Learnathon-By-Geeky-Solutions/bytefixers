@@ -10,8 +10,6 @@ import { authServices } from "../../auth";
 import { EventModal } from "./EventModal";
 import { EventTooltip } from "./EventTooltip";
 import { EventComponent } from "./EventComponent";
-import propTypes from "prop-types";
-import { EventCard } from "./EventCard";
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
 };
@@ -23,7 +21,21 @@ const localizer = dateFnsLocalizer({
   getDay,
   locales,
 });
-
+const EventComponentWithHandlers = (
+  handleEventMouseEnter,
+  handleEventMouseLeave,
+  tooltipPosition
+) => {
+  // This returns a function that React-Big-Calendar will call with event props
+  return (props) => (
+    <EventComponent
+      {...props}
+      handleEventMouseEnter={handleEventMouseEnter}
+      handleEventMouseLeave={handleEventMouseLeave}
+      tooltipPosition={tooltipPosition}
+    />
+  );
+};
 export const ProjectCalendar = () => {
   const [events, setEvents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,8 +51,9 @@ export const ProjectCalendar = () => {
   useEffect(() => {
     fetchEvents();
   }, [projectId]);
+
   // Add tooltip handling functions
-  const handleEventMouseEnter = (event, e) => {
+  const handleEventMouseEnter = React.useCallback((event, e) => {
     console.log("Event mouse enter:", event);
     console.log("Event mouse enter:", e);
     if (tooltipTimeoutRef.current) {
@@ -68,14 +81,14 @@ export const ProjectCalendar = () => {
 
     setTooltipPosition(position); // Set tooltip position
     setTooltipEvent(event); // Set the current event
-  };
+  }, []);
 
   // Handle mouse leave
-  const handleEventMouseLeave = () => {
+  const handleEventMouseLeave = React.useCallback(() => {
     tooltipTimeoutRef.current = setTimeout(() => {
       setTooltipEvent(null); // Hide tooltip after timeout
     }, 100); // Delay hiding by 100ms
-  };
+  }, []);
 
   const fetchEvents = async () => {
     try {
@@ -112,6 +125,13 @@ export const ProjectCalendar = () => {
       setLoading(false);
     }
   };
+  const customEventComponent = React.useMemo(() => {
+    return EventComponentWithHandlers(
+      handleEventMouseEnter,
+      handleEventMouseLeave,
+      tooltipPosition
+    );
+  }, [handleEventMouseEnter, handleEventMouseLeave, tooltipPosition]);
 
   const eventStyleGetter = (event) => {
     let backgroundColor; // default blue
@@ -239,14 +259,7 @@ export const ProjectCalendar = () => {
             timeslots={4}
             showMultiDayTimes
             components={{
-              event: (props) => (
-                <EventComponent
-                  {...props}
-                  handleEventMouseEnter={handleEventMouseEnter}
-                  handleEventMouseLeave={handleEventMouseLeave}
-                  tooltipPosition={tooltipPosition}
-                />
-              ),
+              event: customEventComponent,
             }}
           />
         )}
