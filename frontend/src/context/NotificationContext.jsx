@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+} from "react";
 import { authServices } from "../auth";
 import propTypes from "prop-types";
 const NotificationContext = createContext();
@@ -209,17 +215,30 @@ export const NotificationProvider = ({ children }) => {
 
   return (
     <NotificationContext.Provider
-      value={{
-        notifications,
-        unreadCount,
-        loading,
-        addNotification,
-        markAsRead,
-        markAllAsRead,
-        removeNotification,
-        clearAllNotifications,
-        refreshNotifications: fetchNotifications,
-      }}
+      value={useMemo(
+        () => ({
+          notifications,
+          unreadCount,
+          loading,
+          addNotification,
+          markAsRead,
+          markAllAsRead,
+          removeNotification,
+          clearAllNotifications,
+          refreshNotifications: fetchNotifications,
+        }),
+        [
+          notifications,
+          unreadCount,
+          loading,
+          addNotification,
+          markAsRead,
+          markAllAsRead,
+          removeNotification,
+          clearAllNotifications,
+          fetchNotifications,
+        ]
+      )}
     >
       {children}
     </NotificationContext.Provider>
