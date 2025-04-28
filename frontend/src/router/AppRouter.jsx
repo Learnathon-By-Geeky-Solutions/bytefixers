@@ -3,18 +3,13 @@ import { LoginForm, SignupForm } from "../components/auth";
 import AppBar from "../components/appbar/AppBar";
 import Sidebar from "../components/Board/sidebar/sidebar";
 import TopNavbar from "../components/Board/navbar/navbar";
-import { TaskColoumn } from "../components/kanbanboard/task";
-import { ProjectCreate } from "../components/project/recentProjects";
 import { Dashboard } from "../components/project";
 import { ProjectTable } from "../components/project/projectTable";
-import { TaskForm } from "../components/kanbanboard/task/TaskForm";
 import { TaskLists } from "../components/kanbanboard/taskLists/TaskLists";
 import { TeamCreate } from "../components/team";
 import { TaskDetails } from "../components/kanbanboard/task/TaskDetails";
 import { FilesPage } from "../components/file/FilesPage";
-import { NotificationBell } from "../components/notification/NotificationBell";
 import { ProjectCalendar } from "../components/calendar/ProjectCalendar";
-import { PersonalTaskStats } from "../components/project/PersonalTaskStats";
 import { UserProfile } from "../components/auth/UserProfile";
 import propTypes from "prop-types";
 const KanbanLayout = () => {

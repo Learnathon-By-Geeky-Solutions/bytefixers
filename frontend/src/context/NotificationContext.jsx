@@ -7,7 +7,6 @@ export const NotificationProvider = ({ children }) => {
   const currentUser = authServices.getAuthUser();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-  //   const currentUser = authServices.getAuthUser();
   const [unreadCount, setUnreadCount] = useState(0);
   const fetchNotifications = async () => {
     try {
