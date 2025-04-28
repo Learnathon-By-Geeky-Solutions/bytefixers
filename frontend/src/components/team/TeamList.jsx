@@ -23,7 +23,6 @@ const useForceUpdate = () => {
   return () => setValue((value) => value + 1);
 };
 export const TeamList = ({ teams, setTeams, members, teamMembers }) => {
-  // const [teams, setTeams] = useState([]);
   const forceUpdate = useForceUpdate();
   const currentUser = authServices.getAuthUser();
   const userId = currentUser ? currentUser._id : null;
@@ -162,7 +161,6 @@ export const TeamList = ({ teams, setTeams, members, teamMembers }) => {
     setSelectedTeamMembers(team.teamMember.map((m) => m._id)); // Store members for modal
   };
   const closeModal = () => {
-    // setIsTeamModalOpen(false);
     setSelectedTeamId(null);
     setSelectedTeamMembers([]);
     setShowAddMembersModal(false);

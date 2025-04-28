@@ -156,9 +156,9 @@ export const RecentProjectShow = () => {
                       {/* Team members */}
                       <div className="flex -space-x-1">
                         {/* Reduced spacing */}
-                        {projectMembers.slice(0, 2).map((member, index) => (
+                        {projectMembers.slice(0, 2).map((member) => (
                           <div
-                            key={index}
+                            key={member._id}
                             title={member.name || member.email || "Team member"}
                             className="w-5 h-5 rounded-full bg-gray-300 border border-white flex items-center justify-center text-xs text-gray-600 overflow-hidden"
                           >

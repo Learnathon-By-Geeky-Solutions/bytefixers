@@ -36,12 +36,9 @@ export const AddMembersModal = ({
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post(
-        `http://localhost:4000/teams/assign/${teamId}`,
-        {
-          teamMembers: selectedUsers,
-        }
-      );
+      await axios.post(`http://localhost:4000/teams/assign/${teamId}`, {
+        teamMembers: selectedUsers,
+      });
       const teamResponse = await axios.get(
         `http://localhost:4000/teams/${teamId}`
       );
