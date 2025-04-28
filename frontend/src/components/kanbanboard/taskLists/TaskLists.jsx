@@ -56,13 +56,14 @@ export const TaskLists = () => {
               return false;
             }
             break;
-          case "This Week":
+          case "This Week": {
             const weekEnd = addDays(today, 7); // Ensure this function is defined or imported
 
             if (dueDate < today || dueDate > weekEnd) {
               return false;
             }
             break;
+          }
           case "This Month":
             if (format(dueDate, "yyyy-MM") !== format(today, "yyyy-MM")) {
               return false;
