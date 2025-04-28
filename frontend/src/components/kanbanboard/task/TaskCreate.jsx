@@ -160,7 +160,7 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
 
                   {/* Custom Dropdown */}
                   {isDropdownAssigneeOpen && (
-                    <div className="absolute left-0 mt-2 w-full bg-white border rounded shadow-lg z-10">
+                    <button className="absolute left-0 mt-2 w-full bg-white border rounded shadow-lg z-10">
                       {/* Option: Unassigned */}
                       <div
                         className="flex items-center p-2 cursor-pointer hover:bg-gray-200"
@@ -193,7 +193,7 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
                           <span className="text-gray-700">{member.name}</span>
                         </div>
                       ))}
-                    </div>
+                    </button>
                   )}
                 </div>
               </form>
@@ -231,7 +231,7 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
 
                 {/* Custom Dropdown */}
                 {isDropdownReporterOpen && (
-                  <div className="absolute left-0 mt-2 w-full bg-white border rounded shadow-lg z-10">
+                  <button className="absolute left-0 mt-2 w-full bg-white border rounded shadow-lg z-10">
                     {/* Options: Project Members */}
                     {userDetails.map((member) => (
                       <div
@@ -250,7 +250,7 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
                         <span className="text-gray-700">{member.name}</span>
                       </div>
                     ))}
-                  </div>
+                  </button>
                 )}
               </div>
             </form>
