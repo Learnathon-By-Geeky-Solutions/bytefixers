@@ -1,3 +1,4 @@
+import propTypes from "prop-types";
 import React from "react";
 
 export const EventCard = ({
@@ -27,4 +28,11 @@ export const EventCard = ({
       <span>{title}</span>
     </div>
   );
+};
+
+EventCard.propTypes = {
+  event: propTypes.object.isRequired,
+  title: propTypes.string.isRequired,
+  handleEventMouseEnter: propTypes.func.isRequired,
+  handleEventMouseLeave: propTypes.func.isRequired,
 };
