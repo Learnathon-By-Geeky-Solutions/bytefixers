@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useCallback,
+  useMemo,
 } from "react";
 import { authServices } from "../auth";
 import propTypes from "prop-types";
@@ -141,17 +142,30 @@ export const MembersProvider = ({ children }) => {
   // Expose the value
   return (
     <MembersContext.Provider
-      value={{
-        members,
-        loading,
-        error,
-        setMembers,
-        projects,
-        setProjects,
-        allTasks,
-        teams,
-        refreshData, // Add the refresh function to the context
-      }}
+      value={useMemo(
+        () => ({
+          members,
+          loading,
+          error,
+          setMembers,
+          projects,
+          setProjects,
+          allTasks,
+          teams,
+          refreshData, // Add the refresh function to the context
+        }),
+        [
+          members,
+          loading,
+          error,
+          setMembers,
+          projects,
+          setProjects,
+          allTasks,
+          teams,
+          refreshData, // Recreate the memoized value only when any of these dependencies change
+        ]
+      )}
     >
       {children}
     </MembersContext.Provider>
