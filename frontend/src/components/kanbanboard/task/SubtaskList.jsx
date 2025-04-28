@@ -51,6 +51,7 @@ export const SubtaskItem = ({ subtask, members, onUpdate, onDelete }) => {
     try {
       return format(new Date(date), "PP");
     } catch (e) {
+      console.error("Error formatting date:", e);
       return "";
     }
   };
@@ -337,21 +338,6 @@ export const SubtaskList = ({
   useEffect(() => {
     setLocalSubtasks(subtasks);
   }, [subtasks]);
-  //   const fetchSubtasks = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `http://localhost:4000/tasks/${taskId}/subtasks`
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch subtasks");
-  //       }
-  //       const data = await response.json();
-  //       setLocalSubtasks(data);
-  //       onSubtasksChanged(data);
-  //     } catch (error) {
-  //       console.error("Error fetching subtasks:", error);
-  //     }
-  //   };
 
   const handleAddSubtask = async (e) => {
     e.preventDefault();
@@ -379,7 +365,6 @@ export const SubtaskList = ({
         throw new Error(error.message || "Failed to create subtask");
       }
       const createdSubtask = await response.json();
-      //   await fetchSubtasks();
       const updatedSubtasks = [createdSubtask, ...localSubtasks];
       setLocalSubtasks(updatedSubtasks);
       onSubtasksChanged(updatedSubtasks);
@@ -592,7 +577,6 @@ export const SubtaskList = ({
         const error = await response.json();
         throw new Error(error.message || "Failed to delete subtask");
       }
-      //   await fetchSubtasks();
       onSubtasksChanged(updatedSubtasks);
     } catch (error) {
       // Revert optimistic update on error

@@ -35,7 +35,6 @@ export const FilesPage = () => {
   const [fileTypeFilter, setFileTypeFilter] = useState("all");
   const [projectFilter, setProjectFilter] = useState("all");
   const [projects, setProjects] = useState([]);
-  const [fileTypes, setFileTypes] = useState([]);
   const [deleteInProgress, setDeleteInProgress] = useState(null);
 
   const currentUser = authServices.getAuthUser();
@@ -106,7 +105,6 @@ export const FilesPage = () => {
             })
           ),
         ];
-        setFileTypes(uniqueTypes);
       } catch (err) {
         console.error("Error fetching files:", err);
         setError(err.message);
