@@ -57,7 +57,9 @@ export const TaskLists = () => {
             }
             break;
           case "This Week":
-            const weekEnd = addDays(today, 7);
+            const today = new Date();
+            const weekEnd = addDays(today, 7); // Ensure this function is defined or imported
+
             if (dueDate < today || dueDate > weekEnd) {
               return false;
             }

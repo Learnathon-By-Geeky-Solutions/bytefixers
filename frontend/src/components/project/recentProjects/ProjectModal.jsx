@@ -27,6 +27,10 @@ export const ProjectModal = ({ isOpen, onRequestClose }) => {
           createdBy: userId, // Replace with the actual user ID
         }
       );
+      if (!response) {
+        console.error("Error creating project:", response);
+        return;
+      }
       onRequestClose(); // Close modal after submission
       reset(); // Reset form
     } catch (error) {

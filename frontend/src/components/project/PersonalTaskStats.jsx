@@ -236,19 +236,6 @@ export const PersonalTaskStats = () => {
             ))
         );
       });
-
-      // If empty after all attempts, log some diagnostics
-      if (tasksForCurrentUser.length === 0) {
-        // Show project membership
-        projects.forEach((project) => {
-          if (project.members) {
-            const memberIds = project.members.map((m) =>
-              typeof m === "object" ? m._id : m
-            );
-          }
-        });
-      }
-
       // Update userTasks
       setUserTasks(tasksForCurrentUser);
 
@@ -294,6 +281,7 @@ export const PersonalTaskStats = () => {
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             return diffDays >= 0 && diffDays <= 7;
           } catch (err) {
+            console.error("Error parsing due date:", err);
             return false;
           }
         })
@@ -307,6 +295,7 @@ export const PersonalTaskStats = () => {
             const dueDate = new Date(task.dueDate);
             return dueDate < today;
           } catch (err) {
+            console.error("Error parsing due date:", err);
             return false;
           }
         })
