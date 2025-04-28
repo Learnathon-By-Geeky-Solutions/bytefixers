@@ -226,7 +226,7 @@ const TopNavbar = () => {
                     return (
                       <ul>
                         {searchResults.map((task) => (
-                          <div
+                          <button
                             key={task._id}
                             onClick={() => goToTask(task._id)}
                             onKeyDown={(e) => {
@@ -234,34 +234,34 @@ const TopNavbar = () => {
                                 goToTask(task._id);
                               }
                             }}
-                            role="button"
-                            tabIndex="0"
-                            className="p-2 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
+                            className="w-full p-2 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
                           >
-                            <div className="flex items-start">
-                              <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              {/* <div className="flex-1"> */}
+                              <div className="text-left">
                                 <p className="font-medium">{task.title}</p>
                                 <p className="text-sm text-gray-600 truncate">
                                   {task.description || "No description"}
                                 </p>
-                                {task.tags && task.tags.length > 0 && (
-                                  <div className="flex mt-1 flex-wrap gap-1">
-                                    {task.tags.slice(0, 3).map((tag, idx) => (
-                                      <span
-                                        key={idx}
-                                        className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs"
-                                      >
-                                        {tag}
-                                      </span>
-                                    ))}
-                                    {task.tags.length > 3 && (
-                                      <span className="text-xs text-gray-500">
-                                        +{task.tags.length - 3} more
-                                      </span>
-                                    )}
-                                  </div>
-                                )}
                               </div>
+                              {task.tags && task.tags.length > 0 && (
+                                <div className="flex mt-1 flex-wrap gap-1">
+                                  {task.tags.slice(0, 3).map((tag, idx) => (
+                                    <span
+                                      key={idx}
+                                      className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs"
+                                    >
+                                      {tag}
+                                    </span>
+                                  ))}
+                                  {task.tags.length > 3 && (
+                                    <span className="text-xs text-gray-500">
+                                      +{task.tags.length - 3} more
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                              {/* </div> */}
                               <span
                                 className={`px-2 py-0.5 rounded text-xs ${
                                   task.priority === "HIGH"
@@ -274,7 +274,7 @@ const TopNavbar = () => {
                                 {task.priority || "MEDIUM"}
                               </span>
                             </div>
-                          </div>
+                          </button>
                         ))}
                       </ul>
                     );
