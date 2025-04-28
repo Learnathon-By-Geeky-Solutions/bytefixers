@@ -100,7 +100,7 @@ export const TeamCreateModal = ({
           </div>
           <div className="flex flex-col gap-2 mt-4">
             <div className="font-semibold">Select Team Members :</div>
-            <div
+            <button
               onClick={toggleDropdownteamMembers}
               className={`w-full flex items-center justify-between px-4 py-2 border ${
                 isDropdownteamMembers ? "border-gray-700" : "border-gray-300"
@@ -117,7 +117,7 @@ export const TeamCreateModal = ({
                   : "Select Team Members"}
               </span>
               {isDropdownteamMembers ? <ExpandLess /> : <ExpandMore />}
-            </div>
+            </button>
 
             {isDropdownteamMembers && (
               <div className="absolute mt-2 w-48 bg-white border rounded shadow-lg p-2 z-50">
