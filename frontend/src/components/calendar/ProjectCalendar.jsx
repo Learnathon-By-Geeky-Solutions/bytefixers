@@ -125,7 +125,7 @@ export const ProjectCalendar = () => {
   };
 
   const eventStyleGetter = (event) => {
-    let backgroundColor = "#3182ce"; // default blue
+    let backgroundColor; // default blue
 
     // Color by event type
     switch (event.eventType) {
@@ -142,7 +142,7 @@ export const ProjectCalendar = () => {
         backgroundColor = "#ed8936"; // orange for reminders
         break;
       default:
-        backgroundColor = "#3182ce";
+        backgroundColor = "#3182cf";
     }
 
     // Override with priority if it's high or critical
