@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { TaskCol } from "./TaskCol";
-import ToDo from "../../../assets/images/to-do-list.png";
-import InProgress from "../../../assets/images/in-progress.png";
-import Done from "../../../assets/images/done.png";
-import { useParams } from "react-router-dom";
 import { authServices } from "../../../auth";
 import { useNotifications } from "../../../context/NotificationContext";
 import { useMembers } from "../../../context/MembersContext";
 import propTypes from "prop-types";
 export const TaskColoumn = ({ projectId }) => {
   const { addNotification } = useNotifications();
-  // const { projectId } = useParams();
-  const { members: projectMembers, loading: loadingMembers } = useMembers();
+  const { members: projectMembers } = useMembers();
   const initialData = JSON.parse(localStorage.getItem("tasks")) || {
     todo: [],
     inProgress: [],
