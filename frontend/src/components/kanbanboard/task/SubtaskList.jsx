@@ -683,28 +683,6 @@ export const SubtaskList = ({
   );
 };
 SubtaskItem.propTypes = {
-  taskId: PropTypes.string.isRequired,
-  subtasks: PropTypes.arrayOf(
-    // subtasks is an array of subtask objects
-    PropTypes.shape({
-      _id: PropTypes.string.isRequired, // Subtask ID is required
-      title: PropTypes.string.isRequired, // Subtask title is required
-      description: PropTypes.string,
-      status: PropTypes.oneOf([
-        "BACKLOG",
-        "TO DO",
-        "IN PROGRESS",
-        "REVIEW",
-        "DONE",
-      ]),
-      priority: PropTypes.oneOf(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
-      assignee: PropTypes.shape({
-        _id: PropTypes.string,
-        name: PropTypes.string,
-      }), // Assignee object with optional _id and name
-    }).isRequired // Ensure subtasks is an array of objects and required
-  ).isRequired, // Ensure subtasks is an array of objects and required
-
   subtask: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
@@ -735,7 +713,6 @@ SubtaskItem.propTypes = {
       name: PropTypes.string.isRequired, // Member name is required
     })
   ).isRequired, // Ensure members is an array of objects and required
-  onSubtasksChanged: PropTypes.func.isRequired, // onSubtasksChanged is a required function
   onUpdate: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
 };

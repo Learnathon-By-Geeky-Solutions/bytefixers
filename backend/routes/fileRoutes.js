@@ -3,6 +3,9 @@ const router = express.Router();
 const Task = require("../models/Task");
 const { upload, cloudinary } = require("../config/fileuploadConfig");
 const Project = require("../models/Project");
+const https = require("https");
+const Attachment = require("../models/Attachment"); // Add this import
+const fetch = require("node-fetch"); // Add this if not already imported
 // Upload file to a task
 router.post("/upload/:taskId", upload.single("file"), async (req, res) => {
   try {
@@ -273,69 +276,82 @@ router.get("/user/:userId", async (req, res) => {
 });
 // Replace your download route with this enhanced version:
 
+// In your fileRoutes.js
+// Replace your current download route
+// Better download route that handles all file types
+// Update your download route
+// Update your download route with this more reliable approach
+const axios = require("axios"); // npm install axios
+
+// Replace your download route with this simpler approach
 router.get("/download/:taskId/:fileId", async (req, res) => {
   try {
     const { taskId, fileId } = req.params;
-    console.log(`Downloading file ${fileId} from task ${taskId}`);
 
-    // Find the task
+    // Find the task that contains the file
     const task = await Task.findById(taskId);
     if (!task) {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    // Find the file in the task's attachments
-    const file = task.attachments.id(fileId);
+    // Find the file in the task's attachments array
+    const file = task.attachments.find(
+      (attachment) => attachment._id.toString() === fileId
+    );
+
     if (!file) {
       return res.status(404).json({ message: "File not found" });
     }
 
-    // Determine attachment filename (with extension)
-    let filename = file.fileName;
-    if (!filename.includes(".") && file.fileType) {
-      // Try to add extension based on MIME type
-      const ext = file.fileType.split("/")[1];
-      if (ext) filename += "." + ext;
-    }
+    console.log(`Found file: ${file.fileName}, URL: ${file.fileUrl}`);
 
-    // Get the file URL (use the original URL from your database)
-    const fileUrl = file.fileUrl;
-
-    // Fetch the file content from Cloudinary
-    // This is an important step - we need to proxy the request through our server
-    // to apply the correct headers
+    // Instead of trying to fetch the file with authorization,
+    // create a temporary server-side download and pipe it to the client
     const https = require("https");
 
-    // Make a request to Cloudinary
+    // Set up response headers for download
+    res.setHeader("Content-Type", file.fileType || "application/octet-stream");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${encodeURIComponent(file.fileName)}"`
+    );
+
+    // Make a request to Cloudinary without authentication
+    // and pipe the response directly to the client
     https
-      .get(fileUrl, (fileResponse) => {
-        // Set proper content type from the file
-        res.setHeader(
-          "Content-Type",
-          file.fileType || "application/octet-stream"
-        );
+      .get(file.fileUrl, (cloudinaryResponse) => {
+        // Check if we got a successful response
+        if (cloudinaryResponse.statusCode !== 200) {
+          console.error(
+            `Error from Cloudinary: ${cloudinaryResponse.statusCode}`
+          );
+          return res.status(cloudinaryResponse.statusCode).json({
+            message: `Error downloading file: Cloudinary returned ${cloudinaryResponse.statusCode}`,
+          });
+        }
 
-        // Force download with Content-Disposition
-        res.setHeader(
-          "Content-Disposition",
-          `attachment; filename="${encodeURIComponent(filename)}"`
-        );
+        // Set Content-Length header if available
+        if (cloudinaryResponse.headers["content-length"]) {
+          res.setHeader(
+            "Content-Length",
+            cloudinaryResponse.headers["content-length"]
+          );
+        }
 
-        // Other useful headers
-        res.setHeader("Content-Length", file.fileSize);
-
-        // Pipe the Cloudinary response directly to our response
-        fileResponse.pipe(res);
+        // Pipe the response directly to the client
+        cloudinaryResponse.pipe(res);
       })
-      .on("error", (error) => {
-        console.error("Error fetching file from Cloudinary:", error);
+      .on("error", (err) => {
+        console.error("Error during file download:", err);
         res
           .status(500)
-          .json({ message: "Error downloading file from storage" });
+          .json({ message: `Error downloading file: ${err.message}` });
       });
   } catch (error) {
     console.error("Error downloading file:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    return res
+      .status(500)
+      .json({ message: `Error downloading file: ${error.message}` });
   }
 });
 module.exports = router;

@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "helmet": "^8.0.0"
+    "helmet": "^8.0.0",
+    "node-fetch": "^2.7.0"
   }
 }

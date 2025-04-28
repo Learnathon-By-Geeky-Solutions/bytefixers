@@ -77,34 +77,6 @@ export const FilesPage = () => {
         setProjects(projectsInfo);
 
         // Extract unique file types
-        const uniqueTypes = [
-          ...new Set(
-            data.map((file) => {
-              if (!file.fileType) return "unknown";
-              if (file.fileType.includes("image")) return "image";
-              if (file.fileType.includes("pdf")) return "pdf";
-              if (
-                file.fileType.includes("word") ||
-                file.fileType.includes("document")
-              )
-                return "document";
-              if (
-                file.fileType.includes("excel") ||
-                file.fileType.includes("spreadsheet")
-              )
-                return "spreadsheet";
-              if (file.fileType.includes("video")) return "video";
-              if (file.fileType.includes("audio")) return "audio";
-              if (
-                file.fileType.includes("zip") ||
-                file.fileType.includes("compressed")
-              )
-                return "archive";
-              if (file.fileType.includes("text")) return "text";
-              return "other";
-            })
-          ),
-        ];
       } catch (err) {
         console.error("Error fetching files:", err);
         setError(err.message);
@@ -269,36 +241,49 @@ export const FilesPage = () => {
         return 0;
       });
   }, [files, searchTerm, sortBy, sortOrder, projectFilter, fileTypeFilter]);
-  const handleDownload = (file) => {
+
+  const handleDownload = async (file) => {
     try {
       if (!file.taskId || !file._id) {
         alert("Cannot download file: Missing task ID or file ID");
         return;
       }
 
-      // Use our backend download endpoint
-      const downloadUrl = `http://localhost:4000/files/download/${file.taskId}/${file._id}`;
+      // Show loading indicator
+      setDeleteInProgress(file._id); // Reuse the loading state
 
-      // Open in a new tab or iframe to trigger the download
+      // First, fetch the file through your backend to get the proper content disposition
+      const response = await fetch(
+        `http://localhost:4000/files/download/${file.taskId}/${file._id}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error downloading file: ${response.statusText}`);
+      }
+
+      // Get the file blob
+      const blob = await response.blob();
+
+      // Create a blob URL
+      const url = window.URL.createObjectURL(blob);
+
+      // Create a download link
       const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.download = file.fileName; // Let the server decide the full filename with extension
-      link.target = "_self"; // Use _self to avoid opening in new tab
-
-      // Hide link and add to document
-      link.style.display = "none";
+      link.href = url;
+      link.download = file.fileName;
       document.body.appendChild(link);
 
-      // Trigger click and remove the element
+      // Trigger the download
       link.click();
 
-      // Clean up after a short delay (give time for the download to start)
-      setTimeout(() => {
-        document.body.removeChild(link);
-      }, 100);
+      // Clean up
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
     } catch (err) {
       console.error("Download error:", err);
       alert("Failed to download file: " + err.message);
+    } finally {
+      setDeleteInProgress(null); // Hide loading indicator
     }
   };
 
