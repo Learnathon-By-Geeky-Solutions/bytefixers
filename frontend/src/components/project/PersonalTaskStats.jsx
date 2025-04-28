@@ -586,7 +586,7 @@ export const PersonalTaskStats = () => {
       {taskStats.overdueTasks?.length > 0 && (
         <div className="bg-white rounded-lg shadow p-4">
           <h2 className="text-lg font-medium mb-4 flex items-center">
-            Overdue Tasks
+            Overdue Tasks{" "}
             <span className="ml-2 bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full">
               {taskStats.overdueTasks.length}
             </span>

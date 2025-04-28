@@ -271,28 +271,6 @@ export const FilesPage = () => {
         return 0;
       });
   }, [files, searchTerm, sortBy, sortOrder, projectFilter, fileTypeFilter]);
-
-  // Handle download file with correct extension
-  //   const handleDownload = (file) => {
-  //     // Create an anchor element and set its href to the file URL
-  //     const link = document.createElement("a");
-
-  //     // Use the fileUrl from the file object (which already has the extension)
-  //     link.href = file.fileUrl;
-
-  //     // Set the download attribute to the file's name
-  //     // This ensures the browser downloads it with the correct name and extension
-  //     link.download = file.fileName;
-
-  //     // Append to the document
-  //     document.body.appendChild(link);
-
-  //     // Trigger a click on the link to start the download
-  //     link.click();
-
-  //     // Clean up
-  //     document.body.removeChild(link);
-  //   };
   const handleDownload = (file) => {
     try {
       if (!file.taskId || !file._id) {
