@@ -51,10 +51,6 @@ export const LoginForm = () => {
       email: formData.email,
       password: formData.password,
     };
-    // authServices
-    //   .login(payload)
-    //   .then(() => navigate("/kanbanBoard"))
-    //   .catch(() => alert("Failed to login"));
     authServices
       .login(payload)
       .then(() => {
@@ -64,8 +60,12 @@ export const LoginForm = () => {
         } else {
           navigate("/kanbanBoard");
         }
+        setSuccess("Login successful!");
       })
-      .catch(() => alert("Failed to login"));
+      .catch((err) => {
+        setError(err.response?.data?.message || "Failed to login");
+        alert("Failed to login");
+      });
   };
 
   return (
