@@ -8,7 +8,6 @@ export const TaskCol = ({
   status,
   handleAddTask,
   handleDelete,
-  setActiveTask,
   onDrop,
   icon,
   projectId,
@@ -41,7 +40,6 @@ export const TaskCol = ({
 
   // Handle drag start
   const handleDragStart = (e, taskId) => {
-    setActiveTask({ taskId, status });
     // Set data for HTML5 drag and drop
     e.dataTransfer.setData("taskId", taskId);
   };
@@ -176,7 +174,6 @@ TaskCol.propTypes = {
   status: propTypes.string.isRequired,
   handleAddTask: propTypes.func.isRequired,
   handleDelete: propTypes.func.isRequired,
-  setActiveTask: propTypes.func.isRequired,
   onDrop: propTypes.func.isRequired,
   icon: propTypes.element,
   projectId: propTypes.string.isRequired,

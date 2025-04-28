@@ -22,7 +22,6 @@ export const ProjectTable = () => {
   const navigate = useNavigate();
   const basePath = useResolvedPath("").pathname;
   const { projects, setProjects } = useMembers();
-  // const [projects, setProjects] = useState([]);
   const currentUser = authServices.getAuthUser(); // Retrieve stored user data
   const userId = currentUser ? currentUser._id : null; // Extract user ID // Extract the logged-in user ID
   const handleDelete = async (projectId) => {

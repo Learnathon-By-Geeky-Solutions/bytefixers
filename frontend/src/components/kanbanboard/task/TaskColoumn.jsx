@@ -23,7 +23,6 @@ export const TaskColoumn = ({ projectId }) => {
   ];
   const [activeColumns, setActiveColumns] = useState(defaultStatuses);
   const [tasks, setTasks] = useState(initialData);
-  const [activeTask, setActiveTask] = useState({ index: null, stat: null });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const currentUser = authServices.getAuthUser();
@@ -222,8 +221,6 @@ export const TaskColoumn = ({ projectId }) => {
       setTasks((prev) =>
         prev.map((task) => (task._id === draggedTaskId ? result : task))
       );
-
-      setActiveTask({ index: null, stat: null });
       //add notification
       const changes = result.activityLog[result.activityLog.length - 1];
       addNotification({
@@ -263,7 +260,6 @@ export const TaskColoumn = ({ projectId }) => {
             status={status}
             handleAddTask={handleAddTask}
             handleDelete={handleDeleteTask}
-            setActiveTask={setActiveTask}
             onDrop={onDrop}
             icon={getStatusIcon(status)}
             projectId={projectId}

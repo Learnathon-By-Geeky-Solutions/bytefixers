@@ -1,10 +1,9 @@
-import React from "react";
 import { Button } from "../../../common/icons";
-import { useState } from "react";
+import { React, useState } from "react";
 import { RecentProjectShow } from "./RecentProjectShow";
 import { ProjectModal } from "./ProjectModal";
 export const ProjectCreate = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isModalOpen, setisModalOpen] = useState(false);
   return (
     <div className="bg-gray-50 rounded-lg shadow p-4 w-full">
       <div className="flex justify-between items-start">
@@ -15,7 +14,7 @@ export const ProjectCreate = () => {
         {/* Plus Button to Open Modal */}
         <div className="pl-4 pt-2 flex-shrink-0">
           <Button
-            onClick={() => setModalOpen(true)}
+            onClick={() => setisModalOpen(true)}
             variant="contained"
             sx={{
               backgroundColor: "primary",
@@ -35,7 +34,7 @@ export const ProjectCreate = () => {
       {/* Project Creation Modal */}
       <ProjectModal
         isOpen={isModalOpen}
-        onRequestClose={() => setModalOpen(false)}
+        onRequestClose={() => setisModalOpen(false)}
       />
     </div>
   );
