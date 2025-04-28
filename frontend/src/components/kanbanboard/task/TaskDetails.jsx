@@ -316,9 +316,9 @@ export const TaskDetails = () => {
             <div className="bg-white p-4 rounded-lg shadow">
               <h3 className="font-medium mb-4">Activity Log</h3>
               <div className="space-y-3 max-h-[400px] overflow-y-auto">
-                {task.activityLog.map((log, index) => (
+                {task.activityLog.map((log) => (
                   <div
-                    key={index}
+                    key={log._id}
                     className="border-l-2 border-blue-500 pl-3 py-2"
                   >
                     <div className="text-sm">

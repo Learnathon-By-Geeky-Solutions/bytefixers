@@ -5,13 +5,9 @@ import { useParams } from "react-router-dom";
 import { format, addDays } from "date-fns";
 
 export const TaskLists = () => {
-  const [project, setProject] = useState(null); // Store project data
-  const [members, setMembers] = useState([]); // Store members of the project
   const [userDetails, setUserDetails] = useState([]);
   const [tasks, setTasks] = useState([]);
-  const [subtasks, setSubtasks] = useState([]);
   const [expandedTask, setExpandedTask] = useState({});
-  const [error, setError] = useState(null); // State to store error messages
   const { projectid } = useParams(); // Replace with actual project ID
   const [loadingSubtasks, setLoadingSubtasks] = useState({});
   // Add these after your existing state declarations
@@ -93,12 +89,8 @@ export const TaskLists = () => {
         );
         const data = await response.json();
         setTasks(Array.isArray(data.tasks) ? data.tasks : []);
-        if (data.subTask) {
-          setSubtasks(data.subTask);
-        }
       } catch (error) {
         console.error("Error fetching tasks:", error);
-        // setTasks([]); // ✅ Avoid undefined state
       }
     };
     const fetchProjectDetails = async () => {
@@ -107,8 +99,6 @@ export const TaskLists = () => {
           `http://localhost:4000/projects/${projectid}`
         );
         const data = await response.json();
-        setProject(data);
-        setMembers(data.members); // Set project members
         const memberDetails = await Promise.all(
           data.members.map((memberId) =>
             fetch(`http://localhost:4000/api/user/${memberId}`).then((res) =>
@@ -119,7 +109,6 @@ export const TaskLists = () => {
         setUserDetails(memberDetails); // Set the fetched user details
       } catch (error) {
         console.error("Failed to fetch project details:", error);
-        setError("Error fetching project data");
       }
     };
     fetchProjectDetails();

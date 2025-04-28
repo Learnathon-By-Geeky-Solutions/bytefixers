@@ -481,6 +481,7 @@ export const SubtaskList = ({
             try {
               return new Date(date).toISOString().split("T")[0];
             } catch (e) {
+              console.error("Error formatting date:", e);
               return "";
             }
           };
