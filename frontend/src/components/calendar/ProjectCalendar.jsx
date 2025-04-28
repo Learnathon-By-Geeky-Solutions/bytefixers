@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom";
 import { authServices } from "../../auth";
 import { EventModal } from "./EventModal";
 import { EventTooltip } from "./EventTooltip";
+import { EventComponent } from "./EventComponent";
 import propTypes from "prop-types";
 import { EventCard } from "./EventCard";
 const locales = {
@@ -74,18 +75,6 @@ export const ProjectCalendar = () => {
     tooltipTimeoutRef.current = setTimeout(() => {
       setTooltipEvent(null); // Hide tooltip after timeout
     }, 100); // Delay hiding by 100ms
-  };
-
-  // Event component override for react-big-calendar
-  const EventComponent = ({ event, title }) => {
-    return (
-      <EventCard
-        event={event}
-        title={title}
-        handleEventMouseEnter={handleEventMouseEnter}
-        handleEventMouseLeave={handleEventMouseLeave}
-      />
-    );
   };
 
   const fetchEvents = async () => {
@@ -186,10 +175,6 @@ export const ProjectCalendar = () => {
   const handleViewChange = (newView) => {
     setView(newView);
   };
-  EventComponent.propTypes = {
-    event: propTypes.object.isRequired,
-    title: propTypes.string.isRequired,
-  };
 
   return (
     <div className="h-screen p-4 ml-24 width-auto">
@@ -254,7 +239,14 @@ export const ProjectCalendar = () => {
             timeslots={4}
             showMultiDayTimes
             components={{
-              event: EventComponent,
+              event: (props) => (
+                <EventComponent
+                  {...props}
+                  handleEventMouseEnter={handleEventMouseEnter}
+                  handleEventMouseLeave={handleEventMouseLeave}
+                  tooltipPosition={tooltipPosition}
+                />
+              ),
             }}
           />
         )}
