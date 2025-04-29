@@ -333,6 +333,19 @@ export const PersonalTaskStats = () => {
     }
   }, [allTasks, projects, currentUser]);
 
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case "CRITICAL":
+        return "bg-red-100 text-red-800";
+      case "HIGH":
+        return "bg-orange-100 text-orange-800";
+      case "MEDIUM":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-green-100 text-green-800"; // Default for "LOW" or any other value
+    }
+  };
+
   // Reset processing flag when dependencies change
   useEffect(() => {
     if (allTasks && allTasks.length > 0) {
@@ -501,15 +514,9 @@ export const PersonalTaskStats = () => {
                     Due: {new Date(task.dueDate).toLocaleDateString()}
                   </span>
                   <span
-                    className={`${
-                      task.priority === "CRITICAL"
-                        ? "bg-red-100 text-red-800"
-                        : task.priority === "HIGH"
-                        ? "bg-orange-100 text-orange-800"
-                        : task.priority === "MEDIUM"
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-green-100 text-green-800"
-                    } px-2 py-0.5 text-xs rounded-full`}
+                    className={`${getPriorityColor(
+                      task.priority
+                    )} px-2 py-0.5 text-xs rounded-full`}
                   >
                     {task.priority || "Low"}
                   </span>
@@ -602,15 +609,9 @@ export const PersonalTaskStats = () => {
                       </span>
                     </span>
                     <span
-                      className={`${
-                        task.priority === "CRITICAL"
-                          ? "bg-red-100 text-red-800"
-                          : task.priority === "HIGH"
-                          ? "bg-orange-100 text-orange-800"
-                          : task.priority === "MEDIUM"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-green-100 text-green-800"
-                      } px-2 py-0.5 text-xs rounded-full`}
+                      className={`${getPriorityColor(
+                        task.priority
+                      )} px-2 py-0.5 text-xs rounded-full`}
                     >
                       {task.priority || "Low"}
                     </span>
