@@ -215,7 +215,7 @@ export const TeamList = ({ teams, setTeams, members, teamMembers }) => {
           <div className="flex justify-center pb-4">
             <AvatarGroup max={4}>
               {team.teamMember.map((member) =>
-                member && member.name && member._id ? (
+                member?.name && member?._id ? (
                   <Avatar
                     key={member._id}
                     className="w-8 h-8"
@@ -246,11 +246,9 @@ export const TeamList = ({ teams, setTeams, members, teamMembers }) => {
         onClose={handleMenuClose}
       >
         <MenuItem onClick={handleLeaveTeamClick}>Leave Team</MenuItem>
-        {clickedTeam &&
-          clickedTeam.teamCreator &&
-          clickedTeam.teamCreator._id === userId && (
-            <MenuItem onClick={handleDeleteTeamClick}>Delete Team</MenuItem>
-          )}
+        {clickedTeam?.teamCreator?._id === userId && (
+          <MenuItem onClick={handleDeleteTeamClick}>Delete Team</MenuItem>
+        )}
       </Menu>
 
       {/* Leave Team Confirmation Dialog */}
