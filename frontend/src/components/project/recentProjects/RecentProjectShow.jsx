@@ -185,8 +185,7 @@ export const RecentProjectShow = () => {
   return (
     <div className="bg-white rounded-lg shadow-lg p-4">
       <h1 className="text-xl font-bold text-gray-800 mb-3 flex items-center">
-        <span className="bg-blue-500 w-1 h-5 rounded-md mr-2"></span>
-        Recent Projects
+        <span className="bg-blue-500 w-1 h-5 rounded-md mr-2" /> Recent Projects
       </h1>
 
       {renderContent()}
