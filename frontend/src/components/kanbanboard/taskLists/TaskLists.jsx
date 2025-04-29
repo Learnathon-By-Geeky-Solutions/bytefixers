@@ -31,57 +31,48 @@ export const TaskLists = () => {
       [filterType]: value,
     }));
   };
+  const checkPriorityFilter = (task, filters) => {
+    return !filters.priority || task.priority === filters.priority;
+  };
 
-  // Add filtered tasks logic
+  const checkStatusFilter = (task, filters) => {
+    return !filters.status || task.status === filters.status;
+  };
+
+  const checkDueDateFilter = (task, filters) => {
+    if (!filters.dueDate) return true;
+
+    const today = new Date();
+    const dueDate = new Date(task.dueDate);
+    const formattedToday = format(today, "yyyy-MM-dd");
+    const formattedDueDate = format(dueDate, "yyyy-MM-dd");
+    const formattedDueMonth = format(dueDate, "yyyy-MM");
+
+    switch (filters.dueDate) {
+      case "Today":
+        return formattedDueDate === formattedToday;
+      case "This Week":
+        const weekEnd = addDays(today, 7); // Ensure this function is defined or imported
+        return dueDate >= today && dueDate <= weekEnd;
+      case "This Month":
+        return formattedDueMonth === format(today, "yyyy-MM");
+      case "Overdue":
+        return dueDate < today;
+      default:
+        return true;
+    }
+  };
+
   const getFilteredTasks = () => {
     return tasks.filter((task) => {
-      // Priority filter
-      if (filters.priority && task.priority !== filters.priority) {
-        return false;
-      }
-
-      // Status filter
-      if (filters.status && task.status !== filters.status) {
-        return false;
-      }
-
-      // Due date filter
-      if (filters.dueDate) {
-        const today = new Date();
-        const dueDate = new Date(task.dueDate);
-
-        switch (filters.dueDate) {
-          case "Today":
-            if (format(dueDate, "yyyy-MM-dd") !== format(today, "yyyy-MM-dd")) {
-              return false;
-            }
-            break;
-          case "This Week": {
-            const weekEnd = addDays(today, 7); // Ensure this function is defined or imported
-
-            if (dueDate < today || dueDate > weekEnd) {
-              return false;
-            }
-            break;
-          }
-          case "This Month":
-            if (format(dueDate, "yyyy-MM") !== format(today, "yyyy-MM")) {
-              return false;
-            }
-            break;
-          case "Overdue":
-            if (dueDate >= today) {
-              return false;
-            }
-            break;
-          default:
-            break;
-        }
-      }
-
-      return true;
+      return (
+        checkPriorityFilter(task, filters) &&
+        checkStatusFilter(task, filters) &&
+        checkDueDateFilter(task, filters)
+      );
     });
   };
+
   const fetchMemberDetails = async (memberId) => {
     const response = await fetch(`http://localhost:4000/api/user/${memberId}`);
     return response.json(); // Parse and return the JSON data
