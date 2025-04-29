@@ -51,9 +51,10 @@ export const TaskLists = () => {
     switch (filters.dueDate) {
       case "Today":
         return formattedDueDate === formattedToday;
-      case "This Week":
+      case "This Week": {
         const weekEnd = addDays(today, 7); // Ensure this function is defined or imported
         return dueDate >= today && dueDate <= weekEnd;
+      }
       case "This Month":
         return formattedDueMonth === format(today, "yyyy-MM");
       case "Overdue":
