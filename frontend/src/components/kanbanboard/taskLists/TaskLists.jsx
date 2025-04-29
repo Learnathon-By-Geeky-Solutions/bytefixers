@@ -116,6 +116,20 @@ export const TaskLists = () => {
     fetchProjectDetails();
     fetchTasks();
   }, [projectid]);
+  const getPriorityClass = (priority) => {
+    switch (priority) {
+      case "HIGH":
+        return "bg-orange-100 text-orange-800";
+      case "MEDIUM":
+        return "bg-blue-100 text-blue-800";
+      case "LOW":
+        return "bg-green-100 text-green-800";
+      case "CRITICAL":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
 
   const toggleSubtasks = async (taskId) => {
     setExpandedTask((prev) => {
@@ -289,17 +303,9 @@ export const TaskLists = () => {
                       </td>
                       <td className="border p-2">
                         <span
-                          className={`px-2 py-1 text-xs font-semibold rounded ${
-                            task.priority === "HIGH"
-                              ? "bg-orange-100 text-orange-800"
-                              : task.priority === "MEDIUM"
-                              ? "bg-blue-100 text-blue-800"
-                              : task.priority === "LOW"
-                              ? "bg-green-100 text-green-800"
-                              : task.priority === "CRITICAL"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-gray-100 text-gray-800"
-                          }`}
+                          className={`px-2 py-1 text-xs font-semibold rounded ${getPriorityClass(
+                            task.priority
+                          )}`}
                         >
                           {task.priority}
                         </span>
