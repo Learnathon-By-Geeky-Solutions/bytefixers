@@ -57,6 +57,15 @@ export const PersonalTaskStats = () => {
   // Use ref to track if we've processed
   const hasProcessedRef = useRef(false);
 
+  const isTaskInProject = (project, taskId) => {
+    return project.task.some((projectTask) => projectTask === taskId);
+  };
+
+  // Function to find the project containing the task
+  const findProjectForTask = (projects, task) => {
+    return projects.find((project) => isTaskInProject(project, task._id));
+  };
+
   // Extract and filter tasks when data changes
   useEffect(() => {
     // Skip if data isn't available yet
@@ -78,13 +87,7 @@ export const PersonalTaskStats = () => {
         if (item && Array.isArray(item.tasks)) {
           // Map over the tasks inside each item
           const tasksWithProjectInfo = item.tasks.map((task) => {
-            // Find the project matching the task's project ID (or other logic)
-            const project = projects.find((project) => {
-              const foundTask = project.task.some((projectTask) => {
-                return projectTask === task._id;
-              });
-              return foundTask;
-            });
+            const project = findProjectForTask(projects, task);
 
             // If a matching project is found, enrich the task with project info
             if (project) {
