@@ -120,7 +120,7 @@ export const TaskColoumn = ({ projectId }) => {
       // Create notification for new task
       try {
         // Only send notification if we have the necessary data
-        if (data && data._id) {
+        if (data?._id) {
           addNotification({
             type: "task",
             message: `New task **${data.title}** created in **${status}**`,
