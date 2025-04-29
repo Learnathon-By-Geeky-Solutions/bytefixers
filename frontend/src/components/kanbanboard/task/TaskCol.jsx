@@ -111,6 +111,7 @@ export const TaskCol = ({
                 }
               }}
               className="bg-white p-3 rounded shadow cursor-grab hover:shadow-md"
+              tabIndex="0" // Allows the div to be focusable by keyboard
             >
               <div className="flex justify-between">
                 <h4 className="font-medium">{task.title}</h4>
