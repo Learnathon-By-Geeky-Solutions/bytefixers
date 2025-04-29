@@ -21,7 +21,16 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
   const [userDetails, setUserDetails] = useState([]);
   const currentUser = authServices.getAuthUser(); // Retrieve stored user data
   const userName = currentUser ? currentUser.name : null;
-
+  const getInitials = () => {
+    if (taskData.reporter) {
+      const reporter = userDetails.find(
+        (user) => user._id === taskData.reporter
+      );
+      return reporter ? reporter.name.substring(0, 2).toUpperCase() : "No";
+    } else {
+      return userName ? userName.substring(0, 2).toUpperCase() : "No";
+    }
+  };
   useEffect(() => {
     const fetchProjectDetails = async () => {
       try {
@@ -209,14 +218,16 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
                   onClick={toggleDropdownReporter}
                 >
                   <Avatar className="bg-blue-500">
-                    {taskData.reporter
+                    {/* {taskData.reporter
                       ? userDetails
                           .find((user) => user._id === taskData.reporter)
                           ?.name.substring(0, 2)
                           .toUpperCase()
                       : userName
                       ? userName.substring(0, 2).toUpperCase()
-                      : "No"}{" "}
+                      : "No"}{" "} */}
+
+                    {getInitials()}
                     {/* Use initials of the reporter or the logged-in user */}
                   </Avatar>
                   <span className="text-gray-700">
