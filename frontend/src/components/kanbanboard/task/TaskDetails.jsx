@@ -216,11 +216,13 @@ export const TaskDetails = () => {
 
   // Helper function to get reporter ID (handling object or string ID)
   const getReporterId = () => {
-    return task?.reporter
-      ? typeof task.reporter === "object"
-        ? task.reporter._id
-        : task.reporter
-      : "";
+    if (!task?.reporter) return "";
+
+    if (typeof task.reporter === "object") {
+      return task.reporter._id;
+    } else {
+      return task.reporter;
+    }
   };
 
   if (loading)
@@ -409,15 +411,21 @@ export const TaskDetails = () => {
           {/* Assignee selection - using shared members data */}
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="text-sm font-medium text-gray-700 mb-2">Assignee</h3>
-            {loadingMembers ? (
+
+            {/* Conditional Rendering Logic */}
+            {loadingMembers && (
               <div className="text-gray-500 border rounded p-2 bg-gray-50">
                 Loading project members...
               </div>
-            ) : projectMembers.length === 0 ? (
+            )}
+
+            {!loadingMembers && projectMembers.length === 0 && (
               <div className="text-gray-500 border rounded p-2 bg-gray-50">
                 No members available
               </div>
-            ) : (
+            )}
+
+            {!loadingMembers && projectMembers.length > 0 && (
               <select
                 value={getAssigneeId()}
                 onChange={(e) => setTask({ ...task, assignee: e.target.value })}
@@ -437,22 +445,27 @@ export const TaskDetails = () => {
           {/* Reporter selection - using shared members data */}
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="text-sm font-medium text-gray-700 mb-2">Reporter</h3>
-            {loadingMembers ? (
+
+            {/* Conditional Rendering Logic */}
+            {loadingMembers && (
               <div className="text-gray-500 border rounded p-2 bg-gray-50">
                 Loading project members...
               </div>
-            ) : projectMembers.length === 0 ? (
+            )}
+
+            {!loadingMembers && projectMembers.length === 0 && (
               <div className="text-gray-500 border rounded p-2 bg-gray-50">
                 No members available
               </div>
-            ) : (
+            )}
+
+            {!loadingMembers && projectMembers.length > 0 && (
               <select
                 value={getReporterId()}
                 onChange={(e) => setTask({ ...task, reporter: e.target.value })}
                 className="w-full p-2 border rounded"
                 disabled={loading}
               >
-                <option value="">None</option>
                 {projectMembers.map((member) => (
                   <option key={member._id} value={member._id}>
                     {member.name || "Unknown Member"}
@@ -461,6 +474,7 @@ export const TaskDetails = () => {
               </select>
             )}
           </div>
+
           {/* Due date */}
           <div className="bg-white p-4 rounded-lg shadow">
             <div className="block text-sm font-medium text-gray-700 mb-2">
