@@ -66,12 +66,6 @@ export const ProjectTable = () => {
               >
                 Lead
               </TableCell>
-              <TableCell
-                className="font-bold text-center px-4 py-2"
-                style={{ textAlign: "center" }}
-              >
-                Project URL
-              </TableCell>
               <TableCell className="font-bold text-center px-4 py-2">
                 More Actions
               </TableCell>
@@ -121,13 +115,6 @@ export const ProjectTable = () => {
                       {project?.createdBy?.name}
                     </span>
                   </div>
-                </TableCell>
-
-                {/* Project URL (Placeholder) */}
-                <TableCell style={{ textAlign: "center" }}>
-                  <a href="#" className="font-poppins text-blue-500 font-bold">
-                    View
-                  </a>
                 </TableCell>
 
                 {/* Actions (Delete if created by me) */}
