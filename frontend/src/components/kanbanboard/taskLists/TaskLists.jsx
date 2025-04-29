@@ -130,6 +130,16 @@ export const TaskLists = () => {
         return "bg-gray-100 text-gray-800";
     }
   };
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "DONE":
+        return "bg-green-100 text-green-700";
+      case "IN PROGRESS":
+        return "bg-blue-100 text-blue-700";
+      default:
+        return "bg-gray-200 text-gray-700";
+    }
+  };
 
   const toggleSubtasks = async (taskId) => {
     setExpandedTask((prev) => {
@@ -292,11 +302,9 @@ export const TaskLists = () => {
                       <td className="">{task.description}</td>
                       <td className="border p-2">
                         <span
-                          className={`px-2 py-1 text-xs font-semibold rounded ${
-                            task.status === "DONE"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-gray-200 text-gray-700"
-                          }`}
+                          className={`px-2 py-1 text-xs font-semibold rounded ${getStatusClass(
+                            task.status
+                          )}`}
                         >
                           {task.status}
                         </span>
@@ -352,8 +360,7 @@ export const TaskLists = () => {
                             </td>
                           </tr>
                         ) : (
-                          task.subTask &&
-                          task.subTask.map((subtask) => (
+                          task.subTask?.map((subtask) => (
                             <tr
                               key={subtask._id}
                               className="hover:bg-gray-50 bg-gray-50"
@@ -370,30 +377,18 @@ export const TaskLists = () => {
                               </td>
                               <td className="border p-2">
                                 <span
-                                  className={`px-2 py-1 text-xs font-semibold rounded ${
-                                    subtask.status === "DONE"
-                                      ? "bg-green-100 text-green-700"
-                                      : subtask.status === "IN PROGRESS"
-                                      ? "bg-blue-100 text-blue-700"
-                                      : "bg-gray-200 text-gray-700"
-                                  }`}
+                                  className={`px-2 py-1 text-xs font-semibold rounded ${getStatusClass(
+                                    subtask.status
+                                  )}`}
                                 >
                                   {subtask.status}
                                 </span>
                               </td>
                               <td className="border p-2">
                                 <span
-                                  className={`px-2 py-1 text-xs font-semibold rounded ${
-                                    subtask.priority === "HIGH"
-                                      ? "bg-orange-100 text-orange-800"
-                                      : subtask.priority === "MEDIUM"
-                                      ? "bg-blue-100 text-blue-800"
-                                      : subtask.priority === "LOW"
-                                      ? "bg-green-100 text-green-800"
-                                      : subtask.priority === "CRITICAL"
-                                      ? "bg-red-100 text-red-800"
-                                      : "bg-gray-100 text-gray-800"
-                                  }`}
+                                  className={`px-2 py-1 text-xs font-semibold rounded ${getPriorityClass(
+                                    subtask.priority
+                                  )}`}
                                 >
                                   {subtask.priority}
                                 </span>
