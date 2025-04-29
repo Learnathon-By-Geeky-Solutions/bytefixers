@@ -66,6 +66,17 @@ export const PersonalTaskStats = () => {
     return projects.find((project) => isTaskInProject(project, task._id));
   };
 
+  const isUserInProjectMembers = (task, currentUser, projects) => {
+    const project = projects.find((p) => p._id === task.projectInfo?._id);
+    if (!project || !project.members) return false;
+
+    return project.members.some(
+      (m) =>
+        (typeof m === "string" && m === currentUser._id) ||
+        (typeof m === "object" && m._id === currentUser._id)
+    );
+  };
+
   // Extract and filter tasks when data changes
   useEffect(() => {
     // Skip if data isn't available yet
@@ -226,17 +237,7 @@ export const PersonalTaskStats = () => {
           // Last resort - check if user is in the project's members
           (task.projectInfo &&
             task.projectInfo._id !== "unknown" &&
-            projects.some(
-              (p) =>
-                p._id === task.projectInfo._id &&
-                p.members &&
-                Array.isArray(p.members) &&
-                p.members.some(
-                  (m) =>
-                    (typeof m === "string" && m === currentUser._id) ||
-                    (typeof m === "object" && m._id === currentUser._id)
-                )
-            ))
+            isUserInProjectMembers(task, currentUser, projects))
         );
       });
       // Update userTasks
