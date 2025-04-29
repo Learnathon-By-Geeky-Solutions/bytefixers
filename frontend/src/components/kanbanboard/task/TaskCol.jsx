@@ -100,7 +100,7 @@ export const TaskCol = ({
       <div className="space-y-2">
         {tasks.length > 0 ? (
           tasks.map((task) => (
-            <div
+            <button
               key={task._id}
               draggable
               onDragStart={(e) => handleDragStart(e, task._id)}
@@ -110,8 +110,7 @@ export const TaskCol = ({
                   handleTaskClick(task._id);
                 }
               }}
-              className="bg-white p-3 rounded shadow cursor-grab hover:shadow-md"
-              tabIndex="0" // Allows the div to be focusable by keyboard
+              className="w-full bg-white p-3 rounded shadow cursor-grab hover:shadow-md"
             >
               <div className="flex justify-between">
                 <h4 className="font-medium">{task.title}</h4>
@@ -144,7 +143,7 @@ export const TaskCol = ({
                   {task.assignee ? task.assignee.name : "Unassigned"}
                 </span>
               </div>
-            </div>
+            </button>
           ))
         ) : (
           <div className="text-center py-4 text-gray-400">No tasks yet</div>
