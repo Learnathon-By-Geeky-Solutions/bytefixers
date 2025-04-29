@@ -64,16 +64,7 @@ export const FilesPage = () => {
         setFiles(data);
 
         // Extract unique projects and file types for filters
-        const uniqueProjects = [...new Set(data.map((file) => file.projectId))];
-        const projectsInfo = uniqueProjects.map((projectId) => {
-          const fileWithProject = data.find(
-            (file) => file.projectId === projectId
-          );
-          return {
-            id: projectId,
-            name: fileWithProject?.projectName || "Unknown Project",
-          };
-        });
+        const projectsInfo = getProjectsInfo(data);
         setProjects(projectsInfo);
 
         // Extract unique file types
@@ -87,7 +78,16 @@ export const FilesPage = () => {
 
     fetchAllFiles();
   }, [currentUser?._id]);
-
+  const getProjectsInfo = (data) => {
+    const uniqueProjects = [...new Set(data.map((file) => file.projectId))];
+    return uniqueProjects.map((projectId) => {
+      const fileWithProject = data.find((file) => file.projectId === projectId);
+      return {
+        id: projectId,
+        name: fileWithProject?.projectName || "Unknown Project",
+      };
+    });
+  };
   // Helper function to get file type icon
   const getFileIcon = (fileType) => {
     if (!fileType) return <ArticleOutlined />;
