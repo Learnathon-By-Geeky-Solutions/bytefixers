@@ -155,7 +155,7 @@ export const PersonalTaskStats = () => {
         // Create a mapping of all tasks by ID
         const allTasksById = {};
         allTasks.forEach((task) => {
-          if (task && task._id) {
+          if (task?._id) {
             allTasksById[task._id] = {
               ...task,
               projectInfo: { _id: "unknown", title: "Unknown Project" },
@@ -165,7 +165,7 @@ export const PersonalTaskStats = () => {
 
         // Go through projects and assign project info to tasks
         projects.forEach((project) => {
-          if (project && project._id) {
+          if (project?._id) {
             // Check if this project has tasks
             const projectTaskIds = [];
 
