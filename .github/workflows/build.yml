@@ -1,0 +1,30 @@
+name: Build
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  sonarqube:
+    name: SonarQube
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Install root dependencies
+        run: npm install
+
+      - name: Install backend dependencies
+        run: cd backend && npm install
+
+      - name: Install frontend dependencies
+        run: cd frontend && npm install
+
+      - name: Test and coverage
+        run: npm jest --coverage
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets. SONARCLOUD_TOKEN }}
