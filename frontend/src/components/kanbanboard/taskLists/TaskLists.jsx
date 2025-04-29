@@ -82,6 +82,15 @@ export const TaskLists = () => {
       return true;
     });
   };
+  const fetchMemberDetails = async (memberId) => {
+    const response = await fetch(`http://localhost:4000/api/user/${memberId}`);
+    return response.json(); // Parse and return the JSON data
+  };
+
+  // Function to get member details for all members
+  const getMemberDetails = async (members) => {
+    return await Promise.all(members.map(fetchMemberDetails));
+  };
   useEffect(() => {
     // Fetch tasks when component mounts
     const fetchTasks = async () => {
@@ -101,13 +110,7 @@ export const TaskLists = () => {
           `http://localhost:4000/projects/${projectid}`
         );
         const data = await response.json();
-        const memberDetails = await Promise.all(
-          data.members.map((memberId) =>
-            fetch(`http://localhost:4000/api/user/${memberId}`).then((res) =>
-              res.json()
-            )
-          )
-        );
+        const memberDetails = await getMemberDetails(data.members);
         setUserDetails(memberDetails); // Set the fetched user details
       } catch (error) {
         console.error("Failed to fetch project details:", error);
