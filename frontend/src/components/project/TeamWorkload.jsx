@@ -23,7 +23,7 @@ export const TeamWorkload = () => {
         const tasksToProcess = Array.isArray(item.tasks) ? item.tasks : [item];
 
         tasksToProcess.forEach((task) => {
-          if (!task || !task.team) return;
+          if (!task?.team) return;
 
           const teamId =
             typeof task.team === "object" ? task.team._id : task.team;

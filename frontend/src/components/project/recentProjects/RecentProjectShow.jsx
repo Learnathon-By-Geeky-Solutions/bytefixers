@@ -29,26 +29,36 @@ export const RecentProjectShow = () => {
 
   // Get full member details for a project
   const getProjectMembers = (project) => {
-    if (!project || !project.members) return [];
-
-    return project.members.map((memberId) => {
-      // If member is already an object with details
-      if (typeof memberId === "object" && memberId !== null) {
-        return memberId;
-      }
-
-      // Otherwise, look up the member in our membersMap
-      const memberDetails = membersMap[memberId];
-      return (
-        memberDetails || {
-          _id: memberId,
-          name: "Unknown User",
-          avatar: null,
+    return (
+      project?.members?.map((memberId) => {
+        // If member is already an object with details
+        if (typeof memberId === "object" && memberId !== null) {
+          return memberId;
         }
-      );
-    });
-  };
 
+        // Otherwise, look up the member in our membersMap
+        return (
+          membersMap[memberId] || {
+            _id: memberId,
+            name: "Unknown User",
+            avatar: null,
+          }
+        );
+      }) || []
+    );
+  };
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "Active":
+        return "bg-green-100 text-green-800";
+      case "Completed":
+        return "bg-blue-100 text-blue-800";
+      case "On Hold":
+        return "bg-yellow-100 text-yellow-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
   return (
     <div className="bg-white rounded-lg shadow-lg p-4">
       {/* Reduced padding from p-6 to p-4 */}
@@ -112,17 +122,10 @@ export const RecentProjectShow = () => {
                         {project.name}
                       </Typography>
                       <span
-                        className={`text-xs px-2 py-0.5 rounded-full ${
-                          project.status === "Active"
-                            ? "bg-green-100 text-green-800"
-                            : project.status === "Completed"
-                            ? "bg-blue-100 text-blue-800"
-                            : project.status === "On Hold"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
+                        className={`text-xs px-2 py-0.5 rounded-full ${getStatusClass(
+                          project.status
+                        )}`}
                       >
-                        {/* Reduced padding */}
                         {project.status}
                       </span>
                     </div>
