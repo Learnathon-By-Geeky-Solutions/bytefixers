@@ -218,15 +218,6 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
                   onClick={toggleDropdownReporter}
                 >
                   <Avatar className="bg-blue-500">
-                    {/* {taskData.reporter
-                      ? userDetails
-                          .find((user) => user._id === taskData.reporter)
-                          ?.name.substring(0, 2)
-                          .toUpperCase()
-                      : userName
-                      ? userName.substring(0, 2).toUpperCase()
-                      : "No"}{" "} */}
-
                     {getInitials()}
                     {/* Use initials of the reporter or the logged-in user */}
                   </Avatar>

@@ -205,7 +205,10 @@ export const TaskDetails = () => {
     }
   };
   const getAssigneeId = () => {
-    if (!task || !task.assignee) return "";
+    // Check if assignee exists and is not null or undefined
+    if (!task?.assignee) return "";
+
+    // Return assignee _id if assignee is an object, else return assignee directly
     return typeof task.assignee === "object"
       ? task.assignee._id
       : task.assignee;
@@ -213,10 +216,11 @@ export const TaskDetails = () => {
 
   // Helper function to get reporter ID (handling object or string ID)
   const getReporterId = () => {
-    if (!task || !task.reporter) return "";
-    return typeof task.reporter === "object"
-      ? task.reporter._id
-      : task.reporter;
+    return task?.reporter
+      ? typeof task.reporter === "object"
+        ? task.reporter._id
+        : task.reporter
+      : "";
   };
 
   if (loading)
