@@ -2,6 +2,7 @@ const axios = require('axios');
 const Task = require('../models/Task');
 const Project = require('../models/Project');
 const Team = require('../models/Team');
+const mongoose = require('mongoose');
 
 class AIChatbotAssistant {
   constructor() {
@@ -16,23 +17,19 @@ class AIChatbotAssistant {
     try {
       // Normalize query
       const normalizedQuery = query.toLowerCase().trim();
-
-      console.log(normalizedQuery);
+      const sanitizedUserId = userId.toString();
       // Identify query type and route accordingly
       if (this.isTaskRelatedQuery(normalizedQuery)) {
-        return await this.handleTaskQuery(normalizedQuery, userId);
+        return await this.handleTaskQuery(normalizedQuery, sanitizedUserId);
       }
-      console.log(normalizedQuery);
       if (this.isProjectRelatedQuery(normalizedQuery)) {
-        return await this.handleProjectQuery(normalizedQuery, userId);
+        return await this.handleProjectQuery(normalizedQuery, sanitizedUserId);
       }
-      console.log(normalizedQuery);
       if (this.isTeamRelatedQuery(normalizedQuery)) {
-        return await this.handleTeamQuery(normalizedQuery, userId);
+        return await this.handleTeamQuery(normalizedQuery, sanitizedUserId);
       }
-      console.log(normalizedQuery);
       // Generic AI response for unclassified queries
-      return await this.generateGenericResponse(query, userId);
+      return await this.generateGenericResponse(normalizedQuery, sanitizedUserId);
     } catch (error) {
       console.error('Chatbot processing error:', error);
       return this.getFallbackResponse();
@@ -67,9 +64,10 @@ class AIChatbotAssistant {
   // Specialized Query Handlers
   async handleTaskQuery(query, userId) {
     try {
+      const sanitizedUserId = userId.toString();
       // Fetch user's tasks
       const pendingTasks = await Task.find({
-        assignee: userId,
+        assignee: sanitizedUserId,
         status: { $in: ['BACKLOG', 'TO DO', 'IN PROGRESS', 'REVIEW'] }
       })
       .populate('reporter')
@@ -77,9 +75,15 @@ class AIChatbotAssistant {
 
       const summary = this.summarizeTasks(pendingTasks);
       // Prepare context for AI
-      const taskDetails = summary.tasks.map(task => 
-        `- ${task.title} (${task.priority} Priority, ${task.status} Status)${task.dueDate ? ` - Due: ${task.dueDate.toLocaleDateString()}` : ''}`
-      ).join('\n');
+      const taskDetails = summary.tasks.map(task => {
+        let baseDetails = `- ${task.title} (${task.priority} Priority, ${task.status} Status)`;
+        
+        if (task.dueDate) {
+          baseDetails += ` - Due: ${task.dueDate.toLocaleDateString()}`;
+        }
+        
+        return baseDetails;
+      }).join('\n');
 
       // Generate AI-powered response
       const prompt = `${query}
@@ -148,7 +152,8 @@ class AIChatbotAssistant {
 
   async handleProjectQuery(query, userId) {
     try {
-      const projects = await Project.find({ members: userId }).populate('task');;
+      const sanitizedUserId = userId.toString();
+      const projects = await Project.find({ members: sanitizedUserId }).populate('task');;
       // Prepare project context
       const projectContext = projects.map(project => 
         `Project: ${project.name}
@@ -178,44 +183,31 @@ class AIChatbotAssistant {
 
   async handleTeamQuery(query, userId) {
     try {
-      // Find teams user is part of
-      const teams = await Team.find({ 
-        members: userId 
-      }).populate({
-        path: 'members',
-        populate: {
-          path: 'tasks',
-          match: { 
-            status: { $in: ['IN PROGRESS', 'REVIEW'] } 
-          }
-        }
-      });
+      const sanitizedUserId = userId.toString();
+  
+      // Just fetch the teams where the user is a member
+      const teams = await Team.find({
+        teamMember: sanitizedUserId
+      }).populate('teamMember').populate('leader');
+  
+      if (!teams || teams.length === 0) {
+        return "You're not currently part of any teams.";
+      }
+  
+      // Send entire teams data to geminiRequest
+      const prompt = `The user asked: "${query}"
+      Here is the user's team data: ${JSON.stringify(teams, null, 2)}
 
-      // Prepare team context
-      const teamContext = teams.map(team => 
-        `Team: ${team.name}
-        - Total Members: ${team.members.length}
-        - Active Tasks: ${team.members.reduce((sum, member) => sum + (member.tasks || []).length, 0)}`
-      ).join('\n\n');
-
-      // Generate AI-powered response
-      const prompt = `Context: User's Team Information
-      ${teamContext}
-
-      User Query: ${query}
-
-      Provide an insightful response addressing:
-      1. Team collaboration
-      2. Workload distribution
-      3. Performance insights
-      answer these briefly and break down the information into a list of points.`;
-
+      Provide an insightful response addressing Team collaboration
+      Give a brief and structured answer based on the query.`;
+  
       return await this.geminiRequest(prompt);
     } catch (error) {
       console.error('Team query handling error:', error);
-      return "I couldn't retrieve specific team details. Could you provide more context?";
+      return "Couldn't retrieve team data. Please try again.";
     }
   }
+  
 
   // Generic AI Response for Unclassified Queries
   async generateGenericResponse(query, userId) {
@@ -261,12 +253,9 @@ class AIChatbotAssistant {
       console.log('Response status:', response.status);
       
       // Extract text from the first candidate's content parts
-      if (response.data && 
-          response.data.candidates && 
-          response.data.candidates[0] && 
-          response.data.candidates[0].content && 
-          response.data.candidates[0].content.parts) {
-        return response.data.candidates[0].content.parts[0].text.trim();
+      const responseText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (responseText) {
+        return responseText.trim();
       }
       
       console.log('No valid response content found');

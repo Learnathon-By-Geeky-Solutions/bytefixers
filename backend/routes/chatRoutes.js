@@ -4,7 +4,7 @@ const AIChatbotAssistant = require('../services/aiChatbotService');
 const Conversation = require('../models/Conversation');
 
 // Chatbot Conversation Route
-router.post('/chat', async (req, res) => { // Changed to POST since we're sending data in body
+router.post('/chat', async (req, res) => {
   try {
     // Extract query and user ID from request
     const { userId, query } = req.body;
@@ -27,8 +27,11 @@ router.post('/chat', async (req, res) => { // Changed to POST since we're sendin
     // Process user query
     const aiResponse = await AIChatbotAssistant.processUserQuery(query, userId);
 
+    // Use a sanitized parameter for database operations
+    const sanitizedUserId = userId.toString();
+      
     // Find existing conversation or create new one - only one conversation per user
-    let conversation = await Conversation.findOne({ userId });
+    let conversation = await Conversation.findOne({ userId: sanitizedUserId });
     
     if (!conversation) {
       // Create a new conversation if one doesn't exist
@@ -83,8 +86,11 @@ router.post('/chat-history', async (req, res) => {
       });
     }
 
-    // Find the single conversation for this user
-    const conversation = await Conversation.findOne({ userId });
+    // Use a sanitized parameter for database operations
+    const sanitizedUserId = userId.toString();
+      
+    // Find existing conversation or create new one - only one conversation per user
+    let conversation = await Conversation.findOne({ userId: sanitizedUserId });
     
     if (!conversation) {
       return res.status(200).json({
@@ -121,7 +127,11 @@ router.delete('/delete-chat-history', async (req, res) => {
       });
     }
 
-    const conversation = await Conversation.findOne({ userId });
+    // Use a sanitized parameter for database operations
+    const sanitizedUserId = userId.toString();
+      
+    // Find existing conversation or create new one - only one conversation per user
+    let conversation = await Conversation.findOne({ userId: sanitizedUserId });
     
     if (!conversation) {
       return res.status(200).json({

@@ -9,7 +9,6 @@ export const Chat = () => {
   const messagesEndRef = useRef(null);
 
   const currentUser = authServices.getAuthUser(); // get the logged-in user
-  const userId = currentUser?._id; // safely access id
 
   useEffect(() => {
     fetchChatHistory();
@@ -136,7 +135,7 @@ export const Chat = () => {
         ) : (
           messages.map((message, index) => (
             <div
-              key={index}
+              key={message.id}
               className={`mb-3 ${message.role === "user" ? "text-right" : "text-left"}`}
             >
               <div
