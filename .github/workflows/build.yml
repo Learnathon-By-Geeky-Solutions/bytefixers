@@ -23,7 +23,7 @@ jobs:
         run: cd frontend && npm install
 
       - name: Test and coverage
-        run: npm jest --coverage
+        run: npm test
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v4
         env:
