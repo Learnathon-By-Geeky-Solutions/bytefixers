@@ -378,7 +378,7 @@ export const SubtaskList = ({
     }
   };
 
-  // Update the object comparison in the handleUpdateSubtask function
+  // // Update the object comparison in the handleUpdateSubtask function
   const handleUpdateSubtask = async (subtaskId, updatedData) => {
     try {
       // Find the original subtask
@@ -388,165 +388,181 @@ export const SubtaskList = ({
       }
 
       // Create update object with only changed fields
-      const changedFields = {
-        userId: currentUser._id, // Always include userId for activity tracking
-      };
+      let changedFields = { userId: currentUser._id };
 
-      // Special handling for status changes - the most common update
-      if (updatedData.status && updatedData.status !== originalSubtask.status) {
-        changedFields.status = updatedData.status;
-
-        // Add completedAt date when marking as DONE
-        if (
-          updatedData.status === "DONE" &&
-          originalSubtask.status !== "DONE"
-        ) {
-          changedFields.completedAt = new Date().toISOString();
-        }
-        // Remove completedAt when unmarking as DONE
-        else if (
-          updatedData.status !== "DONE" &&
-          originalSubtask.status === "DONE"
-        ) {
-          changedFields.completedAt = null;
-        }
+      // Handle status change
+      if (updatedData.status) {
+        handleStatusChange(originalSubtask, updatedData, changedFields);
       }
 
-      // Compare each field and only include those that changed
+      // Handle changes to each field
       Object.keys(updatedData).forEach((key) => {
-        // Skip status as we already handled it above
-        if (key === "status") return;
-
-        // Skip userId as we always include it
-        if (key === "userId") return;
-
-        // Handle special object fields like assignee and reporter
-        if (key === "assignee" || key === "reporter") {
-          const originalValue = originalSubtask[key];
-          const newValue = updatedData[key];
-
-          // Handle null/undefined values
-          if (
-            (!originalValue || originalValue === "") &&
-            (!newValue || newValue === "")
-          ) {
-            return;
-          }
-
-          // Special case: If explicitly setting to empty (unassigned)
-          if (
-            (!newValue || newValue === "") &&
-            originalValue &&
-            originalValue !== ""
-          ) {
-            // This is changing from a value to empty/null - clearly mark as null for the backend
-            changedFields[key] = null;
-            return;
-          }
-
-          // Get IDs for comparison
-          let originalId = null;
-          if (originalValue) {
-            originalId =
-              typeof originalValue === "object" && originalValue._id
-                ? originalValue._id.toString()
-                : originalValue
-                ? originalValue.toString()
-                : null;
-          }
-
-          let newId = null;
-          if (newValue) {
-            newId =
-              typeof newValue === "object" && newValue._id
-                ? newValue._id.toString()
-                : newValue
-                ? newValue.toString()
-                : null;
-          }
-
-          // Only add if ID actually changed
-          if (originalId !== newId) {
-            changedFields[key] =
-              newValue && typeof newValue === "object"
-                ? newValue._id
-                : newValue;
-          }
-        }
-        // Handle date fields
-        else if (key === "dueDate" || key === "completedAt") {
-          // Normalize dates to ISO strings for comparison
-          const normalizeDate = (date) => {
-            if (!date) return "";
-            try {
-              return new Date(date).toISOString().split("T")[0];
-            } catch (e) {
-              console.error("Error formatting date:", e);
-              return "";
-            }
-          };
-
-          const originalDate = normalizeDate(originalSubtask[key]);
-          const newDate = normalizeDate(updatedData[key]);
-
-          if (originalDate !== newDate) {
-            changedFields[key] = updatedData[key];
-          }
-        }
-        // Handle regular fields (strings, numbers, etc.)
-        else if (
-          key !== "completedAt" &&
-          originalSubtask[key] !== updatedData[key]
-        ) {
-          changedFields[key] = updatedData[key];
+        if (shouldSkipField(key)) return;
+        if (isAssigneeOrReporter(key)) {
+          handleAssigneeOrReporterChange(
+            originalSubtask,
+            updatedData,
+            key,
+            changedFields
+          );
+        } else if (isDateField(key)) {
+          handleDateFieldChange(
+            originalSubtask,
+            updatedData,
+            key,
+            changedFields
+          );
+        } else {
+          handleRegularFieldChange(
+            originalSubtask,
+            updatedData,
+            key,
+            changedFields
+          );
         }
       });
 
-      // Optimistically update the UI with all provided changes
+      // Optimistically update UI
       const optimisticSubtasks = localSubtasks.map((st) =>
         st._id === subtaskId ? { ...st, ...updatedData } : st
       );
       setLocalSubtasks(optimisticSubtasks);
 
-      // Only make API call if there are actual changes beyond userId
+      // Send API request only if changes exist (excluding userId)
       if (Object.keys(changedFields).length > 1) {
-        // Using async/await for better error handling
-        const response = await fetch(
-          `http://localhost:4000/tasks/subtask/${subtaskId}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(changedFields),
-          }
-        );
-
-        // Check for error response
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Failed to update subtask");
-        }
-
-        const updatedSubtask = await response.json();
-
-        // Update with server response
-        const finalSubtasks = localSubtasks.map((st) =>
-          st._id === subtaskId ? updatedSubtask : st
-        );
-        setLocalSubtasks(finalSubtasks);
-        onSubtasksChanged(finalSubtasks);
+        await updateSubtaskOnServer(subtaskId, changedFields);
       } else {
-        // No changes to save on server
         onSubtasksChanged(optimisticSubtasks);
       }
     } catch (error) {
-      // Revert optimistic update on error
+      // Handle error and revert optimistic update
       setLocalSubtasks(subtasks);
       console.error("Error updating subtask:", error);
       alert(error.message);
       throw error;
     }
+  };
+
+  // Helper Functions
+
+  // Skip certain fields from processing
+  const shouldSkipField = (key) => key === "status" || key === "userId";
+
+  // Handle status changes
+  const handleStatusChange = (originalSubtask, updatedData, changedFields) => {
+    if (updatedData.status !== originalSubtask.status) {
+      changedFields.status = updatedData.status;
+      if (updatedData.status === "DONE" && originalSubtask.status !== "DONE") {
+        changedFields.completedAt = new Date().toISOString();
+      } else if (
+        updatedData.status !== "DONE" &&
+        originalSubtask.status === "DONE"
+      ) {
+        changedFields.completedAt = null;
+      }
+    }
+  };
+
+  // Check if field is assignee or reporter
+  const isAssigneeOrReporter = (key) =>
+    key === "assignee" || key === "reporter";
+
+  // Handle changes for assignee or reporter fields
+  const handleAssigneeOrReporterChange = (
+    originalSubtask,
+    updatedData,
+    key,
+    changedFields
+  ) => {
+    const originalValue = originalSubtask[key];
+    const newValue = updatedData[key];
+
+    if (!originalValue && !newValue) return;
+
+    if ((!newValue || newValue === "") && originalValue) {
+      changedFields[key] = null;
+      return;
+    }
+
+    const originalId = getIdFromValue(originalValue);
+    const newId = getIdFromValue(newValue);
+
+    if (originalId !== newId) {
+      changedFields[key] = newId || newValue;
+    }
+  };
+
+  // Get ID from value (whether it's an object or a primitive)
+  const getIdFromValue = (value) => {
+    if (!value) return null;
+    return typeof value === "object" && value._id
+      ? value._id.toString()
+      : value.toString();
+  };
+
+  // Check if field is a date field
+  const isDateField = (key) => key === "dueDate" || key === "completedAt";
+
+  // Handle changes for date fields
+  const handleDateFieldChange = (
+    originalSubtask,
+    updatedData,
+    key,
+    changedFields
+  ) => {
+    const originalDate = normalizeDate(originalSubtask[key]);
+    const newDate = normalizeDate(updatedData[key]);
+
+    if (originalDate !== newDate) {
+      changedFields[key] = updatedData[key];
+    }
+  };
+
+  // Normalize date for comparison
+  const normalizeDate = (date) => {
+    if (!date) return "";
+    try {
+      return new Date(date).toISOString().split("T")[0];
+    } catch (e) {
+      console.error("Error formatting date:", e);
+      return "";
+    }
+  };
+
+  // Handle changes for regular fields (strings, numbers, etc.)
+  const handleRegularFieldChange = (
+    originalSubtask,
+    updatedData,
+    key,
+    changedFields
+  ) => {
+    if (originalSubtask[key] !== updatedData[key]) {
+      changedFields[key] = updatedData[key];
+    }
+  };
+
+  // Update subtask on the server
+  const updateSubtaskOnServer = async (subtaskId, changedFields) => {
+    const response = await fetch(
+      `http://localhost:4000/tasks/subtask/${subtaskId}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(changedFields),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to update subtask");
+    }
+
+    const updatedSubtask = await response.json();
+    const finalSubtasks = localSubtasks.map((st) =>
+      st._id === subtaskId ? updatedSubtask : st
+    );
+    setLocalSubtasks(finalSubtasks);
+    onSubtasksChanged(finalSubtasks);
   };
 
   const handleDeleteSubtask = async (subtaskId) => {
