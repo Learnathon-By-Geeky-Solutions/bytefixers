@@ -19,7 +19,7 @@ export const RecentProjectShow = () => {
     const map = {};
     if (members && Array.isArray(members)) {
       members.forEach((member) => {
-        if (member && member._id) {
+        if (member?._id) {
           map[member._id] = member;
         }
       });
