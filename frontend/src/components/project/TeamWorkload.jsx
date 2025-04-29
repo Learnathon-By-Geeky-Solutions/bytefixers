@@ -8,6 +8,17 @@ export const TeamWorkload = () => {
   const [selectedTeam, setSelectedTeam] = useState("all");
   const [availableTeams, setAvailableTeams] = useState([]);
   const currentUser = authServices.getAuthUser();
+  const findUserById = (members, memberId) => {
+    return members.find((u) => u._id === memberId);
+  };
+
+  // Function to process members if they exist and are in an array
+  const processMembers = (members, memberId) => {
+    if (members && Array.isArray(members)) {
+      return findUserById(members, memberId);
+    }
+    return null;
+  };
   useEffect(() => {
     if (loading || !allTasks) {
       return;
@@ -97,14 +108,11 @@ export const TeamWorkload = () => {
             let memberAvatar = null;
 
             // Try to find user details if available
-            if (members && Array.isArray(members)) {
-              const user = members.find((u) => u._id === memberId);
-
-              if (user) {
-                memberName = user.name || user.username || "Unknown User";
-                memberEmail = user.email || "";
-                memberAvatar = user.avatar || null;
-              }
+            const user = processMembers(members, memberId);
+            if (user) {
+              memberName = user.name || user.username || "Unknown User";
+              memberEmail = user.email || "";
+              memberAvatar = user.avatar || null;
             }
 
             memberWorkload.set(memberId, {
