@@ -2,6 +2,36 @@ import React, { useEffect, useState } from "react";
 import { Avatar } from "../../../common/icons";
 import { authServices } from "../../../auth";
 import PropTypes from "prop-types";
+const fetchMemberDetails = async (memberId) => {
+  const response = await fetch(`http://localhost:4000/api/user/${memberId}`);
+  const data = await response.json();
+  return data;
+};
+
+const fetchProjectDetails = async (
+  projectid,
+  setProject,
+  setMembers,
+  setUserDetails,
+  setError
+) => {
+  try {
+    const response = await fetch(`http://localhost:4000/projects/${projectid}`);
+    const data = await response.json();
+
+    setProject(data);
+    setMembers(data.members); // Set project members
+
+    const memberDetails = await Promise.all(
+      data.members.map((memberId) => fetchMemberDetails(memberId))
+    );
+
+    setUserDetails(memberDetails); // Set the fetched user details
+  } catch (error) {
+    console.error("Failed to fetch project details:", error);
+    setError("Error fetching project data");
+  }
+};
 export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
   const [taskData, setTaskData] = useState({
     title: "",
@@ -31,31 +61,42 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
       return userName ? userName.substring(0, 2).toUpperCase() : "No";
     }
   };
-  useEffect(() => {
-    const fetchProjectDetails = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:4000/projects/${projectid}`
-        );
-        const data = await response.json();
-        setProject(data);
-        setMembers(data.members); // Set project members
-        const memberDetails = await Promise.all(
-          data.members.map((memberId) =>
-            fetch(`http://localhost:4000/api/user/${memberId}`).then((res) =>
-              res.json()
-            )
-          )
-        );
-        setUserDetails(memberDetails); // Set the fetched user details
-      } catch (error) {
-        console.error("Failed to fetch project details:", error);
-        setError("Error fetching project data");
-      }
-    };
+  // useEffect(() => {
+  //   const fetchProjectDetails = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `http://localhost:4000/projects/${projectid}`
+  //       );
+  //       const data = await response.json();
+  //       setProject(data);
+  //       setMembers(data.members); // Set project members
+  //       const memberDetails = await Promise.all(
+  //         data.members.map((memberId) =>
+  //           fetch(`http://localhost:4000/api/user/${memberId}`).then((res) =>
+  //             res.json()
+  //           )
+  //         )
+  //       );
+  //       setUserDetails(memberDetails); // Set the fetched user details
+  //     } catch (error) {
+  //       console.error("Failed to fetch project details:", error);
+  //       setError("Error fetching project data");
+  //     }
+  //   };
 
+  //   if (isOpen) {
+  //     fetchProjectDetails();
+  //   }
+  // }, [projectid, isOpen]);
+  useEffect(() => {
     if (isOpen) {
-      fetchProjectDetails();
+      fetchProjectDetails(
+        projectid,
+        setProject,
+        setMembers,
+        setUserDetails,
+        setError
+      );
     }
   }, [projectid, isOpen]);
   // Handle Input Change
