@@ -11,6 +11,7 @@ import { TaskDetails } from "../components/kanbanboard/task/TaskDetails";
 import { FilesPage } from "../components/file/FilesPage";
 import { ProjectCalendar } from "../components/calendar/ProjectCalendar";
 import { UserProfile } from "../components/auth/UserProfile";
+import { Chat } from "../components/aiAssistant/chat";
 import propTypes from "prop-types";
 const KanbanLayout = () => {
   return (
@@ -67,6 +68,10 @@ export const router = createBrowserRouter([
       {
         path: "files",
         element: <FilesPage />,
+      },
+      {
+        path: "ai-assistant",
+        element: <Chat />,
       },
       {
         path: "project/:projectId/calendar",

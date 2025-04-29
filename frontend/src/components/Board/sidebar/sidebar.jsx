@@ -44,6 +44,11 @@ const Sidebar = () => {
       route: "team-members",
     },
     {
+      text: "Ai Assistant",
+      icon: <PeopleIcon sx={{ fontSize: "1rem", color: amber[50] }} />,
+      route: "ai-assistant",
+    },
+    {
       text: "My Profile",
       icon: <PersonIcon sx={{ fontSize: "1rem", color: amber[50] }} />,
       route: "profile",

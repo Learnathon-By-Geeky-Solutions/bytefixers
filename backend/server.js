@@ -35,7 +35,8 @@ const teamRoutes = require("./routes/teamRoutes");
 const fileRoutes = require("./routes/fileRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const calendarRoutes = require("./routes/calendarRoutes");
-
+const chatRoutes = require("./routes/chatRoutes");
+app.use("/api/chat", chatRoutes);
 app.use("/api/user", userRoutes);
 app.use("/projects", projectRoutes);
 app.use("/tasks", taskRoutes);
