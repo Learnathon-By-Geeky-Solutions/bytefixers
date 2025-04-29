@@ -68,7 +68,7 @@ export const PersonalTaskStats = () => {
 
   const isUserInProjectMembers = (task, currentUser, projects) => {
     const project = projects.find((p) => p._id === task.projectInfo?._id);
-    if (!project || !project.members) return false;
+    if (!project?.members) return false;
 
     return project.members.some(
       (m) =>
