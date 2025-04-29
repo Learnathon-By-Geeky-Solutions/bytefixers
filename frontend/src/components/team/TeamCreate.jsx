@@ -2,6 +2,43 @@ import React, { useEffect, useState } from "react";
 import { TeamCreateModal } from "./TeamCreateModal";
 import { TeamList } from "./TeamList";
 import { authServices } from "../../auth";
+const fetchMemberDetails = async (memberId) => {
+  const response = await fetch(`http://localhost:4000/api/user/${memberId}`);
+  const data = await response.json();
+  return data;
+};
+
+// Fetch projects and associated members
+const fetchProjectsAndMembers = async (
+  userId,
+  setProjects,
+  setMembers,
+  setLeader
+) => {
+  try {
+    const response = await fetch(
+      `http://localhost:4000/projects/user/${userId}`
+    );
+    const data = await response.json();
+    setProjects(data);
+
+    // Extract members from all projects where the user is a member
+    const uniqueMembers = new Set();
+    data.forEach((project) => {
+      project.members.forEach((memberId) => uniqueMembers.add(memberId));
+    });
+
+    // Fetch details for unique members
+    const membersData = await Promise.all(
+      [...uniqueMembers].map((memberId) => fetchMemberDetails(memberId))
+    );
+
+    setMembers(membersData);
+    setLeader(userId); // Default leader as current user
+  } catch (error) {
+    console.error("Error fetching projects and members:", error);
+  }
+};
 export const TeamCreate = () => {
   const [projects, setProjects] = useState([]);
   const [leader, setLeader] = useState(null);
@@ -18,40 +55,45 @@ export const TeamCreate = () => {
   const handleNewTeam = (newTeam) => {
     setTeams((prevTeams) => [...prevTeams, newTeam]); // Append new team to list
   };
+  // useEffect(() => {
+  //   if (!userId) return;
+
+  //   const fetchProjectsAndMembers = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `http://localhost:4000/projects/user/${userId}`
+  //       );
+  //       const data = await response.json();
+  //       setProjects(data);
+
+  //       // Extract members from all projects where the user is a member
+  //       const uniqueMembers = new Set();
+  //       data.forEach((project) => {
+  //         project.members.forEach((memberId) => uniqueMembers.add(memberId));
+  //       });
+
+  //       // Fetch details for unique members
+  //       const membersData = await Promise.all(
+  //         [...uniqueMembers].map((memberId) =>
+  //           fetch(`http://localhost:4000/api/user/${memberId}`).then((res) =>
+  //             res.json()
+  //           )
+  //         )
+  //       );
+
+  //       setMembers(membersData);
+  //       setLeader(userId); // Default leader as current user
+  //     } catch (error) {
+  //       console.error("Error fetching projects and members:", error);
+  //     }
+  //   };
+
+  //   fetchProjectsAndMembers();
+  // }, [userId]);
   useEffect(() => {
     if (!userId) return;
 
-    const fetchProjectsAndMembers = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:4000/projects/user/${userId}`
-        );
-        const data = await response.json();
-        setProjects(data);
-
-        // Extract members from all projects where the user is a member
-        const uniqueMembers = new Set();
-        data.forEach((project) => {
-          project.members.forEach((memberId) => uniqueMembers.add(memberId));
-        });
-
-        // Fetch details for unique members
-        const membersData = await Promise.all(
-          [...uniqueMembers].map((memberId) =>
-            fetch(`http://localhost:4000/api/user/${memberId}`).then((res) =>
-              res.json()
-            )
-          )
-        );
-
-        setMembers(membersData);
-        setLeader(userId); // Default leader as current user
-      } catch (error) {
-        console.error("Error fetching projects and members:", error);
-      }
-    };
-
-    fetchProjectsAndMembers();
+    fetchProjectsAndMembers(userId, setProjects, setMembers, setLeader);
   }, [userId]);
   useEffect(() => {
     if (!userId) return;
