@@ -19,6 +19,18 @@ export const TeamWorkload = () => {
     }
     return null;
   };
+  // Function to add tasks to a member's workload
+  const addTaskToWorkload = (memberWorkload, memberId, task) => {
+    memberWorkload.get(memberId).tasks.push(task);
+  };
+
+  // Function to process each task and add it to the member's workload
+  const processTasksForMember = (team, memberWorkload, memberId) => {
+    team.tasks.forEach((task) => {
+      addTaskToWorkload(memberWorkload, memberId, task);
+    });
+  };
+
   useEffect(() => {
     if (loading || !allTasks) {
       return;
@@ -129,9 +141,7 @@ export const TeamWorkload = () => {
           memberWorkload.get(memberId).teams.add(team.name);
 
           // Add all team tasks to this member
-          team.tasks.forEach((task) => {
-            memberWorkload.get(memberId).tasks.push(task);
-          });
+          processTasksForMember(team, memberWorkload, memberId);
         });
       });
 
