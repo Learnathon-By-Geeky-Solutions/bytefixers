@@ -41,7 +41,7 @@ A modern, full-featured project management tool for teams to collaborate, track 
 - **Ekramul Haque Amin** -> **(Amin-2005022)**
 - **Tamim Hasan Saad** -> **(Tamim-saad)**
 
-**Mentor:** moshiuzzaman
+**Mentor: Moshiuzzaman Shozon Raj**
 
 ---
 
