@@ -1,0 +1,1 @@
+* 2jsXêhr/frontend/src/components/calendar/EventModal.jsx

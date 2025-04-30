@@ -1,0 +1,1 @@
+ 2jsXhr#frontend/src/common/config/index.js

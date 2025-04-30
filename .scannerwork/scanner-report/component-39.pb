@@ -1,0 +1,1 @@
+' 2jsXvhr1frontend/src/components/Board/sidebar/sidebar.jsx

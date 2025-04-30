@@ -1,0 +1,1 @@
+8 2jsXühr8frontend/src/components/kanbanboard/task/TaskDetails.jsx

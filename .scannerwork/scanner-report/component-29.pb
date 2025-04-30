@@ -1,0 +1,1 @@
+ 2jsX»hr,frontend/src/components/aiAssistant/chat.jsx
