@@ -1,1 +1,0 @@
-) 2jsXAhr3frontend/src/components/calendar/EventComponent.jsx

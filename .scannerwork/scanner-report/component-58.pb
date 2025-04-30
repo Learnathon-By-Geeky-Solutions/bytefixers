@@ -1,1 +1,0 @@
-: 2jsXhr6frontend/src/components/kanbanboard/taskLists/index.js

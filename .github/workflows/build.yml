@@ -28,11 +28,18 @@ jobs:
         run: npm run test:security
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  
+      - name: Install Sonar Scanner
+        run: npm install -g sonar-scanner
+
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5.1.0
-        with:
-          sonar-projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
-          organization: ${{ secrets.SONAR_ORG_KEY }}
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=Learnathon-By-Geeky-Solutions_bytefixers \
+            -Dsonar.organization=learnathon-by-geeky-solutions \
+            -Dsonar.sources=backend,frontend \
+            -Dsonar.tests=backend/tests \
+            -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

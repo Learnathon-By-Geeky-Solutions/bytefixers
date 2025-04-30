@@ -1,1 +1,0 @@
-# 2jsXæhr+frontend/src/components/auth/SignupForm.jsx

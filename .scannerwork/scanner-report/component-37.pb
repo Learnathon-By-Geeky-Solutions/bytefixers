@@ -1,1 +1,0 @@
-% 2jsXÆhr/frontend/src/components/Board/navbar/navbar.jsx

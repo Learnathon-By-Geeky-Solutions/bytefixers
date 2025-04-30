@@ -1,1 +1,0 @@
-X 2jsXhrfrontend/src/utils/index.js

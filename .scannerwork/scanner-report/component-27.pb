@@ -1,1 +1,0 @@
- 2jsXhr(frontend/src/common/inviteModal/index.js

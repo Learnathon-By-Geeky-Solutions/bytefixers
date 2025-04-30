@@ -1,1 +1,0 @@
-L 2jsX¿hr)frontend/src/components/team/TeamList.jsx
