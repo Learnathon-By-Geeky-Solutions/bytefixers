@@ -138,12 +138,6 @@ See [API Documentation](docs/documentation.md#api-documentation) for full detail
 
 ---
 
-## 📜 License
-
-MIT License
-
----
-
 ## 📚 Documentation & Resources
 
 - [UI Figma Design](https://www.figma.com/design/Up4Tppn2Zn5hMDaaXqWHox/Untitled?node-id=0-1&m=dev&t=MPJc5E4z9Nrk1n3Z-1/)
