@@ -23,7 +23,7 @@ Add your project description here.
 4. Create pull requests for review
 
 ## Resources
-- [Design Figma](https://www.figma.com/design/Up4Tppn2Zn5hMDaaXqWHox/Untitled?node-id=0-1&m=dev&t=MPJc5E4z9Nrk1n3Z-1/)
+- [UI Figma](https://www.figma.com/design/Up4Tppn2Zn5hMDaaXqWHox/Untitled?node-id=0-1&m=dev&t=MPJc5E4z9Nrk1n3Z-1/)
 - [Project Documentation](docs/)
 - [Development Setup](docs/setup.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
