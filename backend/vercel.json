@@ -1,4 +1,5 @@
 {
+  "installCommand": "npm install",
   "version": 2,
   "builds": [
     {
@@ -9,7 +10,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/server.js"
+      "dest": "/"
     }
   ]
 }
