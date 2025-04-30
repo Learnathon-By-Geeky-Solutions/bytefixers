@@ -37,9 +37,9 @@ A modern, full-featured project management tool for teams to collaborate, track 
 
 ## 👥 Team
 
-- **Habiba Rafique**->(HABIBARAFIQ)** (Team Leader)
-- **Ekramul Haque Amin(Amin-2005022)**
-- **Tamim Hasan Saad(Tamim-saad)**
+- **Habiba Rafique** -> **(HABIBARAFIQ)** (Team Leader)
+- **Ekramul Haque Amin** -> **(Amin-2005022)**
+- **Tamim Hasan Saad** -> **(Tamim-saad)**
 
 **Mentor:** moshiuzzaman
 
@@ -108,16 +108,6 @@ npm run dev
 
 ---
 
-## 📚 Documentation & Resources
-
-- [UI Figma Design](https://www.figma.com/design/Up4Tppn2Zn5hMDaaXqWHox/Untitled?node-id=0-1&m=dev&t=MPJc5E4z9Nrk1n3Z-1/)
-- [Project Documentation](docs/documentation.md)
-- [Development Setup Guide](docs/setup.md)
-- [Workflow Board](workflow.md)
-- [Tech Stack Overview](teck_stack.pdf)
-
----
-
 ## 📡 API Overview
 
 - User: `/api/user/*`
@@ -148,21 +138,18 @@ See [API Documentation](docs/documentation.md#api-documentation) for full detail
 
 ---
 
-## 🧰 Troubleshooting
-
-- See [docs/setup.md#troubleshooting](docs/setup.md#troubleshooting)
-
----
-
 ## 📜 License
 
 MIT License
 
 ---
 
+## 📚 Documentation & Resources
 
-## Resources
-- [UI Figma](https://www.figma.com/design/Up4Tppn2Zn5hMDaaXqWHox/Untitled?node-id=0-1&m=dev&t=MPJc5E4z9Nrk1n3Z-1/)
+- [UI Figma Design](https://www.figma.com/design/Up4Tppn2Zn5hMDaaXqWHox/Untitled?node-id=0-1&m=dev&t=MPJc5E4z9Nrk1n3Z-1/)
 - [Project Documentation](docs/documentation.md)
-- [Development Setup](docs/setup.md)
-- [Contributing Guidelines](CONTRIBUTING.md)
+- [Development Setup Guide](docs/setup.md)
+- [Workflow Board](workflow.md)
+- [Tech Stack Overview](teck_stack.pdf)
+
+---
