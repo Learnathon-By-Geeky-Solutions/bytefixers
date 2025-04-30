@@ -6,6 +6,8 @@ const projectRoutes = require('../routes/projectRoutes');
 const Project = require('../models/Project');
 const User = require('../models/user');
 const Task = require('../models/Task'); // Assuming you have a Task model
+require("dotenv").config();
+
 
 describe('Project Routes Tests', () => {
   let app;
@@ -34,11 +36,10 @@ describe('Project Routes Tests', () => {
       await Task.deleteMany({});
     }
 
-    const randomPassword = Math.random().toString(36).slice(-8) + 'Aa1!';
     // Create test user
     testUser = new User({
       email: 'test@example.com',
-      password: randomPassword ,
+      password: process.env.TEST_PASSWORD ,
       name: 'Test User'
     });
     await testUser.save();
@@ -265,10 +266,9 @@ describe('Project Routes Tests', () => {
     });
 
     it('should return empty array for user with no projects', async () => {
-      const randomPassword = Math.random().toString(36).slice(-8) + 'Aa1!';
       const newUser = new User({
         email: 'noproject@example.com',
-        password: randomPassword,
+        password: process.env.TEST_PASSWORD,
         name: 'No Project User'
       });
       await newUser.save();
@@ -293,7 +293,7 @@ describe('Project Routes Tests', () => {
     it('should add a user to a project', async () => {
       const newUser = new User({
         email: 'newuser@example.com',
-        password: 'password123',
+        password: process.env.TEST_PASSWORD,
         name: 'New User'
       });
       await newUser.save();
