@@ -234,9 +234,13 @@ describe('File Routes Tests', () => {
       const helperFnMatch = functionStr.match(/function formatFileSize\(bytes\) {[\s\S]+?}/);
       
       if (helperFnMatch) {
-        // Create a new function from the extracted code
-        // This is for demonstration - in real code you might want to export the helper functions
-        eval(`formatFileSize = ${helperFnMatch[0]}`);
+        // Create a new function from the extracted code using Function constructor
+        // This is safer than eval but still allows dynamic function creation
+        const fnBody = helperFnMatch[0]
+          .replace(/function formatFileSize\(bytes\) {/, '')
+          .replace(/}$/, '');
+        
+        formatFileSize = new Function('bytes', fnBody);
       }
     });
 

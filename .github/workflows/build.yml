@@ -24,7 +24,11 @@ jobs:
 
       - name: Test and coverage
         run: npm test
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v4
+      - name: Run Snyk security test
+        run: npm run test:security
         env:
-          SONAR_TOKEN: ${{ secrets. SONARCLOUD_TOKEN }}
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v5.1.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

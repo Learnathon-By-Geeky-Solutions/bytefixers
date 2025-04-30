@@ -9,7 +9,6 @@ import {
 } from "../../common/icons"; // Ensure these imports are correct
 import { authServices } from "../../auth"; // Import authServices
 import login_signupPicture from "../../assets/images/login_signupPicture.jpg";
-import google from "../../assets/images/google.PNG";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 export const SignupForm = () => {
@@ -126,6 +125,7 @@ export const SignupForm = () => {
             Get Started Now
           </h2>
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+          {success && <p className="text-green-500 text-sm mb-4">{success}</p>}
 
           <form onSubmit={handleSignup} className="space-y-4">
             <TextField

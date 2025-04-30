@@ -12,7 +12,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 // Handle Google Authentication
 router.post("/google-login", async (req, res) => {
   try {
-    const { token, email, name, picture } = req.body;
+    const { token } = req.body;
 
     // Verify the Google token
     const ticket = await client.verifyIdToken({
