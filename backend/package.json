@@ -46,8 +46,7 @@
     "coverageReporters": [
       "text",
       "lcov"
-    ],
-    "globalSetup": "./tests/setup.js"
+    ]
 
   }
 
