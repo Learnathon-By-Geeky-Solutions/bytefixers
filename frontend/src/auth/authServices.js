@@ -36,7 +36,23 @@ export const login = async ({ type, email, password, refreshToken }) => {
   saveAuthUser(authUser);
   return authUser;
 };
+export const loginWithGoogle = async (googlePayload) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:4000/auth/google-login",
+      googlePayload
+    );
 
+    // Store the token and user data
+    localStorage.setItem("token", response.data.token);
+    localStorage.setItem("user", JSON.stringify(response.data.user));
+
+    return response.data;
+  } catch (error) {
+    console.error("Google login error:", error);
+    throw error;
+  }
+};
 export const logout = () => {
   localStorage.removeItem(appConfig.CURRENT_USER_KEY);
 };
