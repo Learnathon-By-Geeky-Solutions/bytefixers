@@ -9,15 +9,15 @@ router.post("/send-invite", async (req, res) => {
   if (!email || !projectId) {
     return res.status(400).json({ error: "Email and Project ID are required" });
   }
-  const emailRegex = /^[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]{1,255}\.[a-zA-Z]{2,}$/;
+  const emailRegex =
+    /^[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]{1,255}\.[a-zA-Z]{2,}$/;
   if (!emailRegex.test(String(email).trim())) {
     return res.status(400).json({ error: "Invalid email format" });
   }
 
   try {
     // Generate the invite link
-    let inviteLink = `http://localhost:4000/sendEmail/accept-invite?email=${email}&projectId=${projectId}`;
-    // Send invitation email
+    let inviteLink = `${process.env.BACKEND_URL}/sendEmail/accept-invite?email=${email}&projectId=${projectId}`; // Send invitation email
     await emailConfig(email, projectId, inviteLink);
 
     res.status(200).json({ message: "Invitation sent successfully!" });
@@ -40,7 +40,7 @@ router.get("/accept-invite", async (req, res) => {
     if (!user) {
       // User not registered → Redirect to signup
       return res.redirect(
-        `http://localhost:3000/signup?email=${email}&projectId=${projectId}`
+        `${process.env.FRONTEND_URL}/signup?email=${email}&projectId=${projectId}`
       );
     }
     const project = await Project.findById(projectId);
@@ -53,7 +53,7 @@ router.get("/accept-invite", async (req, res) => {
       });
     }
     return res.redirect(
-      `http://localhost:3000/login?email=${email}&projectId=${projectId}`
+      `${process.env.FRONTEND_URL}/login?email=${email}&projectId=${projectId}`
     );
   } catch (error) {
     console.error("Invite accept error:", error);

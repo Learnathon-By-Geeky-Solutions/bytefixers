@@ -7,7 +7,7 @@ const app = express();
 app.disable("x-powered-by");
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3000", "https://bytefixers-frontend.vercel.app"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   hideOptionsCall: true,
 };
