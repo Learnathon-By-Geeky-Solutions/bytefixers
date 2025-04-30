@@ -143,7 +143,6 @@ See [API Documentation](docs/documentation.md#api-documentation) for full detail
 - [UI Figma Design](https://www.figma.com/design/Up4Tppn2Zn5hMDaaXqWHox/Untitled?node-id=0-1&m=dev&t=MPJc5E4z9Nrk1n3Z-1/)
 - [Project Documentation](docs/documentation.md)
 - [Development Setup Guide](docs/setup.md)
-- [Workflow Board](docs/workflow.md)
 - [Tech Stack Overview](docs/teck_stack.pdf)
 
 ---
