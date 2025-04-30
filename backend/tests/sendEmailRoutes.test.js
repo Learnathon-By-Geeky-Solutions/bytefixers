@@ -39,7 +39,7 @@ describe('Email Routes Tests', () => {
     // Create test user
     testUser = new User({
       email: 'existing@example.com',
-      password: 'password123',
+      password: process.env.TEST_PASSWORD,
       name: 'Test User'
     });
     await testUser.save();

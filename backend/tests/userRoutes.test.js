@@ -56,13 +56,13 @@ describe('User Routes', () => {
         .send({
           name: 'Test User',
           email: 'test@example.com',
-          password: 'password123'
+          password: process.env.TEST_PASSWORD
         });
 
       // Assertions
       expect(response.status).toBe(201);
       expect(bcrypt.genSalt).toHaveBeenCalledWith(10);
-      expect(bcrypt.hash).toHaveBeenCalledWith('password123', 'salt');
+      expect(bcrypt.hash).toHaveBeenCalledWith(process.env.TEST_PASSWORD, 'salt');
       expect(User).toHaveBeenCalledWith({
         name: 'Test User',
         email: 'test@example.com',
@@ -100,7 +100,7 @@ describe('User Routes', () => {
         .send({
           name: 'Test User',
           email: 'test@example.com',
-          password: 'password123',
+          password: process.env.TEST_PASSWORD,
           projectId: 'project123'
         });
 
@@ -127,7 +127,7 @@ describe('User Routes', () => {
         .send({
           name: 'Test User',
           email: 'test@example.com',
-          password: 'password123'
+          password: process.env.TEST_PASSWORD,
         });
 
       // Assertions
@@ -161,12 +161,12 @@ describe('User Routes', () => {
         .send({
           type: 'email',
           email: 'test@example.com',
-          password: 'password123'
+          password: process.env.TEST_PASSWORD,
         });
 
       // Assertions
       expect(User.findOne).toHaveBeenCalled();
-      expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'hashedPassword');
+      expect(bcrypt.compare).toHaveBeenCalledWith(process.env.TEST_PASSWORD, 'hashedPassword');
       expect(jwt.sign).toHaveBeenCalledTimes(2);
       expect(response.body).toHaveProperty('accessToken', 'accessToken');
       expect(response.body).toHaveProperty('refreshToken', 'refreshToken');
