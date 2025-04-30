@@ -783,13 +783,6 @@ curl -X POST http://localhost:4000/api/user/sign-up \
 - `POST /api/chat/message`: Send chat message
 - `GET /api/chat/history/:conversationId`: Get chat history
 
-## 🔧 Tools & Resources
-
-### Recommended Tools
-- **Diagrams**: [draw.io](https://draw.io) or [Mermaid](https://mermaid-js.github.io/)
-- **API Documentation**: Consider integrating [Swagger/OpenAPI](https://swagger.io/)
-- **Code Documentation**: Use JSDoc comments for function documentation
-
 ### Reference Documentation
 - [MongoDB Documentation](https://docs.mongodb.com/)
 - [Express Documentation](https://expressjs.com/)
