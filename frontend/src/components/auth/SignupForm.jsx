@@ -9,7 +9,6 @@ import {
 } from "../../common/icons"; // Ensure these imports are correct
 import { authServices } from "../../auth"; // Import authServices
 import login_signupPicture from "../../assets/images/login_signupPicture.jpg";
-import google from "../../assets/images/google.PNG";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 export const SignupForm = () => {

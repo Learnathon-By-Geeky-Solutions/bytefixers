@@ -8,7 +8,6 @@ import {
 } from "../../common/icons"; // Ensure these imports are correct
 import { useLocation, useNavigate } from "react-router-dom";
 import login_signupPicture from "../../assets/images/login_signupPicture.jpg";
-import google from "../../assets/images/google.PNG";
 import { authServices } from "../../auth";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
