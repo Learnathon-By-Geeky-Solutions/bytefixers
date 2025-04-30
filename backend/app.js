@@ -7,9 +7,10 @@ const app = express();
 app.disable("x-powered-by");
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://bytefixers-frontend.vercel.app", "https://bytefixers-backend.vercel.app"],
+  origin: "https://bytefixers-frontend.vercel.app",
   methods: ["GET", "POST", "PUT", "DELETE"],
   hideOptionsCall: true,
+  optiosSuccessStatus: 200
 };
 
 app.use(helmet());
