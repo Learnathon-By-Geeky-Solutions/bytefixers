@@ -59,7 +59,7 @@ const TopNavbar = () => {
   };
   useEffect(() => {
     // finding the project name from the project id
-    axios.get(`http://localhost:4000/projects/${projectid}`).then((res) => {
+    axios.get(`${process.env.REACT_APP_BASE_URL}/projects/${projectid}`).then((res) => {
       setName(res.data.name);
     });
     fetchAllTasks();
@@ -67,7 +67,7 @@ const TopNavbar = () => {
   const fetchAllTasks = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/projects/${projectid}/tasks`
+        `${process.env.REACT_APP_BASE_URL}/projects/${projectid}/tasks`
       );
       setTasks(response.data);
     } catch (error) {

@@ -21,7 +21,7 @@ export const Chat = () => {
   const fetchChatHistory = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:4000/api/chat/chat-history`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/chat/chat-history`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({userId: currentUser?._id }),
@@ -56,7 +56,7 @@ export const Chat = () => {
 
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:4000/api/chat/chat`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/chat/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: currentUser?._id , query: userMessage.content }),
@@ -83,7 +83,7 @@ export const Chat = () => {
 
   const clearChatHistory = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/api/chat/delete-chat-history`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/chat/delete-chat-history`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: currentUser?._id }),

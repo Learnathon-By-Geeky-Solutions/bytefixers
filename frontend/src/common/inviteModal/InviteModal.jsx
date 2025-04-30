@@ -15,7 +15,7 @@ export const InviteModal = ({ isOpen, onClose, projectid }) => {
     setMessage("");
     try {
       const response = await axios.post(
-        "http://localhost:4000/sendEmail/send-invite",
+        `${process.env.REACT_APP_BASE_URL}/sendEmail/send-invite`,
         {
           email,
           projectId: projectid,

@@ -44,7 +44,7 @@ export const FileUpload = ({ taskId, onFileUploaded }) => {
       setProgress(30);
 
       const response = await fetch(
-        `http://localhost:4000/files/upload/${taskId}`,
+        `${process.env.REACT_APP_BASE_URL}/files/upload/${taskId}`,
         {
           method: "POST",
           body: formData,

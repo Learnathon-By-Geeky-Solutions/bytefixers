@@ -15,7 +15,7 @@ export const getRefreshToken = () => getAuthUser()?.refreshToken;
 
 console.log(appConfig.BASE_URL);
 export const signup = ({ name, email, password, projectId }) =>
-  axios.post("http://localhost:4000/api/user/sign-up", {
+  axios.post(`${process.env.REACT_APP_BASE_URL}/api/user/sign-up`, {
     name,
     email,
     password,
@@ -25,7 +25,7 @@ export const signup = ({ name, email, password, projectId }) =>
 export const login = async ({ type, email, password, refreshToken }) => {
   console.log("Login data", { type, email, password, refreshToken });
   const authUser = (
-    await axios.post("http://localhost:4000/api/user/login", {
+    await axios.post(`${process.env.REACT_APP_BASE_URL}/api/user/login`, {
       type,
       email,
       password,
@@ -39,7 +39,7 @@ export const login = async ({ type, email, password, refreshToken }) => {
 export const loginWithGoogle = async (googlePayload) => {
   try {
     const response = await axios.post(
-      "http://localhost:4000/auth/google-login",
+      `${process.env.REACT_APP_BASE_URL}/auth/google-login`,
       googlePayload
     );
     console.log("Google login response:", response.data);
@@ -55,7 +55,7 @@ export const logout = () => {
 };
 export const addUserToProject = (userId, projectId) => {
   return axios
-    .post("http://localhost:4000/projects/addUserToProject", {
+    .post(`${process.env.REACT_APP_BASE_URL}/projects/addUserToProject`, {
       userId,
       projectId,
     })

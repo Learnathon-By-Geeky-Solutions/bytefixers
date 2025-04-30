@@ -63,7 +63,7 @@ export const EventModal = ({
   const fetchTasks = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000/projects/${projectId}/tasks`
+        `${process.env.REACT_APP_BASE_URL}/projects/${projectId}/tasks`
       );
       const data = await response.json();
       setTasks(Array.isArray(data.tasks) ? data.tasks : []);
@@ -123,8 +123,8 @@ export const EventModal = ({
       createdBy: authServices.getAuthUser()._id,
     };
     const eventUrl = event?.id
-      ? `http://localhost:4000/api/calendar/${event.id}`
-      : "http://localhost:4000/api/calendar";
+      ? `${process.env.REACT_APP_BASE_URL}/api/calendar/${event.id}`
+      : `${process.env.REACT_APP_BASE_URL}/api/calendar`;
 
     // Determine the HTTP method based on the presence of event ID
     const method = event?.id ? "PUT" : "POST";

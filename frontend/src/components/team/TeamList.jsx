@@ -116,7 +116,7 @@ export const TeamList = ({ teams, setTeams, members, teamMembers }) => {
     try {
       // eslint-disable-next-line
       const response = await axios.post(
-        `http://localhost:4000/teams/leave/${clickedTeam._id}`,
+        `${process.env.REACT_APP_BASE_URL}/teams/leave/${clickedTeam._id}`,
         { userId }
       );
       setTeams((prevTeams) =>
@@ -139,7 +139,7 @@ export const TeamList = ({ teams, setTeams, members, teamMembers }) => {
     try {
       // eslint-disable-next-line
       const response = await axios.delete(
-        `http://localhost:4000/teams/${clickedTeam._id}`,
+        `${process.env.REACT_APP_BASE_URL}/teams/${clickedTeam._id}`,
         { data: { userId } }
       );
 

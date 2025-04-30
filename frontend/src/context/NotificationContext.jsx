@@ -17,7 +17,7 @@ export const NotificationProvider = ({ children }) => {
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000/api/notifications/user/${currentUser._id}`
+        `${process.env.REACT_APP_BASE_URL}/api/notifications/user/${currentUser._id}`
       );
       if (!response.ok) throw new Error("Failed to fetch notifications");
       const data = await response.json();
@@ -47,7 +47,7 @@ export const NotificationProvider = ({ children }) => {
   const markAsRead = async (notificationId) => {
     try {
       const response = await fetch(
-        `http://localhost:4000/api/notifications/${notificationId}/read`,
+        `${process.env.REACT_APP_BASE_URL}/api/notifications/${notificationId}/read`,
         {
           method: "PUT",
           headers: {
@@ -67,7 +67,7 @@ export const NotificationProvider = ({ children }) => {
       if (!currentUser?._id) return;
 
       const response = await fetch(
-        `http://localhost:4000/api/notifications/mark-all-read`,
+        `${process.env.REACT_APP_BASE_URL}/api/notifications/mark-all-read`,
         {
           method: "PUT",
           headers: {
@@ -103,7 +103,7 @@ export const NotificationProvider = ({ children }) => {
       if (!currentUser?._id) return;
 
       const response = await fetch(
-        `http://localhost:4000/api/notifications/${notificationId}`,
+        `${process.env.REACT_APP_BASE_URL}/api/notifications/${notificationId}`,
         {
           method: "DELETE",
           headers: {
@@ -144,7 +144,7 @@ export const NotificationProvider = ({ children }) => {
       if (!currentUser?._id) return;
 
       const response = await fetch(
-        `http://localhost:4000/api/notifications/clear-all`,
+        `${process.env.REACT_APP_BASE_URL}/api/notifications/clear-all`,
         {
           method: "DELETE",
           headers: {
@@ -177,7 +177,7 @@ export const NotificationProvider = ({ children }) => {
     try {
       if (!currentUser?._id) return;
 
-      const response = await fetch(`http://localhost:4000/api/notifications`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/notifications`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

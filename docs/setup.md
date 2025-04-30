@@ -49,7 +49,7 @@ npm install
 npm run dev
 ```
 
-The backend server should now be running at: [http://localhost:4000](http://localhost:4000)
+The backend server should now be running at: [${process.env.REACT_APP_BASE_URL}](${process.env.REACT_APP_BASE_URL})
 
 ---
 
@@ -60,7 +60,7 @@ The backend server should now be running at: [http://localhost:4000](http://loca
 In the `frontend` directory, create a `.env` file:
 
 ```ini
-VITE_BACKEND_URL=http://localhost:4000
+VITE_BACKEND_URL=${process.env.REACT_APP_BASE_URL}
 ```
 
 ### ▶️ Start the Frontend Server

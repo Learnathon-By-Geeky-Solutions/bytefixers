@@ -56,7 +56,7 @@ export const MembersProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:4000/projects/user/${userId}`
+        `${process.env.REACT_APP_BASE_URL}/projects/user/${userId}`
       );
 
       if (!response.ok) {
@@ -89,7 +89,7 @@ export const MembersProvider = ({ children }) => {
       // Fetch details for unique members
       const membersData = await Promise.all(
         [...uniqueMembers].map((memberId) =>
-          fetch(`http://localhost:4000/api/user/${memberId}`)
+          fetch(`${process.env.REACT_APP_BASE_URL}/api/user/${memberId}`)
             .then((res) => (res.ok ? res.json() : null))
             .catch(() => null)
         )
@@ -103,7 +103,7 @@ export const MembersProvider = ({ children }) => {
       let allProjectTasks = [];
       for (const project of data) {
         const tasksResponse = await fetch(
-          `http://localhost:4000/projects/${project._id}/tasks`
+          `${process.env.REACT_APP_BASE_URL}/projects/${project._id}/tasks`
         );
         if (tasksResponse.ok) {
           const projectTasks = await tasksResponse.json();
@@ -113,7 +113,7 @@ export const MembersProvider = ({ children }) => {
       setAllTasks(allProjectTasks);
 
       const teamresponse = await fetch(
-        `http://localhost:4000/teams/my-teams/${userId}`
+        `${process.env.REACT_APP_BASE_URL}/teams/my-teams/${userId}`
       );
       if (!teamresponse.ok) throw new Error("Failed to fetch teams");
       const teamdata = await teamresponse.json();

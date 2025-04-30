@@ -3,7 +3,7 @@ import { Avatar } from "../../../common/icons";
 import { authServices } from "../../../auth";
 import PropTypes from "prop-types";
 const fetchMemberDetails = async (memberId) => {
-  const response = await fetch(`http://localhost:4000/api/user/${memberId}`);
+  const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/user/${memberId}`);
   const data = await response.json();
   return data;
 };
@@ -16,7 +16,7 @@ const fetchProjectDetails = async (
   setError
 ) => {
   try {
-    const response = await fetch(`http://localhost:4000/projects/${projectid}`);
+    const response = await fetch(`${process.env.REACT_APP_BASE_URL}/projects/${projectid}`);
     const data = await response.json();
 
     setProject(data);
@@ -65,14 +65,14 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
   //   const fetchProjectDetails = async () => {
   //     try {
   //       const response = await fetch(
-  //         `http://localhost:4000/projects/${projectid}`
+  //         `${process.env.REACT_APP_BASE_URL}/projects/${projectid}`
   //       );
   //       const data = await response.json();
   //       setProject(data);
   //       setMembers(data.members); // Set project members
   //       const memberDetails = await Promise.all(
   //         data.members.map((memberId) =>
-  //           fetch(`http://localhost:4000/api/user/${memberId}`).then((res) =>
+  //           fetch(`${process.env.REACT_APP_BASE_URL}/api/user/${memberId}`).then((res) =>
   //             res.json()
   //           )
   //         )
@@ -112,7 +112,7 @@ export const TaskCreate = ({ isOpen, onClose, onCreate, projectid }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:4000/tasks/${projectid}/addTasks`,
+        `${process.env.REACT_APP_BASE_URL}/tasks/${projectid}/addTasks`,
         {
           method: "POST",
           headers: {

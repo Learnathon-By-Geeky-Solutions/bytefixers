@@ -19,7 +19,7 @@ export const ProjectModal = ({ isOpen, onRequestClose }) => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        "http://localhost:4000/projects/create",
+        `${process.env.REACT_APP_BASE_URL}/projects/create`,
         {
           name: data.name,
           description: data.description,

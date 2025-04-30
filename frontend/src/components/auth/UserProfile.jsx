@@ -51,7 +51,7 @@ export const UserProfile = () => {
   const fetchUserProfile = async () => {
     try {
       const token = authServices.getRefreshToken();
-      const response = await fetch("http://localhost:4000/api/user/profile", {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/user/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -98,7 +98,7 @@ export const UserProfile = () => {
     try {
       setUpdating(true);
       const token = authServices.getRefreshToken();
-      const response = await fetch("http://localhost:4000/api/user/profile", {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/user/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -151,7 +151,7 @@ export const UserProfile = () => {
       setChangingPassword(true);
       const token = authServices.getRefreshToken();
 
-      const response = await fetch("http://localhost:4000/api/user/password", {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/user/password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

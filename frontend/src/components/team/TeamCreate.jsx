@@ -3,7 +3,7 @@ import { TeamCreateModal } from "./TeamCreateModal";
 import { TeamList } from "./TeamList";
 import { authServices } from "../../auth";
 const fetchMemberDetails = async (memberId) => {
-  const response = await fetch(`http://localhost:4000/api/user/${memberId}`);
+  const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/user/${memberId}`);
   const data = await response.json();
   return data;
 };
@@ -17,7 +17,7 @@ const fetchProjectsAndMembers = async (
 ) => {
   try {
     const response = await fetch(
-      `http://localhost:4000/projects/user/${userId}`
+      `${process.env.REACT_APP_BASE_URL}/projects/user/${userId}`
     );
     const data = await response.json();
     setProjects(data);
@@ -66,7 +66,7 @@ export const TeamCreate = () => {
     const fetchTeams = async () => {
       try {
         const response = await fetch(
-          `http://localhost:4000/teams/my-teams/${userId}`
+          `${process.env.REACT_APP_BASE_URL}/teams/my-teams/${userId}`
         );
         if (!response.ok) throw new Error("Failed to fetch teams");
 

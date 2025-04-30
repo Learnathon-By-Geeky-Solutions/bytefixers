@@ -85,7 +85,7 @@ The documentation is organized into the following sections:
 
 **Examples**:
 ```bash
-curl -X POST http://localhost:4000/api/user/sign-up \
+curl -X POST ${process.env.REACT_APP_BASE_URL}/api/user/sign-up \
   -H "Content-Type: application/json" \
   -d '{"name": "John Doe", "email": "john@example.com", "password": "password123"}'
 ```

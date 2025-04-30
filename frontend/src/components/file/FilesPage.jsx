@@ -52,7 +52,7 @@ export const FilesPage = () => {
 
         // Fetch all files for the current user using the dedicated endpoint
         const response = await fetch(
-          `http://localhost:4000/files/user/${currentUser._id}`
+          `${process.env.REACT_APP_BASE_URL}/files/user/${currentUser._id}`
         );
 
         if (!response.ok) {
@@ -137,7 +137,7 @@ export const FilesPage = () => {
       setDeleteInProgress(file._id);
 
       const response = await fetch(
-        `http://localhost:4000/files/${file.taskId}/${file._id}`,
+        `${process.env.REACT_APP_BASE_URL}/files/${file.taskId}/${file._id}`,
         {
           method: "DELETE",
           headers: {
@@ -254,7 +254,7 @@ export const FilesPage = () => {
 
       // First, fetch the file through your backend to get the proper content disposition
       const response = await fetch(
-        `http://localhost:4000/files/download/${file.taskId}/${file._id}`
+        `${process.env.REACT_APP_BASE_URL}/files/download/${file.taskId}/${file._id}`
       );
 
       if (!response.ok) {

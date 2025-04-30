@@ -346,7 +346,7 @@ export const SubtaskList = ({
     setIsSubmitting(true);
     try {
       const response = await fetch(
-        `http://localhost:4000/tasks/${taskId}/add-subtask`,
+        `${process.env.REACT_APP_BASE_URL}/tasks/${taskId}/add-subtask`,
         {
           method: "POST",
           headers: {
@@ -544,7 +544,7 @@ export const SubtaskList = ({
   // Update subtask on the server
   const updateSubtaskOnServer = async (subtaskId, changedFields) => {
     const response = await fetch(
-      `http://localhost:4000/tasks/subtask/${subtaskId}`,
+      `${process.env.REACT_APP_BASE_URL}/tasks/subtask/${subtaskId}`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -578,7 +578,7 @@ export const SubtaskList = ({
       setLocalSubtasks(updatedSubtasks);
 
       const response = await fetch(
-        `http://localhost:4000/tasks/subtask/${subtaskId}`,
+        `${process.env.REACT_APP_BASE_URL}/tasks/subtask/${subtaskId}`,
         {
           method: "DELETE",
           headers: {

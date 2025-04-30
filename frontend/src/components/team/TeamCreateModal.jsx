@@ -24,7 +24,7 @@ export const TeamCreateModal = ({
   const handleCreateTeam = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000/teams/create/${userId}`,
+        `${process.env.REACT_APP_BASE_URL}/teams/create/${userId}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -34,7 +34,7 @@ export const TeamCreateModal = ({
       const data = await response.json();
       if (!response.ok) throw new Error(data.message);
       const teamResponse = await fetch(
-        `http://localhost:4000/teams/${data.team._id}`
+        `${process.env.REACT_APP_BASE_URL}/teams/${data.team._id}`
       );
       const fullTeamData = await teamResponse.json();
       if (typeof onCreateSuccess === "function") {

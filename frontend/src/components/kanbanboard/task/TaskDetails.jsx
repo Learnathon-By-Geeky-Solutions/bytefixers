@@ -36,7 +36,7 @@ export const TaskDetails = () => {
       try {
         console.log("Fetching task with ID:", taskId);
         const response = await fetch(
-          `http://localhost:4000/tasks/task/${taskId}`
+          `${process.env.REACT_APP_BASE_URL}/tasks/task/${taskId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch task details");
@@ -68,7 +68,7 @@ export const TaskDetails = () => {
       try {
         setLoadingTeams(true);
         const response = await fetch(
-          `http://localhost:4000/teams/my-teams/${currentUser._id}`
+          `${process.env.REACT_APP_BASE_URL}/teams/my-teams/${currentUser._id}`
         );
 
         if (!response.ok) {
@@ -94,7 +94,7 @@ export const TaskDetails = () => {
 
       // Fetch fresh task data to get updated activity logs
       const response = await fetch(
-        `http://localhost:4000/tasks/task/${taskId}`
+        `${process.env.REACT_APP_BASE_URL}/tasks/task/${taskId}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch updated task details");
@@ -166,7 +166,7 @@ export const TaskDetails = () => {
       };
 
       // Use the task update endpoint
-      const response = await fetch(`http://localhost:4000/tasks/${taskId}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/tasks/${taskId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -36,11 +36,11 @@ export const AddMembersModal = ({
     setLoading(true);
     setError(null);
     try {
-      await axios.post(`http://localhost:4000/teams/assign/${teamId}`, {
+      await axios.post(`${process.env.REACT_APP_BASE_URL}/teams/assign/${teamId}`, {
         teamMembers: selectedUsers,
       });
       const teamResponse = await axios.get(
-        `http://localhost:4000/teams/${teamId}`
+        `${process.env.REACT_APP_BASE_URL}/teams/${teamId}`
       );
 
       // Pass the complete team data with full member objects

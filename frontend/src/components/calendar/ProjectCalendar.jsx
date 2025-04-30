@@ -94,7 +94,7 @@ export const ProjectCalendar = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:4000/api/calendar/project/${projectId}`
+        `${process.env.REACT_APP_BASE_URL}/api/calendar/project/${projectId}`
       );
       if (!response.ok) throw new Error("Failed to fetch events");
 

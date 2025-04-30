@@ -37,7 +37,7 @@ export const TaskColoumn = ({ projectId }) => {
           return;
         }
         const response = await fetch(
-          `http://localhost:4000/tasks/${projectId}`
+          `${process.env.REACT_APP_BASE_URL}/tasks/${projectId}`
         );
 
         if (!response.ok) {
@@ -88,7 +88,7 @@ export const TaskColoumn = ({ projectId }) => {
       };
 
       const response = await fetch(
-        `http://localhost:4000/tasks/${projectId}/addTasks`,
+        `${process.env.REACT_APP_BASE_URL}/tasks/${projectId}/addTasks`,
         {
           method: "POST",
           headers: {
@@ -166,7 +166,7 @@ export const TaskColoumn = ({ projectId }) => {
 
   const handleDeleteTask = async (taskId) => {
     try {
-      const response = await fetch(`http://localhost:4000/tasks/${taskId}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/tasks/${taskId}`, {
         method: "DELETE",
       });
 
@@ -201,7 +201,7 @@ export const TaskColoumn = ({ projectId }) => {
       };
       // Create updated task object
       const response = await fetch(
-        `http://localhost:4000/tasks/${draggedTaskId}`,
+        `${process.env.REACT_APP_BASE_URL}/tasks/${draggedTaskId}`,
         {
           method: "PUT",
           headers: {

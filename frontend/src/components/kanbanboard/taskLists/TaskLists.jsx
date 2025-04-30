@@ -75,7 +75,7 @@ export const TaskLists = () => {
   };
 
   const fetchMemberDetails = async (memberId) => {
-    const response = await fetch(`http://localhost:4000/api/user/${memberId}`);
+    const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/user/${memberId}`);
     return response.json(); // Parse and return the JSON data
   };
 
@@ -88,7 +88,7 @@ export const TaskLists = () => {
     const fetchTasks = async () => {
       try {
         const response = await fetch(
-          `http://localhost:4000/projects/${projectid}/tasks`
+          `${process.env.REACT_APP_BASE_URL}/projects/${projectid}/tasks`
         );
         const data = await response.json();
         setTasks(Array.isArray(data.tasks) ? data.tasks : []);
@@ -99,7 +99,7 @@ export const TaskLists = () => {
     const fetchProjectDetails = async () => {
       try {
         const response = await fetch(
-          `http://localhost:4000/projects/${projectid}`
+          `${process.env.REACT_APP_BASE_URL}/projects/${projectid}`
         );
         const data = await response.json();
         const memberDetails = await getMemberDetails(data.members);
@@ -153,7 +153,7 @@ export const TaskLists = () => {
     try {
       setLoadingSubtasks((prev) => ({ ...prev, [taskId]: true }));
       const response = await fetch(
-        `http://localhost:4000/tasks/${taskId}/subtasks`
+        `${process.env.REACT_APP_BASE_URL}/tasks/${taskId}/subtasks`
       );
 
       if (!response.ok) {

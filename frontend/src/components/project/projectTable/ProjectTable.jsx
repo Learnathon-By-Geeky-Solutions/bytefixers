@@ -26,7 +26,7 @@ export const ProjectTable = () => {
   const userId = currentUser ? currentUser._id : null; // Extract user ID // Extract the logged-in user ID
   const handleDelete = async (projectId) => {
     try {
-      await axios.delete(`http://localhost:4000/projects/${projectId}`);
+      await axios.delete(`${process.env.REACT_APP_BASE_URL}/projects/${projectId}`);
       setProjects(projects.filter((project) => project._id !== projectId));
     } catch (error) {
       console.error("Error deleting project:", error);
