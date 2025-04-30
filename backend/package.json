@@ -37,5 +37,18 @@
     "mongodb-memory-server": "^10.1.4",
     "nodemon": "^3.1.9",
     "supertest": "^7.1.0"
+  },
+  "jest": {
+    "transform":{},
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ],
+    "globalSetup": "./tests/setup.js"
+
   }
+
 }
