@@ -235,6 +235,17 @@ describe('Team Routes Tests', () => {
   });
 
   describe('GET /api/teams/:teamId', () => {
+    // Helper function to create a mock chain without deep nesting
+    const createMockFindByIdChain = (resolvedValue) => {
+      // Create the mock functions with shallow nesting
+      const lastPopulate = jest.fn().mockResolvedValue(resolvedValue);
+      const secondPopulate = jest.fn().mockReturnValue({ populate: lastPopulate });
+      const firstPopulate = jest.fn().mockReturnValue({ populate: secondPopulate });
+      
+      // Return the mock function that starts the chain
+      return jest.fn().mockReturnValue({ populate: firstPopulate });
+    };
+  
     it('should get a single team by ID with populated member data', async () => {
       const [userId1, userId2] = await createSampleUsers();
       
@@ -246,7 +257,7 @@ describe('Team Routes Tests', () => {
         teamMember: [userId1, userId2]
       });
       
-      // Better mocking approach for chained methods
+      // Store original function to restore later
       const originalFindById = Team.findById;
       
       // Create a more accurate populated response
@@ -261,20 +272,8 @@ describe('Team Routes Tests', () => {
         ]
       };
       
-      // Mock the findById and its chain
-      Team.findById = jest.fn().mockImplementation(() => {
-        return {
-          populate: jest.fn().mockImplementation(() => {
-            return {
-              populate: jest.fn().mockImplementation(() => {
-                return {
-                  populate: jest.fn().mockResolvedValue(populatedTeam)
-                };
-              })
-            };
-          })
-        };
-      });
+      // Use the helper function to create the mock chain
+      Team.findById = createMockFindByIdChain(populatedTeam);
       
       const response = await request(app).get(`/api/teams/${team._id}`);
       
@@ -287,32 +286,22 @@ describe('Team Routes Tests', () => {
       expect(response.body.teamMember.length).toBe(2);
       expect(response.body.teamMember[1].username).toBe('user2');
     });
-
+  
     it('should return 400 for invalid team ID format', async () => {
       const response = await request(app).get('/api/teams/invalid-id');
       
       expect(response.status).toBe(400);
       expect(response.body.message).toBe('Invalid team ID format');
     });
-
+  
     it('should return 404 if team is not found', async () => {
       const nonExistentTeamId = new mongoose.Types.ObjectId();
       
-      // Mock findById and its chain for this test case
+      // Store original function to restore later
       const originalFindById = Team.findById;
-      Team.findById = jest.fn().mockImplementation(() => {
-        return {
-          populate: jest.fn().mockImplementation(() => {
-            return {
-              populate: jest.fn().mockImplementation(() => {
-                return {
-                  populate: jest.fn().mockResolvedValue(null)
-                };
-              })
-            };
-          })
-        };
-      });
+      
+      // Use the helper function to create the mock chain returning null
+      Team.findById = createMockFindByIdChain(null);
       
       const response = await request(app).get(`/api/teams/${nonExistentTeamId}`);
       
