@@ -355,18 +355,20 @@ describe('Team Routes Tests', () => {
           return mockTeam;
         }
         
-        // Second call is for the final response
-        return {
-          populate: jest.fn().mockImplementation(() => {
-            return {
-              populate: jest.fn().mockImplementation(() => {
-                return {
-                  populate: jest.fn().mockResolvedValue(updatedTeam)
-                };
-              })
-            };
-          })
-        };
+        // Second call is for the final response - refactored to avoid deep nesting
+        const populateMock = jest.fn();
+        const queryMock = { populate: populateMock };
+        
+        // Make populate() always return the same object for chaining
+        populateMock.mockReturnThis();
+        
+        // After the last populate call, the promise should resolve with updated team
+        populateMock
+          .mockReturnValueOnce(queryMock)  // First call returns this for chaining
+          .mockReturnValueOnce(queryMock)  // Second call returns this for chaining
+          .mockResolvedValueOnce(updatedTeam);  // Third call resolves with data
+        
+        return queryMock;
       });
       
       const response = await request(app)
@@ -381,7 +383,7 @@ describe('Team Routes Tests', () => {
       expect(response.body.message).toBe('Successfully left the team');
       expect(mockTeam.save).toHaveBeenCalled();
     });
-
+  
     it('should transfer leadership if the leader leaves', async () => {
       const [leaderId, memberId] = await createSampleUsers();
       
@@ -427,18 +429,20 @@ describe('Team Routes Tests', () => {
           return mockTeam;
         }
         
-        // Second call is for the final response
-        return {
-          populate: jest.fn().mockImplementation(() => {
-            return {
-              populate: jest.fn().mockImplementation(() => {
-                return {
-                  populate: jest.fn().mockResolvedValue(updatedTeam)
-                };
-              })
-            };
-          })
-        };
+        // Second call is for the final response - refactored to avoid deep nesting
+        const populateMock = jest.fn();
+        const queryMock = { populate: populateMock };
+        
+        // Make populate() always return the same object for chaining
+        populateMock.mockReturnThis();
+        
+        // After the last populate call, the promise should resolve with updated team
+        populateMock
+          .mockReturnValueOnce(queryMock)  // First call returns this for chaining
+          .mockReturnValueOnce(queryMock)  // Second call returns this for chaining
+          .mockResolvedValueOnce(updatedTeam);  // Third call resolves with data
+        
+        return queryMock;
       });
       
       const response = await request(app)
@@ -453,7 +457,7 @@ describe('Team Routes Tests', () => {
       expect(mockTeam.save).toHaveBeenCalled();
       expect(mockTeam.leader.toString()).toBe(memberId);
     });
-
+  
     it('should delete the team if the last member leaves', async () => {
       const [userId] = await createSampleUsers();
       
@@ -486,7 +490,7 @@ describe('Team Routes Tests', () => {
       expect(response.body.message).toBe('You were the last member. Team has been deleted.');
       expect(Team.findByIdAndDelete).toHaveBeenCalledWith(team._id.toString());
     });
-
+  
     it('should return 400 if user is not a team member', async () => {
       const [teamMemberId, nonMemberId] = await createSampleUsers();
       
