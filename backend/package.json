@@ -46,7 +46,9 @@
     "coverageReporters": [
       "text",
       "lcov"
-    ]
+    ],
+    "globalSetup": "<rootDir>/tests/setup.js",
+    "testMatch": ["<rootDir>/tests/**/*.test.js"]
 
   }
 
