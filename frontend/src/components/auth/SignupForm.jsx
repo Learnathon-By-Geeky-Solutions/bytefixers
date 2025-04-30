@@ -200,6 +200,8 @@ export const SignupForm = () => {
             {/* Replace the static button with Google OAuth button */}
             <div className="flex justify-center">
               <GoogleLogin
+                clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+                redirectUri={process.env.REACT_APP_FRONTEND_URL}
                 onSuccess={handleGoogleLoginSuccess}
                 onError={handleGoogleLoginError}
                 useOneTap
