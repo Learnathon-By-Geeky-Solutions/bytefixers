@@ -125,6 +125,7 @@ export const SignupForm = () => {
             Get Started Now
           </h2>
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+          {success && <p className="text-green-500 text-sm mb-4">{success}</p>}
 
           <form onSubmit={handleSignup} className="space-y-4">
             <TextField
