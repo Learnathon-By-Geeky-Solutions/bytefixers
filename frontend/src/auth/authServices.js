@@ -42,11 +42,12 @@ export const loginWithGoogle = async (googlePayload) => {
       "http://localhost:4000/auth/google-login",
       googlePayload
     );
+    console.log("Google login response:", response.data);
 
     // Store the token and user data
-    localStorage.setItem("token", response.data.token);
-    localStorage.setItem("user", JSON.stringify(response.data.user));
-
+    // localStorage.setItem("token", response.data.refreshToken);
+    // localStorage.setItem("user", JSON.stringify(response.data.user));
+    saveAuthUser(response.data);
     return response.data;
   } catch (error) {
     console.error("Google login error:", error);

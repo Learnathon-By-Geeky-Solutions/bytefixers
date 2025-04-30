@@ -3,10 +3,8 @@ const express = require("express");
 const helmet = require("helmet");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-
 const app = express();
-
-app.disable('x-powered-by');
+app.disable("x-powered-by");
 
 const corsOptions = {
   origin: "http://localhost:3000",
@@ -28,7 +26,7 @@ const fileRoutes = require("./routes/fileRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const calendarRoutes = require("./routes/calendarRoutes");
 const chatRoutes = require("./routes/chatRoutes");
-
+const authRoutes = require("./routes/authRoutes");
 // Mount routes
 app.use("/api/chat", chatRoutes);
 app.use("/api/user", userRoutes);
@@ -39,7 +37,7 @@ app.use("/teams", teamRoutes);
 app.use("/files", fileRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/calendar", calendarRoutes);
-
+app.use("/auth", authRoutes);
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to our app" });
 });

@@ -10,7 +10,8 @@ import {
 import { authServices } from "../../auth"; // Import authServices
 import login_signupPicture from "../../assets/images/login_signupPicture.jpg";
 import google from "../../assets/images/google.PNG";
-
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 export const SignupForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -25,6 +26,7 @@ export const SignupForm = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const projectIdFromQuery = queryParams.get("projectId");
+  const [success, setSuccess] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -66,6 +68,43 @@ export const SignupForm = () => {
         setError(err.response?.data?.message || "Failed to signup");
         alert("Failed to signup");
       });
+  };
+  const handleGoogleLoginSuccess = async (credentialResponse) => {
+    try {
+      // Decode the JWT token from Google
+      const decodedToken = jwtDecode(credentialResponse.credential);
+      console.log("Google login successful:", decodedToken);
+
+      // Send the token to your backend
+      const googlePayload = {
+        type: "google",
+        token: credentialResponse.credential,
+        // You can extract these from decoded token if needed
+        email: decodedToken.email,
+        name: decodedToken.name,
+      };
+
+      // Call your auth service
+      await authServices.loginWithGoogle(googlePayload);
+
+      // Navigate after successful login
+      if (projectIdFromQuery) {
+        navigate(`/kanbanBoard/projects/${projectIdFromQuery}`);
+      } else {
+        navigate("/kanbanBoard");
+      }
+
+      setSuccess("Google login successful!");
+    } catch (err) {
+      console.error("Google login failed:", err);
+      setError("Google login failed. Please try again.");
+    }
+  };
+
+  // Google login error handler
+  const handleGoogleLoginError = () => {
+    console.error("Google login failed");
+    setError("Google login failed. Please try again.");
   };
 
   return (
@@ -157,10 +196,21 @@ export const SignupForm = () => {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-500 mb-4">Or</p>
-            <button className="flex items-center justify-center w-full border border-gray-300 py-2 px-4 rounded-md text-gray-700 hover:bg-gray-100">
-              <img src={google} alt="Google" className="h-5 w-5 mr-2" /> Sign in
-              with Google
-            </button>
+
+            {/* Replace the static button with Google OAuth button */}
+            <div className="flex justify-center">
+              <GoogleLogin
+                onSuccess={handleGoogleLoginSuccess}
+                onError={handleGoogleLoginError}
+                useOneTap
+                type="standard"
+                theme="outline"
+                size="large"
+                text="signin_with"
+                shape="rectangular"
+                logo_alignment="left"
+              />
+            </div>
           </div>
 
           <p className="text-sm mt-4 text-center text-gray-600">

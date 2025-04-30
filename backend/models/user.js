@@ -10,6 +10,8 @@ const UserSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
+    googleId: { type: String },
+    authProvider: { type: String, enum: ["email", "google"], default: "email" },
     password: {
       type: String,
       required: true,
