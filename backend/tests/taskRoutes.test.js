@@ -200,16 +200,12 @@ describe('Task Routes', () => {
   // Get subtasks
   describe('GET /:taskId/subtasks', () => {
 
-    it('should return 404 if task not found', async () => {
+    it('should return 500 if task not found', async () => {
       const invalidId = new mongoose.Types.ObjectId();
       
       // Mock findById to return null
       jest.spyOn(Task, 'findById').mockImplementationOnce(() => ({
-        populate: jest.fn().mockReturnThis(),
-        populate: jest.fn().mockReturnThis(),
-        populate: jest.fn().mockReturnThis(),
-        populate: jest.fn().mockReturnThis(),
-        populate: jest.fn().mockReturnThis(),
+        prePopulate: jest.fn().mockReturnThis(),
         populate: jest.fn().mockResolvedValue(null)
       }));
       

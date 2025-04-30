@@ -34,10 +34,11 @@ describe('Project Routes Tests', () => {
       await Task.deleteMany({});
     }
 
+    const randomPassword = Math.random().toString(36).slice(-8) + 'Aa1!';
     // Create test user
     testUser = new User({
       email: 'test@example.com',
-      password: 'password123',
+      password: randomPassword ,
       name: 'Test User'
     });
     await testUser.save();
@@ -264,9 +265,10 @@ describe('Project Routes Tests', () => {
     });
 
     it('should return empty array for user with no projects', async () => {
+      const randomPassword = Math.random().toString(36).slice(-8) + 'Aa1!';
       const newUser = new User({
         email: 'noproject@example.com',
-        password: 'password123',
+        password: randomPassword,
         name: 'No Project User'
       });
       await newUser.save();
