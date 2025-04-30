@@ -34,10 +34,11 @@ describe('Project Routes Tests', () => {
       await Task.deleteMany({});
     }
 
+    const randomPassword = Math.random().toString(36).slice(-8) + 'Aa1!';
     // Create test user
     testUser = new User({
       email: 'test@example.com',
-      password: 'password123',
+      password: randomPassword ,
       name: 'Test User'
     });
     await testUser.save();
