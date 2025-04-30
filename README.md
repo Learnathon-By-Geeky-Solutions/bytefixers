@@ -25,5 +25,5 @@ Add your project description here.
 ## Resources
 - [UI Figma](https://www.figma.com/design/Up4Tppn2Zn5hMDaaXqWHox/Untitled?node-id=0-1&m=dev&t=MPJc5E4z9Nrk1n3Z-1/)
 - [Project Documentation](docs/)
-- [Development Setup](setup.md)
+- [Development Setup](docs/setup.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
