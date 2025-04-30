@@ -158,29 +158,6 @@ describe('Task Routes', () => {
     });
   });
 
-<<<<<<< Updated upstream
-=======
-  // Get a task by ID
-  describe('GET /task/:taskId', () => {
-    it('should get a task by ID with populated fields', async () => {
-      // First we need to mock the populated response
-      jest.spyOn(Task, 'findById').mockImplementationOnce(() => ({
-        populate: jest.fn().mockReturnThis(),
-        exec: jest.fn().mockResolvedValue({
-          ...mockTask,
-          assignee: [{ ...mockUser }],
-          reporter: { ...mockUser },
-          subTask: [mockSubtask]
-        })
-      }));
-      
-      const response = await request(app)
-        .get(`/api/tasks/task/${mockTask._id}`)
-        .expect(200);
-    });
-  });
-
->>>>>>> Stashed changes
   // Create a subtask
   describe('POST /:taskId/add-subtask', () => {
 

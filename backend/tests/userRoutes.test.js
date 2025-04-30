@@ -7,6 +7,7 @@ const User = require('../models/user');
 const Project = require('../models/Project');
 const appConfig = require('../config/appConfig');
 const { authenticateToken } = require('../middleware/authMiddleware');
+require("dotenv").config();
 
 // Mock dependencies
 jest.mock('../models/user');
@@ -47,7 +48,7 @@ describe('User Routes', () => {
 
       // Mock implementations
       bcrypt.genSalt.mockResolvedValue('salt');
-      bcrypt.hash.mockResolvedValue('hashedPassword');
+      bcrypt.hash.mockResolvedValue('password123');
       User.mockImplementation(() => mockUser);
 
       // Make request
@@ -66,7 +67,7 @@ describe('User Routes', () => {
       expect(User).toHaveBeenCalledWith({
         name: 'Test User',
         email: 'test@example.com',
-        password: 'hashedPassword',
+        password: process.env.TEST_PASSWORD,
         todoList: []
       });
       expect(mockUser.save).toHaveBeenCalled();
@@ -142,7 +143,7 @@ describe('User Routes', () => {
       const mockUser = {
         _id: 'user123',
         email: 'test@example.com',
-        password: 'hashedPassword',
+        password: process.env.TEST_PASSWORD,
         toJSON: jest.fn().mockReturnValue({
           _id: 'user123',
           email: 'test@example.com',
@@ -166,7 +167,7 @@ describe('User Routes', () => {
 
       // Assertions
       expect(User.findOne).toHaveBeenCalled();
-      expect(bcrypt.compare).toHaveBeenCalledWith(process.env.TEST_PASSWORD, 'hashedPassword');
+      expect(bcrypt.compare).toHaveBeenCalledWith(process.env.TEST_PASSWORD, 'password123');
       expect(jwt.sign).toHaveBeenCalledTimes(2);
       expect(response.body).toHaveProperty('accessToken', 'accessToken');
       expect(response.body).toHaveProperty('refreshToken', 'refreshToken');
@@ -421,7 +422,7 @@ describe('User Routes', () => {
       // Mock user
       const mockUser = {
         _id: 'user123',
-        password: 'oldHashedPassword',
+        password: process.env.TEST_PASSWORD,
         save: jest.fn().mockResolvedValue(true)
       };
 
@@ -442,7 +443,7 @@ describe('User Routes', () => {
       // Assertions
       expect(response.status).toBe(200);
       expect(User.findById).toHaveBeenCalledWith('user123');
-      expect(bcrypt.compare).toHaveBeenCalledWith('currentPassword', 'oldHashedPassword');
+      expect(bcrypt.compare).toHaveBeenCalledWith('currentPassword', 'password123');
       expect(bcrypt.genSalt).toHaveBeenCalledWith(10);
       expect(bcrypt.hash).toHaveBeenCalledWith('newPassword123', 'salt');
       expect(mockUser.password).toBe('newHashedPassword');
@@ -499,7 +500,7 @@ describe('User Routes', () => {
       // Mock user
       const mockUser = {
         _id: 'user123',
-        password: 'hashedPassword'
+        password: process.env.TEST_PASSWORD
       };
 
       // Mock implementations
