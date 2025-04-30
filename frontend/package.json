@@ -30,7 +30,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "cd backend && npm test",
+    "test": "react-scripts test",
     "eject": "react-scripts eject",
     "coverage": "npm test -- --coverage --watchAll"
   },

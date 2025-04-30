@@ -48,7 +48,7 @@ router.post("/:projectId/addTasks", async (req, res) => {
 
     await project.save();
 
-    res.status(201).json(newTask);
+    res.status(200).json(newTask);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -224,7 +224,7 @@ router.post("/:taskId/add-subtask", async (req, res) => {
       .populate("createdBy", "name email")
       .populate("reporter", "name email");
 
-    res.status(201).json(populatedSubtask);
+    res.status(200).json(populatedSubtask);
   } catch (error) {
     console.error("Error creating subtask:", error);
     res.status(500).json({ message: "Server error", error: error.message });

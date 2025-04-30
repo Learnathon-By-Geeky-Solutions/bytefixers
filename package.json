@@ -3,5 +3,14 @@
     "helmet": "^8.0.0",
     "jest": "^29.7.0",
     "node-fetch": "^2.7.0"
+  },
+  "scripts": {
+    "start": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run start\"",
+    "test": "cd backend && npm test",
+    "test:security": "snyk test --all-projects"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "snyk": "^1.1296.2"
   }
 }
