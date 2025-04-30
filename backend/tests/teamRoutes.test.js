@@ -6,6 +6,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const teamRoutes = require('../routes/teamRoutes');
 const Team = require('../models/Team');
 const User = require('../models/user');
+require("dotenv").config();
 
 let mongoServer;
 const app = express();
@@ -50,9 +51,9 @@ afterEach(() => {
 // Sample data for tests
 const createSampleUsers = async () => {
   const users = await User.create([
-    { username: 'user1', email: 'user1@example.com', password: 'password1' },
-    { username: 'user2', email: 'user2@example.com', password: 'password2' },
-    { username: 'user3', email: 'user3@example.com', password: 'password3' }
+    { username: 'user1', email: 'user1@example.com', password: process.env.TEST_PASSWORD },
+    { username: 'user2', email: 'user2@example.com', password: process.env.TEST_PASSWORD },
+    { username: 'user3', email: 'user3@example.com', password: process.env.TEST_PASSWORD }
   ]);
   
   return users.map(user => user._id.toString());

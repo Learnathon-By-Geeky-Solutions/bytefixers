@@ -5,6 +5,8 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const emailRoutes = require('../routes/sendEmailRoutes');
 const Project = require('../models/Project');
 const User = require('../models/user');
+require("dotenv").config();
+
 
 // Mock the email configuration module
 jest.mock('../config/emailConfig', () => {
